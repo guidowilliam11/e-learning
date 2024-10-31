@@ -1,11 +1,28 @@
+"use client"
+
 import Image from 'next/image';
+import { useState } from 'react';
 
 export default function CourseCard({ logoSrc, title, description, progress, maxProgress }) {
+    const [imageError, setImageError] = useState(false);
+
     return (
         <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
             {/* Course Logo */}
             <div className="h-52 bg-gray-100 flex items-center justify-center">
-                <Image src={logoSrc} alt={`${title} logo`} width={80} height={80} />
+                {imageError ? (
+                    <div className="w-full h-full bg-[#E5E7FB] flex items-center justify-center text-white text-lg font-bold">
+                        {title.charAt(0)} {/* First letter of the title as placeholder text */}
+                    </div>
+                ) : (
+                    <Image 
+                        src={logoSrc} 
+                        alt={`${title} logo`} 
+                        width={80} 
+                        height={80} 
+                        onError={() => setImageError(true)} 
+                    />
+                )}
             </div>
 
             {/* Course Info */}
@@ -14,7 +31,6 @@ export default function CourseCard({ logoSrc, title, description, progress, maxP
                 <p className="text-sm text-gray-500">{description}</p>
 
                 <div className="border-t border-gray-200 my-3"></div>
-
 
                 {/* Progress */}
                 <div className="mt-4">
