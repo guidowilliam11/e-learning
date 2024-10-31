@@ -24,13 +24,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-      <div className="flex">
-      <Sidebar />
-      <div className="flex flex-col flex-grow">
-        <TopBar />
-        <main className="p-8 bg-gray-50 flex-grow">{children}</main>
-      </div>
-    </div>
+        <div className="flex">
+          <Sidebar />
+          <div className="flex flex-col flex-grow h-screen">
+            <TopBar />
+            <main className="flex-grow overflow-y-auto p-4 bg-gray-50">
+              {children}
+            </main>
+          </div>
+        </div>
       </body>
     </html>
   );

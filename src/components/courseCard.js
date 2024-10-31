@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function CourseCard({ logoSrc, title, description, progress, maxProgress }) {
     return (
-        <div className="w-full max-w-sm bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
             {/* Course Logo */}
             <div className="h-52 bg-gray-100 flex items-center justify-center">
                 <Image src={logoSrc} alt={`${title} logo`} width={80} height={80} />
