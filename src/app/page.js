@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { eachDayOfInterval, format } from 'date-fns';
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import { MdPause, MdPlayArrow, MdRefresh } from 'react-icons/md';
 
 export default function Home() {
   const [todos, setTodos] = useState([
@@ -32,22 +31,56 @@ export default function Home() {
     }
   };
 
+  // Timer state
+  const initialTime = 1 * 60; // 30 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(initialTime);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (!isPaused && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+
+      return () => clearInterval(timer); // Clear timer on component unmount
+    }
+  }, [timeLeft, isPaused]);
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+      .toString()
+      .padStart(2, '0')}`;
+  };
+
+  const togglePause = () => {
+    setIsPaused((prev) => !prev);
+  };
+
+  const resetTimer = () => {
+    setTimeLeft(initialTime);
+    setIsPaused(false);
+  };
+
+  const progress = (timeLeft / initialTime) * 100;
+
   return (<>
     <div className="flex-grow h-full flex gap-4">
       <div className='flex-grow flex flex-col w-[33.33%] h-full gap-4'>
-        {/* Monthly Focused Hours (1,1) */}
+        {/* Monthly Focused Hours */}
         <div className="flex flex-col justify-between bg-[#545EE1] text-white rounded-lg p-6 h-[23%]">
           <h2 className="text-lg font-semibold mb-2 ">Monthly Focused Hours</h2>
           <p className="flex-grow text-start content-center text-6xl font-bold">703.23h</p>
         </div>
 
-        {/* Monthly Focused Hours 2 (2,1) */}
+        {/* Productivity Level */}
         <div className="flex flex-col justify-between bg-white rounded-lg shadow-md p-6 text-center items-start  h-[23%]">
           <h2 className="text-lg font-semibold mb-5">Productivity Level</h2>
           <p className="flex-grow text-start content-center text-6xl font-bold">18 / 20</p>
         </div>
 
-        {/* Today's Motivation (3-4, 1) */}
+        {/* Today's Motivation */}
         <div className=" bg-white rounded-lg shadow-md p-6  h-[54%]">
           <h2 className="text-lg font-semibold mb-4">Today's Motivation</h2>
           <div className="bg-gray-200 w-full h-32 mb-4 rounded"></div>
@@ -58,11 +91,10 @@ export default function Home() {
       <div className='w-[66.66%] h-full'>
         <div className='flex flex-grow h-[69%] w-auto gap-4 mb-4'>
           <div className='flex flex-col w-[50%] gap-4 h-[100%]'>
-            {/* Today's To-Do List (1-2, 2) */}
-            <div className=" bg-white rounded-lg shadow-md p-6 h-[69%]">
+            {/* Today's To-Do List */}
+            <div className=" bg-white rounded-lg shadow-md p-6 h-[69%] overflow-y-auto">
               <h2 className="text-lg font-semibold mb-4">Today's To-Do List</h2>
               <ul className="space-y-4">
-                {/* Checklist Items */}
                 {todos.map((todo) => (
                   <li key={todo.id} className="flex items-center space-x-3">
                     <input
@@ -79,7 +111,6 @@ export default function Home() {
                 ))}
               </ul>
 
-              {/* Input for New Todo Item */}
               <div className="flex items-center space-x-3 mt-4">
                 <input
                   type="checkbox"
@@ -95,7 +126,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* Add New Button */}
               <button
                 onClick={handleAddNewTodo}
                 className="text-gray-500 mt-2 flex items-center"
@@ -104,25 +134,66 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Quote of the Day (3, 2) */}
+            {/* Quote of the Day */}
             <div className=" bg-[#545EE1] text-white rounded-lg p-6 text-center h-[31%]">
-              <h2 className="text-lg font-semibold mb-4">Quote Of The Day</h2>
+              <h2 className="text-lg font-semibold mb-2">Quote Of The Day</h2>
               <p className="text-md italic">"I am blessed with a funny gene that makes me enjoy life."</p>
-              <p className="mt-2">- Karan Patel</p>
+              <p className="mt-1">- Karan Patel</p>
             </div>
           </div>
 
           <div className='flex flex-col w-[50%] h-[100%]'>
-            {/* Ongoing Timer (1-3, 3) */}
-            <div className="bg-[#545EE1] text-white rounded-lg p-6 flex flex-col items-center justify-center text-center h-full">
+            {/* Ongoing Timer */}
+            <div className="bg-[#545EE1] text-white rounded-lg p-6 px-10 flex flex-col items-center justify-center text-center h-full relative">
               <h2 className="text-lg font-semibold mb-2">Ongoing Timer</h2>
-              <div className="text-5xl font-bold">30:00</div>
-              <p className="mt-2">assignment</p>
+              <div className="w-full h-full rounded-full bg-none flex items-center justify-center relative">
+                <svg
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 100 100"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    stroke="#E6E6FA" // Light purple trail
+                    strokeWidth="4"
+                    fill="none"
+                    className="opacity-20"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    stroke="white" // White moving circle
+                    strokeWidth="4"
+                    fill="none"
+                    strokeDasharray="283" // Circumference of the circle (2 * π * r)
+                    strokeDashoffset={`${(283 * (100 + progress)) / 100}`}
+                    className="transition-all duration-1000"
+                  />
+                </svg>
+                <div className="text-5xl font-bold relative group">
+                  {/* Timer text, hidden when buttons are visible on hover */}
+                  <div className="inset-2 hover:text-[#545EE1] transition-opacity duration-300 opacity-100 group-hover:opacity-0">
+                    {formatTime(timeLeft)}
+                  </div>
+
+                  {/* Button group, shown on hover */}
+                  <div className="absolute inset-1 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button onClick={togglePause} className="text-white mx-2">
+                      {isPaused ? <MdPlayArrow size={38} /> : <MdPause size={38} />}
+                    </button>
+                    <button onClick={resetTimer} className="text-white mx-2">
+                      <MdRefresh size={38} />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Performance Level (4, 2-3) */}
+        {/* Performance Level */}
         <div className="bg-white rounded-lg shadow-md p-6 h-[29%]">
           <h2 className="text-lg font-semibold mb-4">Performance Level</h2>
           <div className="mt-4 flex justify-between text-sm text-gray-500">

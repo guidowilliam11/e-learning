@@ -41,10 +41,17 @@ export default function Sidebar() {
 
     // Toggle overlay when navigating to notes
     const handleNavClick = (path) => {
-        if (path === '/notes') {
+        console.log(path)
+        // Check if the path starts with '/notes/' to show the overlay
+        if (path.startsWith('/notes')) {
             setShowOverlay(true);
+    
+            // Extract the session ID from the path if needed
+            const sessionId = path.split('/').pop(); // Get the last part of the path
+            setSelectedSession(parseInt(sessionId, 10)); // Set the selected session ID
         } else {
             setShowOverlay(false);
+            setSelectedSession(null); // Clear selected session when navigating away
         }
     };
 
@@ -84,7 +91,7 @@ export default function Sidebar() {
                                                 className={`cursor-pointer ${selectedSession === session.id ? 'font-medium text-[#F99B26]' : 'text-gray-700'}`}
                                                 onClick={() => setSelectedSession(session.id)}
                                             >
-                                                <NavItem href="/" icon={<FaBook />} label={session.title} onClick={handleNavClick} />
+                                                <NavItem href={"/notes/"+session.id} icon={<FaBook />} label={session.title} onClick={handleNavClick} />
                                             </li>
                                         ))}
                                     </ul>
