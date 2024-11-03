@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
           <Sidebar />
           <div className="flex flex-col flex-grow h-screen">
             <TopBar />
-            <main className="flex-grow overflow-y-auto p-4 bg-gray-50 h-[90%]">
+            <main className="flex-grow overflow-y-auto p-4 bg-gray-50 h-[90%] font-inter">
               {children}
             </main>
           </div>

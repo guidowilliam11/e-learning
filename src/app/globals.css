@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "@fontsource/inter/400.css";
+
 body {
   margin: 0;
   padding: 0;
