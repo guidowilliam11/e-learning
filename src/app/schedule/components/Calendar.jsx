@@ -11,10 +11,11 @@ const Calendar = ({ currentDate, setCurrentDate }) => {
           m: 0,
           '& .MuiPickersDay-root.Mui-selected': {
             backgroundColor: '#E0E7FF', // Light purple
-            color: '#1E3A8A', // Dark blue
+            color: 'black',
           },
           '& .MuiPickersDay-root': {
-            fontWeight: 'normal',
+            fontWeight: '600',
+            fontSize: '14px',
           },
         }}
         value={currentDate}
