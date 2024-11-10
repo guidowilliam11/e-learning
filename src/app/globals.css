@@ -1,10 +1,25 @@
+@import '@fontsource/inter/400.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import '@fontsource/inter/400.css';
 
 body {
   margin: 0;
   padding: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{
+  width: 10px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb{
+  @apply bg-gradient-to-b from-secondary to-secondaryDark rounded-full
+}
+
+::-webkit-scrollbar-track{
+  @apply bg-neutral-400 bg-opacity-30
 }

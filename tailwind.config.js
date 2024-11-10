@@ -10,10 +10,18 @@ module.exports = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        primary: "#F99B26",
+        primaryDark: "#943500",
+        secondary: "#545EE1",
+        secondaryDark: "#383e95",
+        secondaryLight: "#E5E7FB"
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
       },
+      gridTemplateColumns: {
+        contact: "1fr 2.25fr"
+      }
     },
   },
   plugins: [],

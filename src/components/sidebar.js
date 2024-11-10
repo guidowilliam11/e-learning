@@ -61,7 +61,7 @@ export default function Sidebar() {
     };
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen drop-shadow-xl">
             {/* Sidebar */}
             <aside className="relative min-w-80 bg-gray-100 h-full p-5 flex flex-col justify-between">
                 {/* Overlay */}
