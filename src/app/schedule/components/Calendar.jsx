@@ -9,13 +9,16 @@ const Calendar = ({ currentDate, setCurrentDate }) => {
       <DateCalendar
         sx={{
           m: 0,
-          '& .MuiPickersDay-root.Mui-selected': {
-            backgroundColor: '#E0E7FF', // Light purple
-            color: 'black',
+          '.Mui-selected': {
+            backgroundColor: '#CBD5F7 !important',
+            color: '#000000',
           },
-          '& .MuiPickersDay-root': {
-            fontWeight: '600',
-            fontSize: '14px',
+          '.Mui-selected:hover': {
+            backgroundColor: '#A3B5E0 !important',
+          },
+          '.MuiPickersDay-root.Mui-selected': {
+            backgroundColor: '#CBD5F7 !important',
+            color: '#000000',
           },
         }}
         value={currentDate}
