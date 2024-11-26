@@ -1,20 +1,22 @@
 'use client'
 
-import { Button, Card, Grid2, TextField, Typography } from '@mui/material'
+import { Button, Card, Grid2, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { email, minLength, object, string } from 'valibot'
+
+import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { toast } from 'react-toastify'
 import { useEffect } from 'react'
-import { loginWithEmailAndPassword } from '@/utils/supabase/auth'
+import { registerWithEmailAndPassword } from '@/utils/supabase/auth'
 
 const schema = object({
   email: email(),
-  password: string([minLength(1, 'Password is required')]),
+  password: string([minLength(6, 'Password is required')]),
+  confirm: string([minLength(6, 'Confirm Password is required')]),
 })
 
-const Login = () => {
+const Register = () => {
   const router = useRouter()
 
   const {
@@ -27,6 +29,7 @@ const Login = () => {
     defaultValues: {
       email: '',
       password: '',
+      confirm: '',
     },
   })
 
@@ -35,6 +38,7 @@ const Login = () => {
       {
         email: '',
         password: '',
+        confirm: '',
       },
       { keepValues: false }
     )
@@ -47,17 +51,18 @@ const Login = () => {
     }
 
     try {
-      const res = await loginWithEmailAndPassword(userData)
+      const res = await registerWithEmailAndPassword(userData)
 
       if (res.data.user) {
-        toast.success('Successfully signed in!')
+        toast.success('Successfully registered!')
         setTimeout(() => {
           reset({
             email: '',
             password: '',
+            confirm: '',
           })
-          console.log(res)
-          router.replace('/')
+          console.log(res.data)
+          router.replace('/login')
         }, 1000)
       } else {
         toast.error('Error occurred, please try again')
@@ -82,7 +87,7 @@ const Login = () => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid2 container spacing={3}>
-          <Grid2 xs={12}>
+          <Grid2 xs={6}>
             <Controller
               name='email'
               control={control}
@@ -91,7 +96,6 @@ const Login = () => {
                 <TextField
                   {...field}
                   label='Email'
-                  placeholder='your@email.com'
                   error={!!errors.email}
                   helperText={errors.email?.message}
                   fullWidth
@@ -99,7 +103,7 @@ const Login = () => {
               )}
             />
           </Grid2>
-          <Grid2 xs={12}>
+          <Grid2 xs={6}>
             <Controller
               name='password'
               control={control}
@@ -108,9 +112,26 @@ const Login = () => {
                 <TextField
                   {...field}
                   label='Password'
-                  placeholder='••••••'
+                  type='password'
                   error={!!errors.password}
                   helperText={errors.password?.message}
+                  fullWidth
+                />
+              )}
+            />
+          </Grid2>
+          <Grid2 xs={6}>
+            <Controller
+              name='confirm'
+              control={control}
+              rules={{ required: 'Confirm Password is required' }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label='Confirm Password'
+                  type='password'
+                  error={!!errors.confirm}
+                  helperText={errors.confirm?.message}
                   fullWidth
                 />
               )}
@@ -128,9 +149,8 @@ const Login = () => {
           </Grid2>
         </Grid2>
       </form>
-      <Typography>Don&apos;t </Typography>
     </Card>
   )
 }
 
-export default Login
+export default Register

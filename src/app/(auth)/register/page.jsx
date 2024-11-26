@@ -1,11 +1,9 @@
-import React from 'react'
-import Login from './components/Login'
+import Register from './components/Register'
 import { redirect } from 'next/navigation'
 import { createSupabaseServer } from '@/libs/supabase/server'
 
 export const metadata = {
-  title: 'Login',
-  description: 'Login to your account',
+  title: 'Register',
 }
 
 export default async function Page() {
@@ -13,8 +11,10 @@ export default async function Page() {
 
   const { data, error } = await (await supabase).auth.getUser()
 
+  console.log(data)
+
   if (data.user) {
     redirect('/')
   }
-  return <Login />
+  return <Register />
 }
