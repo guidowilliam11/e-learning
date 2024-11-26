@@ -8,7 +8,7 @@ export default function AuthCard({
   footerLinkText,
 }) {
   return (
-    <div className='flex items-center justify-center h-screen bg-gray-100'>
+    <div className='flex items-center justify-center h-screen bg-gray-100 font-inter'>
       <div className='bg-white rounded-lg shadow-lg p-8 w-[400px]'>
         <h2 className='text-2xl font-semibold text-[#F2994A] mb-6 text-center'>
           {title}

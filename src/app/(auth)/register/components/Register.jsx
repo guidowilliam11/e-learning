@@ -181,11 +181,19 @@ const Register = () => {
         </Grid2>
         <Grid2 xs={12}>
           <Button
-            className='bg-[#6C63FF] text-white py-2 rounded-lg hover:bg-[#5750d9] transition'
             type='submit'
             variant='contained'
-            color='primary'
             fullWidth
+            sx={{
+              backgroundColor: '#6C63FF',
+              color: 'white',
+              py: 1,
+              borderRadius: '0.5rem',
+              '&:hover': {
+                backgroundColor: '#5750d9',
+              },
+              transition: 'all 0.3s ease-in-out',
+            }}
           >
             Submit
           </Button>

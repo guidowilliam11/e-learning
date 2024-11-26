@@ -138,7 +138,16 @@ const Login = () => {
           <Button
             type='submit'
             variant='contained'
-            className='bg-[#6C63FF] text-white py-2 rounded-lg hover:bg-[#5750d9] transition'
+            sx={{
+              backgroundColor: '#6C63FF',
+              color: 'white',
+              py: 1,
+              borderRadius: '0.5rem',
+              '&:hover': {
+                backgroundColor: '#5750d9',
+              },
+              transition: 'all 0.3s ease-in-out',
+            }}
             fullWidth
           >
             Login
