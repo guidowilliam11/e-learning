@@ -1,9 +1,8 @@
-@import '@fontsource/inter/400.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 body {
   margin: 0;
@@ -11,15 +10,15 @@ body {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   width: 10px;
   height: 8px;
 }
 
-::-webkit-scrollbar-thumb{
-  @apply bg-gradient-to-b from-secondary to-secondaryDark rounded-full
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-secondary to-secondaryDark rounded-full;
 }
 
-::-webkit-scrollbar-track{
-  @apply bg-neutral-400 bg-opacity-30
+::-webkit-scrollbar-track {
+  @apply bg-neutral-400 bg-opacity-30;
 }
