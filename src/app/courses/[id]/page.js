@@ -1,4 +1,4 @@
-import CourseCard from '../../components/courseCard';
+import Image from "next/image";
 
 export default function Home() {
   const courses = [
@@ -126,10 +126,8 @@ export default function Home() {
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {courses.map((course) => (
-        <CourseCard key={course.id} {...course} />
-      ))}
+    <div>
+    
     </div>
   );
 }
