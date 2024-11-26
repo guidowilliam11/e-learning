@@ -59,8 +59,6 @@ const Login = () => {
             email: '',
             password: '',
           })
-          console.log(res)
-          router.replace('/')
         }, 1000)
       } else {
         toast.error('Error occurred, please try again')

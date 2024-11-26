@@ -75,8 +75,6 @@ const Register = () => {
             password: '',
             confirmPassword: '',
           })
-          console.log(res.data)
-          router.replace('/login')
         }, 1000)
       } else {
         toast.error('Error occurred, please try again')
