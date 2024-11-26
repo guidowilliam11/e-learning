@@ -2,7 +2,6 @@
 
 import { Button, Grid2, styled, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { useEffect } from 'react'
 import { loginWithEmailAndPassword } from '@/utils/supabase/auth'
@@ -18,8 +17,6 @@ const schema = object({
 })
 
 const Login = () => {
-  const router = useRouter()
-
   const {
     control,
     handleSubmit,

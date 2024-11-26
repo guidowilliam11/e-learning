@@ -3,7 +3,6 @@
 import { Button, Grid2, styled, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { registerWithEmailAndPassword } from '@/utils/supabase/auth'
 import { object, string } from 'zod'
@@ -26,8 +25,6 @@ const schema = object({
 })
 
 const Register = () => {
-  const router = useRouter()
-
   const {
     control,
     handleSubmit,
