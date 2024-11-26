@@ -1,19 +1,28 @@
 'use client'
 
-import { Button, Card, Grid2, TextField } from '@mui/material'
+import { Button, Grid2, styled, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import { email, minLength, object, string } from 'valibot'
-
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
-import { valibotResolver } from '@hookform/resolvers/valibot'
 import { useEffect } from 'react'
 import { registerWithEmailAndPassword } from '@/utils/supabase/auth'
+import { object, string } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import AuthCard from '@/components/AuthCard'
 
 const schema = object({
-  email: email(),
-  password: string([minLength(6, 'Password is required')]),
-  confirm: string([minLength(6, 'Confirm Password is required')]),
+  fullName: string().min(6, { message: 'Name is required' }),
+  email: string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Invalid email format' }),
+  password: string().min(6, {
+    message: 'Password must be at least 6 characters long',
+  }),
+  confirmPassword: string().min(6, {
+    message: 'Confirm Password must be at least 6 characters long',
+  }),
+}).refine((value) => value.password === value.confirmPassword, {
+  message: 'Passwords must match',
 })
 
 const Register = () => {
@@ -25,20 +34,22 @@ const Register = () => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: valibotResolver(schema),
+    resolver: zodResolver(schema),
     defaultValues: {
+      fullName: '',
       email: '',
       password: '',
-      confirm: '',
+      confirmPassword: '',
     },
   })
 
   useEffect(() => {
     reset(
       {
+        fullName: '',
         email: '',
         password: '',
-        confirm: '',
+        confirmPassword: '',
       },
       { keepValues: false }
     )
@@ -49,17 +60,20 @@ const Register = () => {
       email: data.email,
       password: data.password,
     }
+    console.log(userData)
 
     try {
       const res = await registerWithEmailAndPassword(userData)
+      console.log(res)
 
       if (res.data.user) {
         toast.success('Successfully registered!')
         setTimeout(() => {
           reset({
+            fullName: '',
             email: '',
             password: '',
-            confirm: '',
+            confirmPassword: '',
           })
           console.log(res.data)
           router.replace('/login')
@@ -72,84 +86,117 @@ const Register = () => {
     }
   }
 
+  const CustomTextField = styled(TextField)({
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '8px',
+      '&:hover fieldset': {
+        borderColor: '#F2994A',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#F2994A',
+        borderWidth: '2px',
+      },
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: '#F2994A',
+    },
+    '& .MuiInputBase-root': {
+      fontSize: '0.925rem',
+      fontWeight: 12,
+    },
+    '& .MuiInputLabel-root': {
+      fontSize: '0.925rem',
+    },
+  })
+
   return (
-    <Card
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignSelf: 'center',
-        width: '100%',
-        padding: 4,
-        gap: 2,
-        margin: 'auto',
-        maxWidth: { sm: '450px' },
-      }}
+    <AuthCard
+      title='Create an Account'
+      footerText='Already have an account?'
+      footerLink='/login'
+      footerLinkText='Login'
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid2 container spacing={3}>
-          <Grid2 xs={6}>
-            <Controller
-              name='email'
-              control={control}
-              rules={{ required: 'Email is required' }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label='Email'
-                  error={!!errors.email}
-                  helperText={errors.email?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </Grid2>
-          <Grid2 xs={6}>
-            <Controller
-              name='password'
-              control={control}
-              rules={{ required: 'Password is required' }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label='Password'
-                  type='password'
-                  error={!!errors.password}
-                  helperText={errors.password?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </Grid2>
-          <Grid2 xs={6}>
-            <Controller
-              name='confirm'
-              control={control}
-              rules={{ required: 'Confirm Password is required' }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label='Confirm Password'
-                  type='password'
-                  error={!!errors.confirm}
-                  helperText={errors.confirm?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </Grid2>
-          <Grid2 xs={12} className='flex justify-end gap-4'>
-            <Button
-              className='text-white'
-              type='submit'
-              variant='contained'
-              color='primary'
-            >
-              Submit
-            </Button>
-          </Grid2>
+        <Grid2 container justifyContent='center' alignItems='center'>
+          <Controller
+            name='fullName'
+            control={control}
+            rules={{ required: 'Full Name is required' }}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label='Full Name'
+                error={errors.fullName}
+                helperText={errors.fullName?.message}
+                fullWidth
+                size='small'
+              />
+            )}
+          />
+          <Controller
+            name='email'
+            control={control}
+            rules={{ required: 'Email is required' }}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label='Email'
+                error={errors.email}
+                helperText={errors.email?.message}
+                fullWidth
+                size='small'
+                sx={{ my: 2 }}
+              />
+            )}
+          />
+          <Controller
+            name='password'
+            control={control}
+            rules={{ required: 'Password is required' }}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label='Password'
+                type='password'
+                error={errors.password}
+                helperText={errors.password?.message}
+                fullWidth
+                size='small'
+              />
+            )}
+          />
+          <Controller
+            name='confirmPassword'
+            control={control}
+            rules={{ required: 'Confirm Password is required' }}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label='Confirm Password'
+                type='password'
+                error={errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+                fullWidth
+                size='small'
+                margin='normal'
+                sx={{ mb: 4 }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 xs={12}>
+          <Button
+            className='bg-[#6C63FF] text-white py-2 rounded-lg hover:bg-[#5750d9] transition'
+            type='submit'
+            variant='contained'
+            color='primary'
+            fullWidth
+          >
+            Submit
+          </Button>
         </Grid2>
       </form>
-    </Card>
+    </AuthCard>
   )
 }
 

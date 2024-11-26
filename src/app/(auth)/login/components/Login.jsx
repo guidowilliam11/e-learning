@@ -1,17 +1,20 @@
 'use client'
 
-import { Button, Card, Grid2, TextField, Typography } from '@mui/material'
+import { Button, Grid2, styled, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import { email, minLength, object, string } from 'valibot'
 import { useRouter } from 'next/navigation'
-import { valibotResolver } from '@hookform/resolvers/valibot'
 import { toast } from 'react-toastify'
 import { useEffect } from 'react'
 import { loginWithEmailAndPassword } from '@/utils/supabase/auth'
+import AuthCard from '@/components/AuthCard'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { object, string } from 'zod'
 
 const schema = object({
-  email: email(),
-  password: string([minLength(1, 'Password is required')]),
+  email: string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Invalid email format' }),
+  password: string().min(6, { message: 'Password is required' }),
 })
 
 const Login = () => {
@@ -23,7 +26,7 @@ const Login = () => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: valibotResolver(schema),
+    resolver: zodResolver(schema),
     defaultValues: {
       email: '',
       password: '',
@@ -67,69 +70,87 @@ const Login = () => {
     }
   }
 
+  const CustomTextField = styled(TextField)({
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '8px',
+      '&:hover fieldset': {
+        borderColor: '#F2994A',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#F2994A',
+        borderWidth: '2px',
+      },
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: '#F2994A',
+    },
+    '& .MuiInputBase-root': {
+      fontSize: '0.925rem',
+    },
+    '& .MuiInputLabel-root': {
+      fontSize: '0.925rem',
+    },
+  })
+
   return (
-    <Card
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignSelf: 'center',
-        width: '100%',
-        padding: 4,
-        gap: 2,
-        margin: 'auto',
-        maxWidth: { sm: '450px' },
-      }}
+    <AuthCard
+      title='Login to ZEAL'
+      footerText="Don't have an account?"
+      footerLink='/register'
+      footerLinkText='Register'
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid2 container spacing={3}>
-          <Grid2 xs={12}>
-            <Controller
-              name='email'
-              control={control}
-              rules={{ required: 'Email is required' }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label='Email'
-                  placeholder='your@email.com'
-                  error={!!errors.email}
-                  helperText={errors.email?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </Grid2>
-          <Grid2 xs={12}>
-            <Controller
-              name='password'
-              control={control}
-              rules={{ required: 'Password is required' }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label='Password'
-                  placeholder='••••••'
-                  error={!!errors.password}
-                  helperText={errors.password?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </Grid2>
-          <Grid2 xs={12} className='flex justify-end gap-4'>
-            <Button
-              className='text-white'
-              type='submit'
-              variant='contained'
-              color='primary'
-            >
-              Submit
-            </Button>
-          </Grid2>
+        <Grid2 container justifyContent='center' alignItems='center'>
+          <Controller
+            name='email'
+            control={control}
+            rules={{ required: 'Email is required' }}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label='Email'
+                placeholder='your@email.com'
+                error={errors.email}
+                helperText={errors.email?.message}
+                fullWidth
+                size='small'
+                sx={{
+                  my: 2,
+                }}
+              />
+            )}
+          />
+          <Controller
+            name='password'
+            control={control}
+            rules={{ required: 'Password is required' }}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label='Password'
+                type='password'
+                placeholder='••••••'
+                error={errors.password}
+                helperText={errors.password?.message}
+                fullWidth
+                size='small'
+                sx={{ mb: 4 }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 xs={12}>
+          <Button
+            type='submit'
+            variant='contained'
+            className='bg-[#6C63FF] text-white py-2 rounded-lg hover:bg-[#5750d9] transition'
+            fullWidth
+          >
+            Login
+          </Button>
         </Grid2>
       </form>
-      <Typography>Don&apos;t </Typography>
-    </Card>
+    </AuthCard>
   )
 }
 
