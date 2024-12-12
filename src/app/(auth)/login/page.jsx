@@ -1,7 +1,7 @@
-import React from 'react'
 import Login from './components/Login'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { redirect } from 'next/navigation'
-import { createSupabaseServer } from '@/libs/supabase/server'
 
 export const metadata = {
   title: 'Login',
@@ -9,12 +9,9 @@ export const metadata = {
 }
 
 export default async function Page() {
-  const supabase = createSupabaseServer()
+  const session = await getServerSession(authOptions)
 
-  const { data } = await (await supabase).auth.getUser()
+  session && redirect('/')
 
-  if (data.user) {
-    redirect('/')
-  }
   return <Login />
 }

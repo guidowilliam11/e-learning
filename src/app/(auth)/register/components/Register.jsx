@@ -2,9 +2,7 @@
 
 import { Button, Grid2, styled, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import { useEffect } from 'react'
-import { registerWithEmailAndPassword } from '@/utils/supabase/auth'
 import { object, string } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import AuthCard from '@/components/AuthCard'
@@ -54,17 +52,27 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     const userData = {
+      fullName: data.fullName,
       email: data.email,
       password: data.password,
     }
     console.log(userData)
 
     try {
-      const res = await registerWithEmailAndPassword(userData)
-      console.log(res)
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      })
 
-      if (res.data.user) {
-        toast.success('Successfully registered!')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Sign-up failed')
+      } else {
+        const data = await response.json()
+        alert(data.message)
         setTimeout(() => {
           reset({
             fullName: '',
@@ -73,8 +81,6 @@ const Register = () => {
             confirmPassword: '',
           })
         }, 1000)
-      } else {
-        toast.error('Error occurred, please try again')
       }
     } catch (error) {
       throw error
@@ -97,7 +103,6 @@ const Register = () => {
     },
     '& .MuiInputBase-root': {
       fontSize: '0.925rem',
-      fontWeight: 12,
     },
     '& .MuiInputLabel-root': {
       fontSize: '0.925rem',

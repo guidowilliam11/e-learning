@@ -1,20 +1,16 @@
 import Register from './components/Register'
 import { redirect } from 'next/navigation'
-import { createSupabaseServer } from '@/libs/supabase/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 export const metadata = {
   title: 'Register',
 }
 
 export default async function Page() {
-  const supabase = createSupabaseServer()
+  const session = await getServerSession(authOptions)
 
-  const { data } = await (await supabase).auth.getUser()
+  session && redirect('/')
 
-  console.log(data)
-
-  if (data.user) {
-    redirect('/')
-  }
   return <Register />
 }

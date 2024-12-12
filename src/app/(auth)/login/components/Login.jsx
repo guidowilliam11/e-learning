@@ -4,10 +4,11 @@ import { Button, Grid2, styled, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { useEffect } from 'react'
-import { loginWithEmailAndPassword } from '@/utils/supabase/auth'
+import { signIn } from 'next-auth/react'
 import AuthCard from '@/components/AuthCard'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { object, string } from 'zod'
+import { redirect } from 'next/navigation'
 
 const schema = object({
   email: string()
@@ -41,15 +42,20 @@ const Login = () => {
   }, [reset])
 
   const onSubmit = async (data) => {
-    const userData = {
-      email: data.email,
-      password: data.password,
-    }
+    const email = data.email
+    const password = data.password
 
     try {
-      const res = await loginWithEmailAndPassword(userData)
+      const res = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      })
 
-      if (res.data.user) {
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.message || 'Sign-in failed')
+      } else {
         toast.success('Successfully signed in!')
         setTimeout(() => {
           reset({
@@ -57,8 +63,7 @@ const Login = () => {
             password: '',
           })
         }, 1000)
-      } else {
-        toast.error('Error occurred, please try again')
+        redirect('/')
       }
     } catch (error) {
       throw error
