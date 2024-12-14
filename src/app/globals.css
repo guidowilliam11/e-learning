@@ -22,3 +22,19 @@ body {
 ::-webkit-scrollbar-track {
   @apply bg-neutral-400 bg-opacity-30;
 }
+
+@layer base {
+  ol {
+    list-style-type: decimal;
+  }
+  ul {
+    list-style-type: disc;
+  }
+  menu {
+    list-style-type: none;
+  }
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
