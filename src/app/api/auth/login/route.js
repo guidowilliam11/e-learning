@@ -1,5 +1,5 @@
 import { connectToDatabase } from '@/libs/mongo/config'
-import User from '@/models/userModel'
+import Students from '@/models/StudentModel'
 import bcrypt from 'bcrypt'
 
 export default async function handler(req, res) {
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   try {
     await connectToDatabase()
 
-    const user = await User.findOne({ email })
+    const user = await Students.findOne({ email })
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' })
     }

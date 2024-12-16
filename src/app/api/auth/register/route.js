@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
-import User from '@/models/userModel'
+import Students from '@/models/StudentModel'
 import { connectToDatabase } from '@/libs/mongo/config'
 
 export async function POST(req) {
@@ -17,7 +17,7 @@ export async function POST(req) {
     }
 
     // Check if the user already exists
-    const existingUser = await User.findOne({ email })
+    const existingUser = await Students.findOne({ email })
     if (existingUser) {
       return NextResponse.json(
         { message: 'User already exists' },

@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcrypt'
-import User from '@/models/userModel'
+import Students from '@/models/StudentModel'
 import { connectToDatabase } from '@/libs/mongo/config'
 
 export const authOptions = {
@@ -15,7 +15,7 @@ export const authOptions = {
       async authorize(credentials) {
         await connectToDatabase()
 
-        const user = await User.findOne({ email: credentials.email })
+        const user = await Students.findOne({ email: credentials.email })
         if (!user) {
           throw new Error('No user found with this email')
         }
