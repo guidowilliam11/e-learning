@@ -17,6 +17,7 @@ export default async function handler(req, res) {
     await connectToDatabase()
 
     const user = await Students.findOne({ email })
+    console.log("Hai : ", user.email)
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' })
     }

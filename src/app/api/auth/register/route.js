@@ -29,7 +29,7 @@ export async function POST(req) {
     const hashedPassword = await bcrypt.hash(password, 10)
 
     // Create a new user
-    const newUser = new User({ fullName, email, password: hashedPassword })
+    const newUser = new Students({ fullName, email, password: hashedPassword })
     await newUser.save()
 
     return NextResponse.json(
