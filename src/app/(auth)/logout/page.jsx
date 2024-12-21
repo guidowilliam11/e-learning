@@ -1,14 +1,11 @@
-'use server'
+'use client'
 
-import { createSupabaseServer } from '@/libs/supabase/server'
-import { redirect } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 
-const Logout = async () => {
-  const supabase = await createSupabaseServer()
+export default function Logout() {
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/login' })
+  }
 
-  await supabase.auth.signOut()
-
-  return redirect('/login')
+  return handleLogout()
 }
-
-export default Logout

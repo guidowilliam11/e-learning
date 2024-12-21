@@ -1,15 +1,12 @@
-import { createSupabaseServer } from '@/libs/supabase/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from './api/auth/[...nextauth]/route'
 import Home from './(home)/components/Home'
 import { redirect } from 'next/navigation'
 
 export default async function page() {
-  const supabase = createSupabaseServer()
+  const session = await getServerSession(authOptions)
 
-  const { data, error } = await (await supabase).auth.getUser()
-
-  if (error || !data?.user) {
-    redirect('/login')
-  }
+  !session && redirect('/login')
 
   return <Home />
 }
