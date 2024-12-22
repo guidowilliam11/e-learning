@@ -16,19 +16,19 @@ const assignmentSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      required: [true, 'Please provide a subtopic'],
+      required: [true, 'Please provide a title.'],
     },
     description: {
       type: String,
-      required: [true, 'Please provide a subtopic'],
+      required: [true, 'Please provide a description.'],
     },
     dueDate: {
       type: Date,
-      required: [true, 'Please provide a subtopic'],
+      required: [true, 'Please provide the due date.'],
     },
     status: {
       type: String,
-      required: [true, 'Please provide a subtopic'],
+      required: [true, 'Please provide the status.'],
     },
   },
   { timestamps: true }

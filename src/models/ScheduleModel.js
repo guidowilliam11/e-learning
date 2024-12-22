@@ -2,7 +2,7 @@ import mongoose, { Types } from 'mongoose'
 import Students from './StudentModel'
 import Course from './CourseModel'
 
-const assignmentSchema = new mongoose.Schema(
+const scheduleSchema = new mongoose.Schema(
   {
     studentId: {
       type: Types.ObjectId,
@@ -16,21 +16,21 @@ const assignmentSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      required: [true, 'Please provide a subtopic'],
+      required: [true, 'Please provide a title.'],
     },
     description: {
       type: String,
-      required: [true, 'Please provide a subtopic'],
+      required: [true, 'Please provide a description.'],
     },
     date: {
       type: Date,
-      required: [true, 'Please provide a subtopic'],
+      required: [true, 'Please provide a date.'],
     },
   },
   { timestamps: true }
 )
 
 const SubTopic =
-  mongoose.models.assignments || mongoose.model('assignments', assignmentSchema)
+  mongoose.models.schedules || mongoose.model('schedules', scheduleSchema)
 
 export default SubTopic
