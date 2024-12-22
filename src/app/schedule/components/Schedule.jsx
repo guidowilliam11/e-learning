@@ -5,6 +5,7 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import { Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import { formattedDate } from '@/utils/time'
 
 import Calendar from './Calendar'
 import AssignmentList from './AssignmentList'
@@ -18,15 +19,28 @@ const tempData = [
   { id: 3, label: 'Assignment 3', checked: false },
 ]
 
-const Schedule = () => {
+const Schedule = ({ user }) => {
+  console.log(user)
   const [currentDate, setCurrentDate] = useState(null)
   const [currentPage, setCurrentPage] = useState('Daily')
 
-  const formattedDate = (date) => {
-    return date.format('ddd MMM DD YYYY')
+  const fetchSchedule = async () => {
+    try {
+      const response = await fetch(`/api/schedule?studentId=${user.id}`)
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      console.log(data)
+    } catch (error) {
+      console.error('Error fetching schedule:', error.message)
+    }
   }
 
   useEffect(() => {
+    fetchSchedule()
     setCurrentDate(dayjs())
   }, [])
 

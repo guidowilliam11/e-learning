@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 import Summary from './SummaryModel'
 
 const sessionSchema = new mongoose.Schema(

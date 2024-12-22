@@ -8,11 +8,11 @@ export const getTimeDifferenceInDays = (time2, time1) => {
 }
 
 export const formatTime = (time, options, separator = '/') => {
-    const format = option => {
-        const f = new Intl.DateTimeFormat('en-US', option);
-        return f.format(time);
+    const format = (option) => {
+        const f = new Intl.DateTimeFormat('en-US', option)
+        return f.format(time)
     }
-    return options.map(format).join(separator);
+    return options.map(format).join(separator)
 }
 
 export const formatMessageTime = (lastMessageTime, shouldShowTime = false) => {
@@ -21,10 +21,17 @@ export const formatMessageTime = (lastMessageTime, shouldShowTime = false) => {
     const options = []
 
     if (getTimeDifferenceInDays(now, lastMessageTime) > 0) {
-        options.push({year: "numeric"}, {month: "2-digit"}, {day: "2-digit"})
+        options.push({ year: 'numeric' }, { month: '2-digit' }, { day: '2-digit' })
         return formatTime(epoch, options, '/')
-    } else if (shouldShowTime || getTimeDifferenceInDays(now, lastMessageTime) === 0) {
-        options.push({timeStyle: "short", hour12: false})
+    } else if (
+        shouldShowTime ||
+        getTimeDifferenceInDays(now, lastMessageTime) === 0
+    ) {
+        options.push({ timeStyle: 'short', hour12: false })
         return formatTime(epoch, options, ':')
     }
+}
+
+export const formattedDate = (date) => {
+    return date.format('ddd MMM DD YYYY')
 }

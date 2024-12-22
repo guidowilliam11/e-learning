@@ -1,5 +1,6 @@
 import mongoose, { Types } from 'mongoose'
 import Subscriber from './SubscriberModel'
+import Session from './SessionModel'
 
 const courseSchema = new mongoose.Schema(
   {
