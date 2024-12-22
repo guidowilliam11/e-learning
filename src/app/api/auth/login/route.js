@@ -2,11 +2,7 @@ import { connectToDatabase } from '@/libs/mongo/config'
 import Students from '@/models/StudentModel'
 import bcrypt from 'bcrypt'
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' })
-  }
-
+export async function POST(req) {
   const { email, password } = req.body
 
   if (!email || !password) {
