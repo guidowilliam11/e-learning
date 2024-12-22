@@ -62,8 +62,8 @@ const Login = () => {
             email: '',
             password: '',
           })
-        }, 1000)
-        redirect('/')
+          redirect('/')
+        }, 500)
       }
     } catch (error) {
       throw error

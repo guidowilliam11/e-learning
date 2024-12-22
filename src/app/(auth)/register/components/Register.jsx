@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { object, string } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import AuthCard from '@/components/AuthCard'
+import { redirect } from 'next/navigation'
 
 const schema = object({
   fullName: string().min(6, { message: 'Name is required' }),
@@ -80,7 +81,8 @@ const Register = () => {
             password: '',
             confirmPassword: '',
           })
-        }, 1000)
+          redirect('/login')
+        }, 500)
       }
     } catch (error) {
       throw error
