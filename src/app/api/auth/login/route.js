@@ -1,32 +1,45 @@
 import { connectToDatabase } from '@/libs/mongo/config'
 import Students from '@/models/StudentModel'
 import bcrypt from 'bcrypt'
+import { NextResponse } from 'next/server'
 
 export async function POST(req) {
   const { email, password } = req.body
 
   if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' })
+    return NextResponse.json(
+      { message: 'Email and password are required' },
+      { status: 400 }
+    )
   }
 
   try {
     await connectToDatabase()
 
     const user = await Students.findOne({ email })
-    console.log("Hai : ", user.email)
+    console.log('Hai : ', user.email)
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' })
+      return NextResponse.json(
+        { message: 'Invalid email or password' },
+        { status: 401 }
+      )
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid email or password' })
+      return NextResponse.json(
+        { message: 'Invalid email or password' },
+        { status: 401 }
+      )
     }
-
-    res
-      .status(200)
-      .json({ message: 'Login successful', user: { email: user.email } })
+    return NextResponse.json(
+      { message: 'Login successful', user: { email: user.email } },
+      { status: 200 }
+    )
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' })
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
