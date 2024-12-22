@@ -3,17 +3,14 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import dayjs from 'dayjs'
-import {
-  Button,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material'
+import { Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import CircleIcon from '@mui/icons-material/Circle'
+
 import Calendar from './Calendar'
 import AssignmentList from './AssignmentList'
+import CurrentAssignment from './CurrentAssignment'
+import RemainingTasks from './RemainingTasks'
+import TaskPastDue from './TaskPastDue'
 
 const tempData = [
   { id: 1, label: 'Assignment 1', checked: true },
@@ -39,7 +36,15 @@ const Schedule = () => {
 
   console.log(assignments)
 
-  const handleAddNewClick = () => setIsAdding(true)
+  const handleAddNewClick = () => {
+    setIsAdding(true)
+    setAssignmentTitle('')
+  }
+
+  const handleCancelAdd = () => {
+    setIsAdding(false)
+    setAssignmentTitle('')
+  }
 
   const handleSaveNewAssignment = () => {
     if (assignmentTitle.trim() !== '') {
@@ -71,21 +76,9 @@ const Schedule = () => {
       <div className='w-[30%] mr-6'>
         <Calendar currentDate={currentDate} setCurrentDate={setCurrentDate} />
 
-        <div className='flex flex-col justify-between bg-[#545EE1] text-white rounded-lg p-6 h-[30%]'>
-          <h2 className='mb-2 text-base font-normal'>
-            Today&apos;s Remaining Tasks
-          </h2>
-          <p className='content-center flex-grow text-6xl font-medium text-start'>
-            18 / 20
-          </p>
-        </div>
+        <RemainingTasks done={18} total={20} />
 
-        <div className='flex flex-col justify-between bg-white text-black rounded-lg p-6 h-[30%] mt-4'>
-          <h2 className='mb-2 text-base font-normal'>Task Past Due</h2>
-          <p className='content-center flex-grow text-6xl font-medium text-start'>
-            20
-          </p>
-        </div>
+        <TaskPastDue taskPast={20} />
       </div>
 
       <div className='flex flex-col w-full'>
@@ -153,6 +146,7 @@ const Schedule = () => {
                   isEditing={true}
                   onLabelChange={(e) => setAssignmentTitle(e.target.value)}
                   onSave={handleSaveNewAssignment}
+                  cancelAdd={handleCancelAdd}
                 />
               ) : (
                 <Button
@@ -201,45 +195,8 @@ const Schedule = () => {
               </Button>
             </div>
           </div>
-          <div className='bg-white w-[49%] p-3'>
-            <div className='text-xl font-medium text-black'>Assignment 1</div>
-            <div className='mt-4 text-[#050505a8] text-justify'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima,
-              inventore veniam possimus unde, ratione architecto, distinctio
-              exercitationem tempore mollitia consectetur quis officiis adipisci
-              animi et quisquam eos? Asperiores eius ducimus, cumque nulla iure
-            </div>
 
-            <List>
-              <ListItem>
-                <ListItemIcon>
-                  <CircleIcon color='primary' />
-                </ListItemIcon>
-                <ListItemText primary='Lorem ipsum dolor sit amet' />
-              </ListItem>
-
-              <ListItem>
-                <ListItemIcon>
-                  <CircleIcon color='primary' />
-                </ListItemIcon>
-                <ListItemText primary='Lorem ipsum dolor sit amet' />
-              </ListItem>
-
-              <ListItem>
-                <ListItemIcon>
-                  <CircleIcon color='primary' />
-                </ListItemIcon>
-                <ListItemText primary='Lorem ipsum dolor sit amet' />
-              </ListItem>
-
-              <ListItem>
-                <ListItemIcon>
-                  <CircleIcon color='primary' />
-                </ListItemIcon>
-                <ListItemText primary='Lorem ipsum dolor sit amet' />
-              </ListItem>
-            </List>
-          </div>
+          <CurrentAssignment />
         </div>
       </div>
     </div>
