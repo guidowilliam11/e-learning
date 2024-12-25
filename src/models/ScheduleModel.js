@@ -20,6 +20,10 @@ const scheduleSchema = new mongoose.Schema(
       type: Types.ObjectId,
       ref: 'assignments',
     },
+    checked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 )

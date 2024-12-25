@@ -12,11 +12,7 @@ const assignmentSchema = new mongoose.Schema(
     },
     list: {
       type: [String],
-      default: []
-    },
-    status: {
-      type: Boolean,
-      default: false,
+      default: ['This is an empty list.'],
     },
   },
   { timestamps: true }

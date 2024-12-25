@@ -7,17 +7,37 @@ export async function GET(req) {
   try {
     const url = new URL(req.url)
     const studentId = url.searchParams.get('studentId')
+    const date = url.searchParams.get('currentDate')
 
-    if (!studentId) {
+    if (!studentId || !date) {
       return NextResponse.json(
-        { error: 'studentId is required' },
+        { error: 'Student ID and Date is required' },
         { status: 400 }
       )
     }
 
+    const startOfDay = new Date(date)
+    startOfDay.setHours(0, 0, 0, 0)
+
+    const endOfDay = new Date(date)
+    endOfDay.setHours(23, 59, 59, 999)
+
     await connectToDatabase()
 
-    const schedule = await Schedule.find({ studentId })
+    const schedule = await Schedule.find({
+      studentId,
+      date: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    })
+
+    if (!schedule || schedule.length === 0) {
+      return NextResponse.json(
+        { message: 'No schedule found for the given Student ID and Date' },
+        { status: 404 }
+      )
+    }
 
     return NextResponse.json(schedule)
   } catch (error) {

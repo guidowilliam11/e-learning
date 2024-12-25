@@ -1,3 +1,5 @@
+import dayjs from "dayjs"
+
 const MS_TO_SECOND = 1000
 const MS_TO_MINUTE = MS_TO_SECOND * 60
 const MS_TO_HOUR = MS_TO_MINUTE * 60
@@ -34,4 +36,15 @@ export const formatMessageTime = (lastMessageTime, shouldShowTime = false) => {
 
 export const formattedDate = (date) => {
     return date.format('ddd MMM DD YYYY')
+}
+
+export const formatHour = (hour) => {
+    return dayjs().hour(hour).minute(0).format('hh:mm A')
+}
+
+export const generateTimeSlots = (startHour, endHour = 23) => {
+    return Array.from({ length: endHour - startHour + 1 }, (_, index) => {
+        const hour = startHour + index
+        return formatHour(hour)
+    })
 }

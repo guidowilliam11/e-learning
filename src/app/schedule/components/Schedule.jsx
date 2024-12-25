@@ -5,7 +5,8 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import { Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { formattedDate } from '@/utils/time'
+
+import { formatHour, formattedDate, generateTimeSlots } from '@/utils/time'
 
 import Calendar from './Calendar'
 import AssignmentList from './AssignmentList'
@@ -13,77 +14,109 @@ import CurrentAssignment from './CurrentAssignment'
 import RemainingTasks from './RemainingTasks'
 import TaskPastDue from './TaskPastDue'
 
-const tempData = [
-  { id: 1, label: 'Assignment 1', checked: true },
-  { id: 2, label: 'Assignment 2', checked: false },
-  { id: 3, label: 'Assignment 3', checked: false },
-]
+import { fetchDailySchedule } from '../action'
 
 const Schedule = ({ user }) => {
-  console.log(user)
-  const [currentDate, setCurrentDate] = useState(null)
+  const [currentDate, setCurrentDate] = useState(dayjs())
   const [currentPage, setCurrentPage] = useState('Daily')
+  const [schedules, setSchedules] = useState([])
+  const [assignmentTitles, setAssignmentTitles] = useState({})
+  const [isAddingBySlot, setIsAddingBySlot] = useState({})
+  const [selectedAssignment, setSelectedAssignment] = useState(null)
 
-  const fetchSchedule = async () => {
-    try {
-      const response = await fetch(`/api/schedule?studentId=${user.id}`)
+  const timeSlots = generateTimeSlots(currentDate.hour())
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`)
-      }
+  const fetchSchedule = async (date) => {
+    const schedules = await fetchDailySchedule(user, date)
+    if (schedules) {
+      const updatedSchedules = schedules.map((schedule) => {
+        const timeSlot = formatHour(dayjs(schedule.date).hour())
 
-      const data = await response.json()
-      console.log(data)
-    } catch (error) {
-      console.error('Error fetching schedule:', error.message)
+        return {
+          ...schedule,
+          timeSlot: timeSlot,
+        }
+      })
+
+      setSchedules(updatedSchedules)
     }
   }
 
-  useEffect(() => {
-    fetchSchedule()
-    setCurrentDate(dayjs())
-  }, [])
-
-  const [isAdding, setIsAdding] = useState(false)
-  const [assignments, setAssignments] = useState(tempData)
-  const [assignmentTitle, setAssignmentTitle] = useState('')
-
-  console.log(assignments)
-
-  const handleAddNewClick = () => {
-    setIsAdding(true)
-    setAssignmentTitle('')
+  const handleAddNewClick = (slot) => {
+    setIsAddingBySlot((prev) => ({
+      ...prev,
+      [slot]: true,
+    }))
+    setAssignmentTitles((prev) => ({
+      ...prev,
+      [slot]: '',
+    }))
   }
 
-  const handleCancelAdd = () => {
-    setIsAdding(false)
-    setAssignmentTitle('')
+  const handleCancelAdd = (slot) => {
+    setIsAddingBySlot((prev) => ({
+      ...prev,
+      [slot]: false,
+    }))
+    setAssignmentTitles((prev) => ({
+      ...prev,
+      [slot]: '',
+    }))
   }
 
-  const handleSaveNewAssignment = () => {
-    if (assignmentTitle.trim() !== '') {
+  const handleSaveNewAssignment = (slot) => {
+    if (assignmentTitles[slot].trim() !== '') {
       const newAssignment = {
-        id: assignments.length + 1,
-        label: assignmentTitle,
+        id: schedules.length + 1,
+        title: assignmentTitles[slot],
         checked: false,
+        timeSlot: slot,
       }
-      setAssignments([...assignments, newAssignment])
-      setAssignmentTitle('')
-      setIsAdding(false)
+      setSchedules([...schedules, newAssignment])
+      setIsAddingBySlot((prev) => ({
+        ...prev,
+        [slot]: false,
+      }))
+      setAssignmentTitles((prev) => ({
+        ...prev,
+        [slot]: '',
+      }))
     }
   }
 
-  const handleCheck = (curr) => {
-    if (curr) {
-      setAssignments(
-        assignments.map((value) =>
-          value.id === curr
-            ? { ...value, checked: !value.checked }
-            : { ...value }
+  const handleTitleChange = (slot, value) => {
+    setAssignmentTitles((prev) => ({
+      ...prev,
+      [slot]: value,
+    }))
+  }
+
+  const handleCheck = (id) => {
+    if (id) {
+      setSchedules(
+        schedules.map((schedule) =>
+          schedule._id === id
+            ? { ...schedule, checked: !schedule.checked }
+            : { ...schedule }
         )
       )
     }
   }
+
+  const handleViewAssignment = (assignment) => {
+    setSelectedAssignment(assignment)
+  }
+
+  const handleCloseAssignment = () => {
+    setSelectedAssignment(null)
+  }
+
+  useEffect(() => {
+    setSchedules([])
+    fetchSchedule(currentDate.toISOString())
+  }, [currentDate])
+
+  console.log(schedules)
 
   return (
     <div className='flex justify-between font-inter'>
@@ -120,97 +153,73 @@ const Schedule = ({ user }) => {
             Weekly
           </Link>
         </div>
-        <div className='flex justify-between mt-2'>
-          <div className='w-[49%] bg-white p-3'>
+        <div
+          className={`flex ${
+            selectedAssignment ? 'justify-between' : 'w-full'
+          } mt-2`}
+        >
+          <div
+            className={`${
+              selectedAssignment ? 'w-[49%]' : 'w-full'
+            } bg-white p-3`}
+          >
             <div className='text-xl font-medium text-black'>
               {currentDate ? formattedDate(currentDate) : 'Loading...'}
             </div>
             <div>
-              <p className='mt-3 text-[#050505a8] text-lg'>08:00 AM</p>
+              {timeSlots.map((slot, index) => (
+                <div key={`time-slot-${index}`}>
+                  <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
 
-              <Button
-                variant='text'
-                startIcon={<AddIcon size={14} color='#050505a8' />}
-                sx={{
-                  color: '#050505a8',
-                  textTransform: 'none',
-                  fontSize: '16px',
-                  ml: 0.75,
-                }}
-              >
-                Add new
-              </Button>
-            </div>
-            <div>
-              <p className='mt-3 text-[#050505a8] text-lg'>09:00 AM</p>
+                  {schedules
+                    .filter((schedule) => schedule.timeSlot === slot)
+                    .map((assignment) => (
+                      <AssignmentList
+                        key={`assignment-${assignment.id}`}
+                        curr={assignment._id}
+                        title={assignment.title}
+                        checked={assignment.checked}
+                        handleCheck={handleCheck}
+                        handleViewAssignment={handleViewAssignment}
+                      />
+                    ))}
 
-              {assignments.map((assignment) => (
-                <AssignmentList
-                  key={assignment.id}
-                  curr={assignment.id}
-                  label={assignment.label}
-                  checked={assignment.checked}
-                  handleCheck={handleCheck}
-                />
+                  {isAddingBySlot[slot] ? (
+                    <AssignmentList
+                      title={assignmentTitles[slot] || ''}
+                      isEditing={true}
+                      onLabelChange={(e) =>
+                        handleTitleChange(slot, e.target.value)
+                      }
+                      onSave={() => handleSaveNewAssignment(slot)}
+                      cancelAdd={() => handleCancelAdd(slot)}
+                    />
+                  ) : (
+                    <Button
+                      variant='text'
+                      startIcon={<AddIcon size={14} color='#050505a8' />}
+                      sx={{
+                        color: '#050505a8',
+                        textTransform: 'none',
+                        fontSize: '16px',
+                        ml: 0.75,
+                      }}
+                      onClick={() => handleAddNewClick(slot)}
+                    >
+                      Add new
+                    </Button>
+                  )}
+                </div>
               ))}
-
-              {isAdding ? (
-                <AssignmentList
-                  label={assignmentTitle}
-                  isEditing={true}
-                  onLabelChange={(e) => setAssignmentTitle(e.target.value)}
-                  onSave={handleSaveNewAssignment}
-                  cancelAdd={handleCancelAdd}
-                />
-              ) : (
-                <Button
-                  variant='text'
-                  startIcon={<AddIcon size={14} color='#050505a8' />}
-                  sx={{
-                    color: '#050505a8',
-                    textTransform: 'none',
-                    fontSize: '16px',
-                    ml: 0.75,
-                  }}
-                  onClick={handleAddNewClick}
-                >
-                  Add new
-                </Button>
-              )}
-            </div>
-            <div>
-              <p className='mt-3 text-[#050505a8] text-lg'>10:00 AM</p>
-              <Button
-                variant='text'
-                startIcon={<AddIcon size={14} color='#050505a8' />}
-                sx={{
-                  color: '#050505a8',
-                  textTransform: 'none',
-                  fontSize: '16px',
-                  ml: 0.75,
-                }}
-              >
-                Add new
-              </Button>
-            </div>
-            <div>
-              <p className='mt-3 text-[#050505a8] text-lg'>11:00 AM</p>
-              <Button
-                variant='text'
-                startIcon={<AddIcon size={14} color='#050505a8' />}
-                sx={{
-                  color: '#050505a8',
-                  textTransform: 'none',
-                  fontSize: '16px',
-                  ml: 0.75,
-                }}
-              >
-                Add new
-              </Button>
             </div>
           </div>
 
-          <CurrentAssignment />
+          {selectedAssignment && (
+            <CurrentAssignment
+              selectedAssignment={selectedAssignment}
+              handleCloseAssignment={handleCloseAssignment}
+            />
+          )}
         </div>
       </div>
     </div>

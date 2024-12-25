@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import CircleIcon from '@mui/icons-material/Circle'
+import CloseIcon from '@mui/icons-material/Close'
 import {
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
@@ -10,7 +12,7 @@ import {
   TextField,
 } from '@mui/material'
 
-const CurrentAssignment = () => {
+const CurrentAssignment = ({ selectedAssignment, handleCloseAssignment }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [isTitleLoading, setIsTitleLoading] = useState(true)
   const [originalTitle, setOriginalTitle] = useState(`
@@ -88,10 +90,16 @@ const CurrentAssignment = () => {
         <div className='text-xl font-medium text-black'>Loading...</div>
       ) : (
         <>
-          <EditorContent
-            editor={titleEditor}
-            className='text-xl font-medium text-black'
-          />
+          <div className='flex justify-between'>
+            <EditorContent
+              editor={titleEditor}
+              className='text-xl font-medium text-black'
+            />
+
+            <IconButton onClick={handleCloseAssignment} aria-label='close'>
+              <CloseIcon />
+            </IconButton>
+          </div>
           <EditorContent
             editor={descEditor}
             className='mt-4 text-[#050505a8] text-justify'
