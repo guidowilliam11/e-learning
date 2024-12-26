@@ -14,7 +14,7 @@ const sessionSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Session =

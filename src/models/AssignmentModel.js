@@ -15,7 +15,7 @@ const assignmentSchema = new mongoose.Schema(
       default: ['This is an empty list.'],
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Assignment =

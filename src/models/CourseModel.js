@@ -25,7 +25,7 @@ const courseSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Course =

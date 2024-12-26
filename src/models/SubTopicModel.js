@@ -11,7 +11,7 @@ const subTopicSchema = new mongoose.Schema(
       required: [true, 'Please provide a subtopic'],
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const SubTopic =

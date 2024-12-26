@@ -25,7 +25,7 @@ const scheduleSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Schedule =
