@@ -1,48 +1,44 @@
 "use client";
 
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import { FaChevronDown, FaChevronRight, FaHome, FaBook, FaStickyNote, FaUsers, FaCalendar, FaAddressBook, FaChevronLeft } from 'react-icons/fa';
 import { IoLogOut, IoSettingsSharp, IoIosArrowBack } from "react-icons/io5";
 
 // Dummy notes data for users
-const notesData = [
-    {
-        topic: "Topic 001",
-        sessions: [
-            { id: 1, title: "Session 1", content: "Content for session 1 of Topic 001." },
-            { id: 2, title: "Session 2", content: "Content for session 2 of Topic 001." },
-            { id: 3, title: "Session 3", content: "Content for session 3 of Topic 001." },
-        ],
-    },
-    {
-        topic: "Topic 002",
-        sessions: [
-            { id: 4, title: "Session 1", content: "Content for session 1 of Topic 002." },
-            { id: 5, title: "Session 2", content: "Content for session 2 of Topic 002." },
-        ],
-    },
-    {
-        topic: "Topic 003",
-        sessions: [
-            { id: 6, title: "Session 1", content: "Content for session 1 of Topic 003." },
-            { id: 7, title: "Session 2", content: "Content for session 2 of Topic 003." },
-            { id: 8, title: "Session 3", content: "Content for session 3 of Topic 003." },
-            { id: 9, title: "Session 4", content: "Content for session 4 of Topic 003." },
-        ],
-    },
-    // Add more topics and sessions as needed
-];
 
 export default function Sidebar() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [expandedTopics, setExpandedTopics] = useState({});
     const [selectedSession, setSelectedSession] = useState(null);
+    const [notesData, setNotesData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const toggleSidebar = () => {
         setIsSidebarCollapsed((prev) => !prev);
     };
+
+    // Fetch notes data
+    useEffect(() => {
+        const fetchNotes = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/notes');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setNotesData(data); // Assuming the API returns an array of folders with notes
+            } catch (error) {
+                console.error("Failed to fetch notes:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchNotes();
+    }, []);
 
     // Toggle overlay when navigating to notes
     const handleNavClick = (path) => {
@@ -88,24 +84,24 @@ export default function Sidebar() {
                             >
                                 <span className="flex justify-center gap-2 items-center text-3xl font-bold text-[#F99B26] mb-8 pt-4">{<FaChevronLeft />} Notes</span>
                             </button>
-                            {notesData.map((topic) => (
-                                <div key={topic.topic} className="mb-4 w-full">
+                            {notesData.notes.map((folder) => (
+                                <div key={folder._id} className="mb-4 w-full">
                                     <div
                                         className="flex items-center justify-between cursor-pointer"
-                                        onClick={() => toggleTopic(topic.topic)}
+                                        onClick={() => toggleTopic(folder._id)}
                                     >
-                                        <span className="font-medium">{topic.topic}</span>
-                                        {expandedTopics[topic.topic] ? <FaChevronDown /> : <FaChevronRight />}
+                                        <span className="font-medium">{folder.name}</span>
+                                        {expandedTopics[folder._id] ? <FaChevronDown /> : <FaChevronRight />}
                                     </div>
-                                    {expandedTopics[topic.topic] && (
+                                    {expandedTopics[folder._id] && (
                                         <ul className="mt-2 ml-4 space-y-1">
-                                            {topic.sessions.map((session) => (
+                                            {folder.notes.map((notes) => (
                                                 <li
-                                                    key={session.id}
-                                                    className={`cursor-pointer ${selectedSession === session.id ? 'font-medium text-[#F99B26]' : 'text-gray-700'}`}
-                                                    onClick={() => setSelectedSession(session.id)}
+                                                    key={notes._id}
+                                                    className={`cursor-pointer ${selectedSession === notes._id ? 'font-medium text-[#F99B26]' : 'text-gray-700'}`}
+                                                    onClick={() => setSelectedSession(notes._id)}
                                                 >
-                                                    <NavItem href={"/notes/" + session.id} icon={<FaBook />} label={session.title} onClick={handleNavClick} />
+                                                    <NavItem href={"/notes/" + notes._id} icon={<FaBook />} label={notes.topic} onClick={handleNavClick} />
                                                 </li>
                                             ))}
                                         </ul>
