@@ -60,7 +60,7 @@ const Conversation = ({
         <div className="p-5 border-b-[1px] border-neutral-300 flex gap-4 cursor-pointer hover:bg-gray-100 transition duration-300" onClick={handleClick}>
             <div>
                 <Image
-                    src={profilePicture || '/images/default-profile-picture.jpg'}
+                    src={profilePicture || '/images/default-profile-picture.webp'}
                     className="rounded-full"
                     height={48}
                     width={48}
