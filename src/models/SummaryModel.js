@@ -11,7 +11,7 @@ const summarySchema = new mongoose.Schema(
       required: [true, 'Please provide the summary type.'],
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Summary =

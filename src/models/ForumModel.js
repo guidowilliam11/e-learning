@@ -37,7 +37,7 @@ const forumSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Forum = mongoose.models.forums || mongoose.model('forums', forumSchema)

@@ -18,7 +18,7 @@ const noteSchema = new mongoose.Schema(
       required: [true, 'Please provide the Creator'],
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Notes = mongoose.models.notes || mongoose.model('notes', noteSchema)

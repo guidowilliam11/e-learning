@@ -1,5 +1,6 @@
 import mongoose, { Types } from 'mongoose'
 import Subscriber from './SubscriberModel'
+import Session from './SessionModel'
 
 const courseSchema = new mongoose.Schema(
   {
@@ -24,7 +25,7 @@ const courseSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Course =
