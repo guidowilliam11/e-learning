@@ -3,9 +3,21 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import dayjs from 'dayjs'
-import { Button } from '@mui/material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
+import { toast } from 'react-toastify'
 
+import {
+  fetchDailySchedule,
+  insertSchedule,
+  updateScheduleCheckStatus,
+} from '../action'
 import { formatHour, formattedDate, generateTimeSlots } from '@/utils/time'
 
 import Calendar from './Calendar'
@@ -13,8 +25,6 @@ import AssignmentList from './AssignmentList'
 import CurrentAssignment from './CurrentAssignment'
 import RemainingTasks from './RemainingTasks'
 import TaskPastDue from './TaskPastDue'
-
-import { fetchDailySchedule } from '../action'
 
 const Schedule = ({ user }) => {
   const [currentDate, setCurrentDate] = useState(dayjs())
@@ -24,21 +34,60 @@ const Schedule = ({ user }) => {
   const [isAddingBySlot, setIsAddingBySlot] = useState({})
   const [selectedAssignment, setSelectedAssignment] = useState(null)
 
-  const timeSlots = generateTimeSlots(currentDate.hour())
+  const timeSlots = generateTimeSlots()
+
+  const pastSchedules = schedules.filter(
+    ({ timeSlot }) =>
+      (parseInt(timeSlot) % 12) + (timeSlot.includes('PM') ? 12 : 0) <
+      currentDate.hour()
+  )
+
+  const pastTimeSlots = timeSlots.filter(
+    (slot) =>
+      (parseInt(slot) % 12) + (slot.includes('PM') ? 12 : 0) <
+        currentDate.hour() &&
+      schedules.some(({ timeSlot }) => timeSlot === slot)
+  )
+
+  const futureSchedules = schedules.filter(
+    ({ timeSlot }) =>
+      (parseInt(timeSlot) % 12) + (timeSlot.includes('PM') ? 12 : 0) >=
+      currentDate.hour()
+  )
+
+  const futureTimeSlots = timeSlots.filter(
+    (slot) =>
+      (parseInt(slot) % 12) + (slot.includes('PM') ? 12 : 0) >=
+      currentDate.hour()
+  )
+
+  const isPastDate = currentDate.toDate().getDate() < dayjs().toDate().getDate()
+  const isFutureDate =
+    currentDate.toDate().getDate() > dayjs().toDate().getDate()
+
+  const filteredTimeSlots = isPastDate
+    ? timeSlots.filter((slot) =>
+        schedules.some(({ timeSlot }) => timeSlot === slot)
+      )
+    : timeSlots
 
   const fetchSchedule = async (date) => {
-    const schedules = await fetchDailySchedule(user, date)
-    if (schedules) {
-      const updatedSchedules = schedules.map((schedule) => {
-        const timeSlot = formatHour(dayjs(schedule.date).hour())
+    try {
+      const schedules = await fetchDailySchedule(user, date)
+      if (schedules) {
+        const updatedSchedules = schedules.map((schedule) => {
+          const timeSlot = formatHour(dayjs(schedule.date).hour())
 
-        return {
-          ...schedule,
-          timeSlot: timeSlot,
-        }
-      })
+          return {
+            ...schedule,
+            timeSlot: timeSlot,
+          }
+        })
 
-      setSchedules(updatedSchedules)
+        setSchedules(updatedSchedules)
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -64,23 +113,64 @@ const Schedule = ({ user }) => {
     }))
   }
 
-  const handleSaveNewAssignment = (slot) => {
-    if (assignmentTitles[slot].trim() !== '') {
-      const newAssignment = {
-        id: schedules.length + 1,
-        title: assignmentTitles[slot],
-        checked: false,
-        timeSlot: slot,
-      }
-      setSchedules([...schedules, newAssignment])
-      setIsAddingBySlot((prev) => ({
-        ...prev,
-        [slot]: false,
-      }))
-      setAssignmentTitles((prev) => ({
-        ...prev,
-        [slot]: '',
-      }))
+  const handleSaveNewAssignment = async (slot) => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(async () => {
+          if (assignmentTitles[slot].trim() !== '') {
+            const newAssignment = {
+              title: assignmentTitles[slot],
+              checked: false,
+              timeSlot: slot,
+            }
+
+            const currentTimeSlot = dayjs(slot, 'hh:mm A')
+
+            const combinedDateTime = dayjs(currentDate)
+              .hour(currentTimeSlot.hour())
+              .minute(currentTimeSlot.minute())
+              .second(0)
+              .toISOString()
+
+            const inserted = await insertSchedule(
+              user.id,
+              newAssignment.title,
+              combinedDateTime
+            )
+
+            if (inserted) {
+              fetchSchedule(currentDate.toISOString())
+              resolve(inserted)
+              setIsAddingBySlot((prev) => ({
+                ...prev,
+                [slot]: false,
+              }))
+              setAssignmentTitles((prev) => ({
+                ...prev,
+                [slot]: '',
+              }))
+            } else reject(inserted)
+          }
+        }, 500)
+      })
+
+      return toast.promise(promise, {
+        pending: 'Processing...',
+        success: {
+          render() {
+            return 'Insert new assignment success!'
+          },
+          autoClose: 2000,
+        },
+        error: {
+          render() {
+            return 'Insert new assignment failed!'
+          },
+          autoClose: 2000,
+        },
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -92,14 +182,43 @@ const Schedule = ({ user }) => {
   }
 
   const handleCheck = (id) => {
-    if (id) {
-      setSchedules(
-        schedules.map((schedule) =>
-          schedule._id === id
-            ? { ...schedule, checked: !schedule.checked }
-            : { ...schedule }
-        )
-      )
+    try {
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(async () => {
+          if (id) {
+            const currentSchedule = schedules.find(
+              (schedule) => schedule._id === id
+            )
+            const check = await updateScheduleCheckStatus(
+              id,
+              !currentSchedule.checked
+            )
+
+            if (check) {
+              fetchSchedule(currentDate.toISOString())
+              resolve(check)
+            } else reject(check)
+          }
+        }, 500)
+      })
+
+      return toast.promise(promise, {
+        pending: 'Processing...',
+        success: {
+          render() {
+            return 'Schedule check update success!'
+          },
+          autoClose: 2000,
+        },
+        error: {
+          render() {
+            return 'Schedule check update failed!'
+          },
+          autoClose: 2000,
+        },
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -116,7 +235,7 @@ const Schedule = ({ user }) => {
     fetchSchedule(currentDate.toISOString())
   }, [currentDate])
 
-  console.log(schedules)
+  console.log(futureSchedules, schedules)
 
   return (
     <div className='flex justify-between font-inter'>
@@ -161,63 +280,188 @@ const Schedule = ({ user }) => {
           <div
             className={`${
               selectedAssignment ? 'w-[49%]' : 'w-full'
-            } bg-white p-3`}
+            } bg-white p-3 rounded-md`}
           >
             <div className='text-xl font-medium text-black'>
               {currentDate ? formattedDate(currentDate) : 'Loading...'}
             </div>
-            <div>
-              {timeSlots.map((slot, index) => (
-                <div key={`time-slot-${index}`}>
-                  <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
 
-                  {schedules
-                    .filter((schedule) => schedule.timeSlot === slot)
-                    .map((assignment) => (
-                      <AssignmentList
-                        key={`assignment-${assignment.id}`}
-                        curr={assignment._id}
-                        title={assignment.title}
-                        checked={assignment.checked}
-                        handleCheck={handleCheck}
-                        handleViewAssignment={handleViewAssignment}
+            {currentDate.toDate().getDate() === dayjs().toDate().getDate() ? (
+              <>
+                <Accordion
+                  disableGutters
+                  sx={{
+                    boxShadow: 'none',
+                    border: 'none',
+                    '&:before': { display: 'none' },
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={
+                      <ArrowForwardIosSharpIcon
+                        sx={{
+                          fontSize: '0.9rem',
+                          transition: 'transform 0.3s ease',
+                        }}
                       />
-                    ))}
+                    }
+                    aria-controls='panel1-content'
+                    id='panel1-header'
+                    sx={{
+                      p: 0,
+                      flexDirection: 'row-reverse',
+                      '& .MuiAccordionSummary-expandIconWrapper': {
+                        transition: 'transform 0.3s ease',
+                      },
+                      '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+                        transform: 'rotate(90deg)',
+                      },
+                      '& .MuiAccordionSummary-content': {
+                        my: 0,
+                        marginLeft: 1,
+                        p: 0,
+                      },
+                    }}
+                  >
+                    <h3 className='text-[#050505a8] text-lg'>Past Schedules</h3>
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ p: 0 }}>
+                    {pastTimeSlots.length > 0 && (
+                      <div>
+                        {pastTimeSlots.map((slot, index) => (
+                          <div key={`time-slot-${index}`}>
+                            <p className='text-[#050505a8] text-lg'>{slot}</p>
 
-                  {isAddingBySlot[slot] ? (
-                    <AssignmentList
-                      title={assignmentTitles[slot] || ''}
-                      isEditing={true}
-                      onLabelChange={(e) =>
-                        handleTitleChange(slot, e.target.value)
-                      }
-                      onSave={() => handleSaveNewAssignment(slot)}
-                      cancelAdd={() => handleCancelAdd(slot)}
-                    />
-                  ) : (
-                    <Button
-                      variant='text'
-                      startIcon={<AddIcon size={14} color='#050505a8' />}
-                      sx={{
-                        color: '#050505a8',
-                        textTransform: 'none',
-                        fontSize: '16px',
-                        ml: 0.75,
-                      }}
-                      onClick={() => handleAddNewClick(slot)}
-                    >
-                      Add new
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
+                            {pastSchedules
+                              .filter((schedule) => schedule.timeSlot === slot)
+                              .map((assignment) => (
+                                <AssignmentList
+                                  key={`assignment-${assignment._id}`}
+                                  curr={assignment._id}
+                                  assignmentId={assignment.assignmentId}
+                                  title={assignment.title.toString()}
+                                  checked={assignment.checked}
+                                  handleCheck={handleCheck}
+                                  handleViewAssignment={handleViewAssignment}
+                                />
+                              ))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </AccordionDetails>
+                </Accordion>
+
+                {futureTimeSlots.map((slot, index) => (
+                  <div key={`time-slot-${index}`}>
+                    <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
+
+                    {futureSchedules
+                      .filter((schedule) => schedule.timeSlot === slot)
+                      .map((assignment) => (
+                        <AssignmentList
+                          key={`assignment-${assignment._id}`}
+                          curr={assignment._id}
+                          assignmentId={assignment.assignmentId}
+                          title={assignment.title}
+                          checked={assignment.checked}
+                          handleCheck={handleCheck}
+                          handleViewAssignment={handleViewAssignment}
+                        />
+                      ))}
+
+                    {isAddingBySlot[slot] ? (
+                      <AssignmentList
+                        title={assignmentTitles[slot] || ''}
+                        isEditing={true}
+                        onLabelChange={(e) =>
+                          handleTitleChange(slot, e.target.value)
+                        }
+                        onSave={() => handleSaveNewAssignment(slot)}
+                        cancelAdd={() => handleCancelAdd(slot)}
+                      />
+                    ) : (
+                      <Button
+                        variant='text'
+                        startIcon={<AddIcon size={14} color='#050505a8' />}
+                        sx={{
+                          color: '#050505a8',
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          ml: 0.75,
+                        }}
+                        onClick={() => handleAddNewClick(slot)}
+                      >
+                        Add new
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className='max-h-[70vh] overflow-y-auto pr-2'>
+                {filteredTimeSlots.length === 0 && isPastDate ? (
+                  <div className='text-[#050505a8] text-lg mt-3'>
+                    You have no schedules for this day.
+                  </div>
+                ) : (
+                  filteredTimeSlots.map((slot, index) => (
+                    <div key={`time-slot-${index}`}>
+                      <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
+
+                      {schedules
+                        .filter((schedule) => schedule.timeSlot === slot)
+                        .map((assignment) => (
+                          <AssignmentList
+                            key={`assignment-${assignment._id}`}
+                            curr={assignment._id}
+                            assignmentId={assignment.assignmentId}
+                            title={assignment.title}
+                            checked={assignment.checked}
+                            handleCheck={handleCheck}
+                            handleViewAssignment={handleViewAssignment}
+                          />
+                        ))}
+
+                      {isFutureDate &&
+                        (isAddingBySlot[slot] ? (
+                          <AssignmentList
+                            title={assignmentTitles[slot] || ''}
+                            isEditing={true}
+                            onLabelChange={(e) =>
+                              handleTitleChange(slot, e.target.value)
+                            }
+                            onSave={() => handleSaveNewAssignment(slot)}
+                            cancelAdd={() => handleCancelAdd(slot)}
+                          />
+                        ) : (
+                          <Button
+                            variant='text'
+                            startIcon={<AddIcon size={14} color='#050505a8' />}
+                            sx={{
+                              color: '#050505a8',
+                              textTransform: 'none',
+                              fontSize: '16px',
+                              ml: 0.75,
+                            }}
+                            onClick={() => handleAddNewClick(slot)}
+                          >
+                            Add new
+                          </Button>
+                        ))}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {selectedAssignment && (
             <CurrentAssignment
-              selectedAssignment={selectedAssignment}
+              currentDate={currentDate.toISOString()}
+              fetchSchedule={fetchSchedule}
               handleCloseAssignment={handleCloseAssignment}
+              selectedAssignment={selectedAssignment}
             />
           )}
         </div>

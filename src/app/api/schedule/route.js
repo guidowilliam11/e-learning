@@ -9,9 +9,9 @@ export async function GET(req) {
     const studentId = url.searchParams.get('studentId')
     const date = url.searchParams.get('currentDate')
 
-    if (!studentId || !date) {
+    if (!studentId) {
       return NextResponse.json(
-        { error: 'Student ID and Date is required' },
+        { error: 'Student ID is required' },
         { status: 400 }
       )
     }
@@ -31,13 +31,6 @@ export async function GET(req) {
         $lte: endOfDay,
       },
     })
-
-    if (!schedule || schedule.length === 0) {
-      return NextResponse.json(
-        { message: 'No schedule found for the given Student ID and Date' },
-        { status: 404 }
-      )
-    }
 
     return NextResponse.json(schedule)
   } catch (error) {
@@ -68,10 +61,6 @@ export async function POST(req) {
       date,
       assignmentId: newAssignment._id,
     })
-
-    console.log('Assignment created:', newAssignment)
-
-    console.log('Schedule created:', newSchedule)
 
     const populatedSchedule = await Schedule.findById(newSchedule._id).populate(
       'assignmentId'
