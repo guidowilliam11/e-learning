@@ -15,6 +15,11 @@ export default function TopBar() {
     '/forum': 'Forum',
     '/schedule': 'Schedule',
     '/contact': 'Contact',
+    '/contact/community': 'Contact',
+    '/contact/community/add': 'Contact',
+    '/contact/community/edit': 'Contact',
+    '/contact/peer': 'Contact',
+    '/contact/peer/add': 'Contact'
   };
 
   const title = pageTitles[path] || 'Dashboard'; // Default to 'Dashboard' if path doesn't match
