@@ -34,6 +34,8 @@ const Schedule = ({ user }) => {
   const [isAddingBySlot, setIsAddingBySlot] = useState({})
   const [selectedAssignment, setSelectedAssignment] = useState(null)
 
+  console.log(selectedAssignment)
+
   const timeSlots = generateTimeSlots()
 
   const pastSchedules = schedules.filter(
@@ -233,9 +235,10 @@ const Schedule = ({ user }) => {
   useEffect(() => {
     setSchedules([])
     fetchSchedule(currentDate.toISOString())
-  }, [currentDate])
 
-  console.log(futureSchedules, schedules)
+    currentDate.toDate().getDate() !== dayjs().toDate().getDate() &&
+      handleCloseAssignment()
+  }, [currentDate])
 
   return (
     <div className='flex justify-between font-inter'>
