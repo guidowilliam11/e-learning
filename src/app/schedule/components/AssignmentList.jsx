@@ -5,6 +5,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 
 const AssignmentList = ({
   curr,
+  assignmentId,
   title,
   isEditing = false,
   checked,
@@ -16,6 +17,10 @@ const AssignmentList = ({
 }) => {
   const handleClick = () => {
     handleCheck(curr)
+  }
+
+  const handleClickAssignment = () => {
+    handleViewAssignment(assignmentId)
   }
 
   const handleKeyPress = (event) => {
@@ -71,7 +76,7 @@ const AssignmentList = ({
           }}
         />
       ) : (
-        <span style={{ cursor: 'text' }} onClick={handleViewAssignment}>
+        <span style={{ cursor: 'pointer' }} onClick={handleClickAssignment}>
           {title}
         </span>
       )}

@@ -1,4 +1,4 @@
-import dayjs from "dayjs"
+import dayjs from 'dayjs'
 
 const MS_TO_SECOND = 1000
 const MS_TO_MINUTE = MS_TO_SECOND * 60
@@ -42,9 +42,9 @@ export const formatHour = (hour) => {
     return dayjs().hour(hour).minute(0).format('hh:mm A')
 }
 
-export const generateTimeSlots = (startHour, endHour = 23) => {
-    return Array.from({ length: endHour - startHour + 1 }, (_, index) => {
-        const hour = startHour + index
+export const generateTimeSlots = () => {
+    return Array.from({ length: 23 - 0 + 1 }, (_, index) => {
+        const hour = 0 + index
         return formatHour(hour)
     })
 }
