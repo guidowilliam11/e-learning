@@ -9,6 +9,7 @@ export const ConversationContextProvider = ({ children }) => {
     const [conversationsData, setConversationsData] = useState(new Map());
     const [activeConversation, setActiveConversation] = useState({});
     const [isFetchingConversationData, setIsFetchingConversationData] = useState(true);
+    const [activeContactId, setActiveContactId] = useState("");
 
     return <>
         <ConversationContext.Provider
@@ -20,7 +21,9 @@ export const ConversationContextProvider = ({ children }) => {
                 conversationsData,
                 setConversationsData,
                 activeConversation,
-                setActiveConversation
+                setActiveConversation,
+                activeContactId,
+                setActiveContactId
             }}
         >
             {children}
