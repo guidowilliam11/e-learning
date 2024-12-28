@@ -3,14 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import dayjs from 'dayjs'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-} from '@mui/material'
+import { Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
+
 import { toast } from 'react-toastify'
 
 import {
@@ -25,56 +20,21 @@ import AssignmentList from './AssignmentList'
 import CurrentAssignment from './CurrentAssignment'
 import RemainingTasks from './RemainingTasks'
 import TaskPastDue from './TaskPastDue'
+import PastSchedules from './PastSchedules'
+import FutureSchedules from './FutureSchedules'
 
 const Schedule = ({ user }) => {
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [currentPage, setCurrentPage] = useState('Daily')
   const [schedules, setSchedules] = useState([])
+  const [todaySchedules, setTodaySchedules] = useState([])
   const [assignmentTitles, setAssignmentTitles] = useState({})
   const [isAddingBySlot, setIsAddingBySlot] = useState({})
   const [selectedAssignment, setSelectedAssignment] = useState(null)
 
-  console.log(selectedAssignment)
-
-  const timeSlots = generateTimeSlots()
-
-  const pastSchedules = schedules.filter(
-    ({ timeSlot }) =>
-      (parseInt(timeSlot) % 12) + (timeSlot.includes('PM') ? 12 : 0) <
-      currentDate.hour()
-  )
-
-  const pastTimeSlots = timeSlots.filter(
-    (slot) =>
-      (parseInt(slot) % 12) + (slot.includes('PM') ? 12 : 0) <
-        currentDate.hour() &&
-      schedules.some(({ timeSlot }) => timeSlot === slot)
-  )
-
-  const futureSchedules = schedules.filter(
-    ({ timeSlot }) =>
-      (parseInt(timeSlot) % 12) + (timeSlot.includes('PM') ? 12 : 0) >=
-      currentDate.hour()
-  )
-
-  const futureTimeSlots = timeSlots.filter(
-    (slot) =>
-      (parseInt(slot) % 12) + (slot.includes('PM') ? 12 : 0) >=
-      currentDate.hour()
-  )
-
-  const isPastDate = currentDate.toDate().getDate() < dayjs().toDate().getDate()
-  const isFutureDate =
-    currentDate.toDate().getDate() > dayjs().toDate().getDate()
-
-  const filteredTimeSlots = isPastDate
-    ? timeSlots.filter((slot) =>
-        schedules.some(({ timeSlot }) => timeSlot === slot)
-      )
-    : timeSlots
-
   const fetchSchedule = async (date) => {
     try {
+      const isToday = dayjs(date).isSame(dayjs(), 'day')
       const schedules = await fetchDailySchedule(user, date)
       if (schedules) {
         const updatedSchedules = schedules.map((schedule) => {
@@ -85,6 +45,10 @@ const Schedule = ({ user }) => {
             timeSlot: timeSlot,
           }
         })
+
+        if (isToday) {
+          setTodaySchedules(updatedSchedules)
+        }
 
         setSchedules(updatedSchedules)
       }
@@ -224,13 +188,27 @@ const Schedule = ({ user }) => {
     }
   }
 
-  const handleViewAssignment = (assignment) => {
-    setSelectedAssignment(assignment)
-  }
+  const handleViewAssignment = (assignment) => setSelectedAssignment(assignment)
 
-  const handleCloseAssignment = () => {
-    setSelectedAssignment(null)
-  }
+  const handleCloseAssignment = () => setSelectedAssignment(null)
+
+  const timeSlots = generateTimeSlots()
+
+  const futureTimeSlots = timeSlots.filter(
+    (slot) =>
+      (parseInt(slot) % 12) + (slot.includes('PM') ? 12 : 0) >=
+      currentDate.hour()
+  )
+
+  const isPastDate = currentDate.toDate().getDate() < dayjs().toDate().getDate()
+  const isFutureDate =
+    currentDate.toDate().getDate() > dayjs().toDate().getDate()
+
+  const filteredTimeSlots = isPastDate
+    ? timeSlots.filter((slot) =>
+        schedules.some(({ timeSlot }) => timeSlot === slot)
+      )
+    : timeSlots
 
   useEffect(() => {
     setSchedules([])
@@ -245,9 +223,15 @@ const Schedule = ({ user }) => {
       <div className='w-[30%] mr-6'>
         <Calendar currentDate={currentDate} setCurrentDate={setCurrentDate} />
 
-        <RemainingTasks done={18} total={20} />
+        <RemainingTasks
+          schedules={todaySchedules}
+          futureTimeSlots={futureTimeSlots}
+        />
 
-        <TaskPastDue taskPast={20} />
+        <TaskPastDue
+          schedules={todaySchedules}
+          futureTimeSlots={futureTimeSlots}
+        />
       </div>
 
       <div className='flex flex-col w-full'>
@@ -289,174 +273,89 @@ const Schedule = ({ user }) => {
               {currentDate ? formattedDate(currentDate) : 'Loading...'}
             </div>
 
-            {currentDate.toDate().getDate() === dayjs().toDate().getDate() ? (
-              <>
-                <Accordion
-                  disableGutters
-                  sx={{
-                    boxShadow: 'none',
-                    border: 'none',
-                    '&:before': { display: 'none' },
-                  }}
-                >
-                  <AccordionSummary
-                    expandIcon={
-                      <ArrowForwardIosSharpIcon
-                        sx={{
-                          fontSize: '0.9rem',
-                          transition: 'transform 0.3s ease',
-                        }}
-                      />
-                    }
-                    aria-controls='panel1-content'
-                    id='panel1-header'
-                    sx={{
-                      p: 0,
-                      flexDirection: 'row-reverse',
-                      '& .MuiAccordionSummary-expandIconWrapper': {
-                        transition: 'transform 0.3s ease',
-                      },
-                      '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-                        transform: 'rotate(90deg)',
-                      },
-                      '& .MuiAccordionSummary-content': {
-                        my: 0,
-                        marginLeft: 1,
-                        p: 0,
-                      },
-                    }}
-                  >
-                    <h3 className='text-[#050505a8] text-lg'>Past Schedules</h3>
-                  </AccordionSummary>
-                  <AccordionDetails sx={{ p: 0 }}>
-                    {pastTimeSlots.length > 0 && (
-                      <div>
-                        {pastTimeSlots.map((slot, index) => (
-                          <div key={`time-slot-${index}`}>
-                            <p className='text-[#050505a8] text-lg'>{slot}</p>
+            <div className='max-h-[70vh] overflow-y-auto pr-2'>
+              {currentDate.toDate().getDate() === dayjs().toDate().getDate() ? (
+                <>
+                  <PastSchedules
+                    currentDate={currentDate}
+                    schedules={todaySchedules}
+                    timeSlots={timeSlots}
+                    handleCheck={handleCheck}
+                    handleViewAssignment={handleViewAssignment}
+                  />
 
-                            {pastSchedules
-                              .filter((schedule) => schedule.timeSlot === slot)
-                              .map((assignment) => (
-                                <AssignmentList
-                                  key={`assignment-${assignment._id}`}
-                                  curr={assignment._id}
-                                  assignmentId={assignment.assignmentId}
-                                  title={assignment.title.toString()}
-                                  checked={assignment.checked}
-                                  handleCheck={handleCheck}
-                                  handleViewAssignment={handleViewAssignment}
-                                />
-                              ))}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </AccordionDetails>
-                </Accordion>
-
-                {futureTimeSlots.map((slot, index) => (
-                  <div key={`time-slot-${index}`}>
-                    <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
-
-                    {futureSchedules
-                      .filter((schedule) => schedule.timeSlot === slot)
-                      .map((assignment) => (
-                        <AssignmentList
-                          key={`assignment-${assignment._id}`}
-                          curr={assignment._id}
-                          assignmentId={assignment.assignmentId}
-                          title={assignment.title}
-                          checked={assignment.checked}
-                          handleCheck={handleCheck}
-                          handleViewAssignment={handleViewAssignment}
-                        />
-                      ))}
-
-                    {isAddingBySlot[slot] ? (
-                      <AssignmentList
-                        title={assignmentTitles[slot] || ''}
-                        isEditing={true}
-                        onLabelChange={(e) =>
-                          handleTitleChange(slot, e.target.value)
-                        }
-                        onSave={() => handleSaveNewAssignment(slot)}
-                        cancelAdd={() => handleCancelAdd(slot)}
-                      />
-                    ) : (
-                      <Button
-                        variant='text'
-                        startIcon={<AddIcon size={14} color='#050505a8' />}
-                        sx={{
-                          color: '#050505a8',
-                          textTransform: 'none',
-                          fontSize: '16px',
-                          ml: 0.75,
-                        }}
-                        onClick={() => handleAddNewClick(slot)}
-                      >
-                        Add new
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </>
-            ) : (
-              <div className='max-h-[70vh] overflow-y-auto pr-2'>
-                {filteredTimeSlots.length === 0 && isPastDate ? (
-                  <div className='text-[#050505a8] text-lg mt-3'>
-                    You have no schedules for this day.
-                  </div>
-                ) : (
-                  filteredTimeSlots.map((slot, index) => (
-                    <div key={`time-slot-${index}`}>
-                      <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
-
-                      {schedules
-                        .filter((schedule) => schedule.timeSlot === slot)
-                        .map((assignment) => (
-                          <AssignmentList
-                            key={`assignment-${assignment._id}`}
-                            curr={assignment._id}
-                            assignmentId={assignment.assignmentId}
-                            title={assignment.title}
-                            checked={assignment.checked}
-                            handleCheck={handleCheck}
-                            handleViewAssignment={handleViewAssignment}
-                          />
-                        ))}
-
-                      {isFutureDate &&
-                        (isAddingBySlot[slot] ? (
-                          <AssignmentList
-                            title={assignmentTitles[slot] || ''}
-                            isEditing={true}
-                            onLabelChange={(e) =>
-                              handleTitleChange(slot, e.target.value)
-                            }
-                            onSave={() => handleSaveNewAssignment(slot)}
-                            cancelAdd={() => handleCancelAdd(slot)}
-                          />
-                        ) : (
-                          <Button
-                            variant='text'
-                            startIcon={<AddIcon size={14} color='#050505a8' />}
-                            sx={{
-                              color: '#050505a8',
-                              textTransform: 'none',
-                              fontSize: '16px',
-                              ml: 0.75,
-                            }}
-                            onClick={() => handleAddNewClick(slot)}
-                          >
-                            Add new
-                          </Button>
-                        ))}
+                  <FutureSchedules
+                    currentDate={currentDate}
+                    schedules={todaySchedules}
+                    futureTimeSlots={futureTimeSlots}
+                    assignmentTitles={assignmentTitles}
+                    isAddingBySlot={isAddingBySlot}
+                    handleCheck={handleCheck}
+                    handleViewAssignment={handleViewAssignment}
+                    handleAddNewClick={handleAddNewClick}
+                    handleTitleChange={handleTitleChange}
+                    handleSaveNewAssignment={handleSaveNewAssignment}
+                  />
+                </>
+              ) : (
+                <>
+                  {filteredTimeSlots.length === 0 && isPastDate ? (
+                    <div className='text-[#050505a8] text-lg mt-3'>
+                      You have no schedules for this day.
                     </div>
-                  ))
-                )}
-              </div>
-            )}
+                  ) : (
+                    filteredTimeSlots.map((slot, index) => (
+                      <div key={`time-slot-${index}`}>
+                        <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
+
+                        {schedules
+                          .filter((schedule) => schedule.timeSlot === slot)
+                          .map((assignment) => (
+                            <AssignmentList
+                              key={`assignment-${assignment._id}`}
+                              curr={assignment._id}
+                              assignmentId={assignment.assignmentId}
+                              title={assignment.title}
+                              checked={assignment.checked}
+                              handleCheck={handleCheck}
+                              handleViewAssignment={handleViewAssignment}
+                            />
+                          ))}
+
+                        {isFutureDate &&
+                          (isAddingBySlot[slot] ? (
+                            <AssignmentList
+                              title={assignmentTitles[slot] || ''}
+                              isEditing={true}
+                              onLabelChange={(e) =>
+                                handleTitleChange(slot, e.target.value)
+                              }
+                              onSave={() => handleSaveNewAssignment(slot)}
+                              cancelAdd={() => handleCancelAdd(slot)}
+                            />
+                          ) : (
+                            <Button
+                              variant='text'
+                              startIcon={
+                                <AddIcon size={14} color='#050505a8' />
+                              }
+                              sx={{
+                                color: '#050505a8',
+                                textTransform: 'none',
+                                fontSize: '16px',
+                                ml: 0.75,
+                              }}
+                              onClick={() => handleAddNewClick(slot)}
+                            >
+                              Add new
+                            </Button>
+                          ))}
+                      </div>
+                    ))
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {selectedAssignment && (
