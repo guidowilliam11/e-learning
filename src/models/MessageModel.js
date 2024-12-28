@@ -1,4 +1,4 @@
-import mongoose, {Types} from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 
 const messageSchema = new mongoose.Schema(
   {
@@ -30,6 +30,6 @@ const messageSchema = new mongoose.Schema(
 )
 
 const Messages =
-  mongoose.models.messages || mongoose.model('peers', messageSchema)
+  mongoose.models.messages || mongoose.model('messages', messageSchema)
 
 export default Messages
