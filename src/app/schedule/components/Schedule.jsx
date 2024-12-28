@@ -213,9 +213,7 @@ const Schedule = ({ user }) => {
   useEffect(() => {
     setSchedules([])
     fetchSchedule(currentDate.toISOString())
-
-    currentDate.toDate().getDate() !== dayjs().toDate().getDate() &&
-      handleCloseAssignment()
+    handleCloseAssignment()
   }, [currentDate])
 
   return (
