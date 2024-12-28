@@ -1,68 +1,17 @@
-"use server";
+import { _responseAdapter } from "@/utils/adapter"
 
-import Students from "@/models/StudentModel";
-import {authServerSession} from "@/libs/auth/session";
-import Peers from "@/models/PeerModel";
-import {connectToDatabase} from "@/libs/mongo/config";
-import {_serverActionDataAdapter} from "@/utils/adapter";
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
 
-export const searchPeer = async (email) => {
-  try {
-    await connectToDatabase()
-    const { user } = await authServerSession()
-
-    if (user.email === email) {
-      return {
-        error: 'YOURSELF'
-      }
-    }
-
-    let alreadyPeers = false
-    const searchedPeer = await Students.findOne({email: email})
-    if (!searchedPeer) {
-      return {
-        error: 'NOT_FOUND'
-      }
-    }
-
-    const existingPeer = await Peers.findOne({
-      participants: {
-        $in: user.id
-      }
-    }).findOne({
-      participants: {
-        $in: searchedPeer._id
-      }
-    })
-
-    if (existingPeer) {
-      alreadyPeers = true
-    }
-
-    return _serverActionDataAdapter({
-      ...searchedPeer.toObject(),
-      alreadyPeers
-    })
-  } catch (error) {
-    throw error
-  }
+export const searchPeer = async email => {
+  return fetch(`${baseUrl}/api/contact/peer/add?email=${email}`).then(_responseAdapter)
 }
 
-export const addPeer = async (targetPeer) => {
-  try {
-    const { user } = await authServerSession()
-
-    const peer = await Peers.create({
-      participants: [
-        user.id,
-        targetPeer._id
-      ],
-      lastMessage: null
-    })
-
-    return _serverActionDataAdapter(peer)
-
-  } catch (error) {
-    throw error
-  }
+export const addPeer = async targetPeer => {
+  return fetch(`${baseUrl}/api/contact/peer/add`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(targetPeer)
+  }).then(_responseAdapter)
 }

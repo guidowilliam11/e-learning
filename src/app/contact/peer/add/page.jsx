@@ -11,7 +11,6 @@ import {
 import {useState} from "react";
 import Image from "next/image";
 import {addPeer, searchPeer} from "@/app/contact/peer/add/actions";
-import {getSession} from "next-auth/react";
 import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
 import {useConversationContext} from "@/contexts/conversationContext";
@@ -30,13 +29,18 @@ const Result = ({ isLoading, result, errorMode }) => {
   const handleClickAdd = () => {
     addPeer(result)
       .then(handleAddResult)
+      .catch(handleFailAddPeer)
   }
 
-  const handleAddResult = (result) => {
-    if (result._id) {
+  const handleAddResult = (res) => {
+    if (res.body._id) {
       setTimeout(() => router.push('/contact'), 1000)
       toast.success('Successfully added peer!')
     }
+  }
+
+  const handleFailAddPeer = (res) => {
+    toast.error('Oops, something went wrong. Please try that again.')
   }
 
   const handleClickViewProfile = () => {
@@ -129,16 +133,17 @@ const AddPeerPage = () => {
 
     searchPeer(peerEmail)
       .then(handleSearchResult)
+      .catch(handleFailSearchPeer)
       .finally(() => setIsLoading(false))
   }
 
-  const handleSearchResult = (result) => {
-    if (result.error) {
-      setErrorMode(result.error)
-      return
-    }
+  const handleSearchResult = (res) => {
     setErrorMode(null)
-    setResult(result)
+    setResult(res.body)
+  }
+
+  const handleFailSearchPeer = (res) => {
+    setErrorMode(res.body.error)
   }
 
   return (

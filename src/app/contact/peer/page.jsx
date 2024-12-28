@@ -7,6 +7,7 @@ import Image from "next/image";
 import {useConversationContext} from "@/contexts/conversationContext";
 import {useEffect, useState} from "react";
 import {getPeerData} from "@/app/contact/peer/actions";
+import { toast } from "react-toastify";
 
 const PeerPage = () => {
 
@@ -22,10 +23,15 @@ const PeerPage = () => {
 
     getPeerData(activeContactId)
       .then(handlePeerData)
+      .catch(handleFailGetPeerData)
   }, [activeContactId])
 
-  const handlePeerData = peer => {
-    setPeerData(peer)
+  const handlePeerData = res => {
+    setPeerData(res.body)
+  }
+
+  const handleFailGetPeerData = res => {
+    toast.error('Oops, something went wrong. Please try that again.')
   }
 
   const handleClickBack = () => {
