@@ -24,7 +24,7 @@ const errorModeEnum = {
 const Result = ({ isLoading, result, errorMode }) => {
 
   const router = useRouter()
-  const { setActiveContactId } = useConversationContext()
+  const { setActivePeerProfileId } = useConversationContext()
 
   const handleClickAdd = () => {
     addPeer(result)
@@ -44,7 +44,7 @@ const Result = ({ isLoading, result, errorMode }) => {
   }
 
   const handleClickViewProfile = () => {
-    setActiveContactId(result._id)
+    setActivePeerProfileId(result._id)
     router.push('/contact/peer')
   }
 

@@ -35,7 +35,6 @@ const AddCommunityPage = () => {
   }
 
   const handleGetPeerResult = (res) => {
-    console.log(res)
     if (res.body.length === 0) {
       toast.error(`You don't have peers yet.`)
     }
@@ -43,8 +42,11 @@ const AddCommunityPage = () => {
   }
 
   const handlePictureChange = (e) => {
-    console.log(e)
-    setPicture(e.target.files?.[0])
+    if (e.target.files.length > 0) {
+      setPicture(e.target.files[0])
+      return
+    }
+    setPicture(null)
   }
 
   const handleCreateCommunity = async (e) => {

@@ -2,7 +2,6 @@
 
 import {FaArrowLeft, FaBan} from "react-icons/fa6";
 import {useRouter} from "next/navigation";
-import {contactsMockData} from "@/mock-data/contact";
 import Image from "next/image";
 import {useConversationContext} from "@/contexts/conversationContext";
 import {useEffect, useState} from "react";
@@ -11,20 +10,20 @@ import { toast } from "react-toastify";
 
 const PeerPage = () => {
 
-  const { activeContactId } = useConversationContext();
+  const { activePeerProfileId } = useConversationContext();
 
   const router = useRouter();
   const [peer, setPeerData]  = useState({})
 
   useEffect(() => {
-    if (!activeContactId) {
+    if (!activePeerProfileId) {
       router.push(`/contact`);
     }
 
-    getPeerData(activeContactId)
+    getPeerData(activePeerProfileId)
       .then(handlePeerData)
       .catch(handleFailGetPeerData)
-  }, [activeContactId])
+  }, [activePeerProfileId])
 
   const handlePeerData = res => {
     setPeerData(res.body)

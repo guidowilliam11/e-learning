@@ -39,8 +39,6 @@ export const createCommunity = async (newCommunity) => {
       await writeFile(relativePath, buffer)
 
       newCommunity.picture = path
-    } else {
-      newCommunity.picture = '/public/images/default-community-picture.png'
     }
 
     newCommunity.participants.push(user.id)
