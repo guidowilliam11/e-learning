@@ -1,4 +1,4 @@
-import mongoose, {Types} from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 
 const peerSchema = new mongoose.Schema(
   {
@@ -10,16 +10,19 @@ const peerSchema = new mongoose.Schema(
     ],
     lastMessage: {
       type: Types.ObjectId,
-      ref: 'messages'
+      ref: 'messages',
+      default: null
     },
     unreadCount: {
       type: Number,
       default: 0
     },
-    isCallOngoing: {
-      type: Boolean,
-      default: false
-    },
+    onCall: [
+      {
+        type: Types.ObjectId,
+        ref: 'students'
+      }
+    ]
   },
   {
     timestamps: true,

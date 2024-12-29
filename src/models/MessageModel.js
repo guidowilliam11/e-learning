@@ -4,12 +4,13 @@ const messageSchema = new mongoose.Schema(
   {
     chatId: {
       $type: Types.ObjectId,
-      ref: 'chats',
+      refPath: 'type',
       required: true
     },
     type: {
       $type: String,
-      required: true
+      required: true,
+      enum: ['peers', 'communities']
     },
     value: {
       $type: String,
@@ -18,6 +19,15 @@ const messageSchema = new mongoose.Schema(
     sender: {
       $type: Types.ObjectId,
       ref: 'students'
+    },
+    seenBy: {
+      $type: [
+        {
+          $type: Types.ObjectId,
+          ref: 'students'
+        }
+      ],
+      default: []
     }
   },
   {

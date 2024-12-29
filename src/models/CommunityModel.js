@@ -1,4 +1,4 @@
-import mongoose, {Types} from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 
 const communitySchema = new mongoose.Schema(
   {
@@ -16,17 +16,19 @@ const communitySchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
-    isCallOngoing: {
-      type: Boolean,
-      default: false
-    },
+    onCall: [
+      {
+        type: Types.ObjectId,
+        ref: 'students'
+      }
+    ],
     name: {
       type: String,
       required: true
     },
     picture: {
       type: String,
-      required: true
+      default: ''
     },
     description: {
       type: String,

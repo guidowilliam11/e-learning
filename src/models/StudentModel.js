@@ -16,6 +16,10 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
     },
+    picture: {
+      type: String,
+      default: ''
+    }
   },
   {
     timestamps: true,
