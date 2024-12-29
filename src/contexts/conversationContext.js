@@ -1,29 +1,38 @@
 "use client"
 
-import {createContext, useContext, useState} from "react"
+import { createContext, useContext, useState } from "react"
 
-const ConversationContext= createContext(null)
+const ConversationContext = createContext(null)
 
 export const ConversationContextProvider = ({ children }) => {
-    const [activeConversationId, setActiveConversationId] = useState(null);
+    const [activeContactTab, setActiveContactTab] = useState(0);
     const [conversationsData, setConversationsData] = useState(new Map());
     const [activeConversation, setActiveConversation] = useState({});
-    const [isFetchingConversationData, setIsFetchingConversationData] = useState(true);
-    const [activeContactId, setActiveContactId] = useState("");
+    const [activeConversationMessages, setActiveConversationMessages] = useState({});
+    const [isFetchingConversationData, setIsFetchingConversationData] = useState(false);
+    const [activePeerProfileId, setActivePeerProfileId] = useState('');
+    const [activeCommunityProfileId, setActiveCommunityProfileId] = useState('');
+    const [isCallOngoing, setIsCallOngoing] = useState(false)
 
     return <>
         <ConversationContext.Provider
             value={{
-                activeConversationId,
-                setActiveConversationId,
+                activeContactTab,
+                setActiveContactTab,
                 isFetchingConversationData,
                 setIsFetchingConversationData,
                 conversationsData,
                 setConversationsData,
                 activeConversation,
                 setActiveConversation,
-                activeContactId,
-                setActiveContactId
+                activeConversationMessages,
+                setActiveConversationMessages,
+                activePeerProfileId,
+                setActivePeerProfileId,
+                activeCommunityProfileId,
+                setActiveCommunityProfileId,
+                isCallOngoing,
+                setIsCallOngoing
             }}
         >
             {children}
