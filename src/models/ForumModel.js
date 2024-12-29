@@ -1,12 +1,14 @@
 import mongoose, { Types } from 'mongoose'
 import Tag from './TagModel'
 import Comment from './CommentModel'
+import Students from './StudentModel'
 
 const forumSchema = new mongoose.Schema(
   {
-    publisher: {
-      type: String,
-      required: [true, 'Please provide a publisher'],
+    studentId: {
+      type: Types.ObjectId,
+      ref: Students.modelName,
+      required: [true, 'Please provide a Student ID'],
     },
     publishDate: {
       type: Date,
@@ -34,6 +36,7 @@ const forumSchema = new mongoose.Schema(
       {
         type: Types.ObjectId,
         ref: Comment.modelName,
+        default: [],
       },
     ],
   },
