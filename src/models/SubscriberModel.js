@@ -13,7 +13,7 @@ const subscriberSchema = new Schema(
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Subscriber =

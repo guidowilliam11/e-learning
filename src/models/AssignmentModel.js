@@ -1,19 +1,7 @@
-import mongoose, { Types } from 'mongoose'
-import Students from './StudentModel'
-import Course from './CourseModel'
+import mongoose from 'mongoose'
 
 const assignmentSchema = new mongoose.Schema(
   {
-    studentId: {
-      type: Types.ObjectId,
-      required: true,
-      ref: Students.modelName,
-    },
-    courseId: {
-      type: Types.ObjectId,
-      required: true,
-      ref: Course.modelName,
-    },
     title: {
       type: String,
       required: [true, 'Please provide a title.'],
@@ -22,19 +10,15 @@ const assignmentSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a description.'],
     },
-    dueDate: {
-      type: Date,
-      required: [true, 'Please provide the due date.'],
-    },
-    status: {
-      type: String,
-      required: [true, 'Please provide the status.'],
+    list: {
+      type: [String],
+      default: ['This is an empty list.'],
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
-const SubTopic =
+const Assignment =
   mongoose.models.assignments || mongoose.model('assignments', assignmentSchema)
 
-export default SubTopic
+export default Assignment

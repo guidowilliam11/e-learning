@@ -9,7 +9,7 @@ export const ToastWrapper = () => {
     '.Toastify__toast': {
       borderRadius: '8px',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-      fontSize: '16px',
+      fontSize: '15px',
       padding: '0px 16px',
       display: 'flex',
       alignItems: 'center',

@@ -7,7 +7,7 @@ const tagSchema = new mongoose.Schema(
       required: [true, 'Please provide a tag'],
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 const Tag = mongoose.models.tags || mongoose.model('tags', tagSchema)

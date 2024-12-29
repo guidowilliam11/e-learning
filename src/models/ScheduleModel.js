@@ -1,6 +1,5 @@
 import mongoose, { Types } from 'mongoose'
 import Students from './StudentModel'
-import Course from './CourseModel'
 
 const scheduleSchema = new mongoose.Schema(
   {
@@ -9,28 +8,27 @@ const scheduleSchema = new mongoose.Schema(
       required: true,
       ref: Students.modelName,
     },
-    courseId: {
-      type: Types.ObjectId,
-      required: true,
-      ref: Course.modelName,
-    },
     title: {
       type: String,
       required: [true, 'Please provide a title.'],
-    },
-    description: {
-      type: String,
-      required: [true, 'Please provide a description.'],
     },
     date: {
       type: Date,
       required: [true, 'Please provide a date.'],
     },
+    assignmentId: {
+      type: Types.ObjectId,
+      ref: 'assignments',
+    },
+    checked: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
-const SubTopic =
+const Schedule =
   mongoose.models.schedules || mongoose.model('schedules', scheduleSchema)
 
-export default SubTopic
+export default Schedule

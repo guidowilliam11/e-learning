@@ -8,5 +8,5 @@ export default async function Page() {
 
   !session && redirect('/login')
 
-  return <Schedule />
+  return <Schedule user={session.user} />
 }
