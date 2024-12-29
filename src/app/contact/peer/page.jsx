@@ -7,15 +7,18 @@ import {useConversationContext} from "@/contexts/conversationContext";
 import {useEffect, useState} from "react";
 import {getPeerData} from "@/app/contact/peer/actions";
 import { toast } from "react-toastify";
+import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext";
 
 const PeerPage = () => {
 
+  const { setIsFullscreenLoading } = useFullscreenLoadingContext()
   const { activePeerProfileId } = useConversationContext();
 
   const router = useRouter();
   const [peer, setPeerData]  = useState({})
 
   useEffect(() => {
+    setIsFullscreenLoading(true)
     if (!activePeerProfileId) {
       router.push(`/contact`);
     }
@@ -23,6 +26,7 @@ const PeerPage = () => {
     getPeerData(activePeerProfileId)
       .then(handlePeerData)
       .catch(handleFailGetPeerData)
+      .finally(() => setIsFullscreenLoading(false))
   }, [activePeerProfileId])
 
   const handlePeerData = res => {

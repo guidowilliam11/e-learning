@@ -9,10 +9,13 @@ import './style.css';
 import {createCommunity, getPeers} from "@/app/contact/community/add/actions";
 import {toast} from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext";
 
 const AddCommunityPage = () => {
 
   const router = useRouter()
+
+  const { setIsFullscreenLoading } = useFullscreenLoadingContext()
 
   const [peers, setPeers] = useState([]);
   const selectedPeers = useMemo(() => peers.filter(peer => peer.selected), [peers]);
@@ -52,11 +55,6 @@ const AddCommunityPage = () => {
   const handleCreateCommunity = async (e) => {
     e.preventDefault()
 
-    if (selectedPeers.length === 0) {
-      toast.error('You must select at least one peer')
-      return
-    }
-
     const newCommunity = {
       name: communityName,
       description: '',
@@ -64,8 +62,10 @@ const AddCommunityPage = () => {
       picture
     }
 
+    setIsFullscreenLoading(true)
     createCommunity(newCommunity)
       .then(handleCreateCommunityResult)
+      .finally(() => setIsFullscreenLoading(false))
   }
 
   const handleCreateCommunityResult = (res) => {
@@ -76,8 +76,10 @@ const AddCommunityPage = () => {
   }
 
   useEffect(() => {
+    setIsFullscreenLoading(true)
     getPeers()
       .then(handleGetPeerResult)
+      .finally(() => setIsFullscreenLoading(false))
   }, [])
 
   return (

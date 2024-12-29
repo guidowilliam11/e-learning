@@ -8,9 +8,11 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { editCommunity, getCommunity, leaveCommunity } from "./actions"
 import { getSession } from "next-auth/react"
 import { toast } from "react-toastify"
+import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext"
 
 const CommunityPage = () => {
 
+  const { setIsFullscreenLoading } = useFullscreenLoadingContext()
   const { 
     activeCommunityProfileId,
     setActiveCommunityProfileId,
@@ -38,12 +40,13 @@ const CommunityPage = () => {
     setCommunity(res.body)
   }
   const handleClickBack = () => {
-    setActiveCommunityProfileId('')
     router.back()
   }
   const handleLeaveCommunity = () => {
+    setIsFullscreenLoading(true)
     leaveCommunity(activeCommunityProfileId)
       .then(handleSuccessLeaveCommunity)
+      .finally(() => setIsFullscreenLoading(false))
   }
   const handleSuccessLeaveCommunity = () => {
     setActiveConversation({})
@@ -55,8 +58,10 @@ const CommunityPage = () => {
 
     formData.set('picture', community.picture)
 
+    setIsFullscreenLoading(true)
     editCommunity(formData)
       .then(handleSuccessSave)
+      .finally(() => setIsFullscreenLoading(false))
   }
   const handleSuccessSave = (res) => {
     if (res.body._id) {
@@ -74,6 +79,7 @@ const CommunityPage = () => {
   }
 
   useEffect(() => {
+    setIsFullscreenLoading(true)
     if (!activeCommunityProfileId) {
       router.back()
     }
@@ -81,6 +87,7 @@ const CommunityPage = () => {
       .then(({user}) => setUserId(user.id))
     getCommunity(activeCommunityProfileId)
       .then(handleSuccessGetCommunity)
+      .finally(setIsFullscreenLoading(false))
   }, [])
 
   return (

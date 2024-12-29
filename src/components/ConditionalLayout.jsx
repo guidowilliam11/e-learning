@@ -6,6 +6,7 @@ import TopBar from '../components/topbar'
 import { ToastWrapper } from '@/libs/ToastWrapper'
 import { createTheme, ThemeProvider } from '@mui/material'
 import { ConversationContextProvider } from "@/contexts/conversationContext";
+import { FullscreenLoadingContextProvider } from '@/contexts/fullscreenLoadingContext'
 
 export default function ConditionalLayout({ children }) {
   const theme = createTheme({
@@ -46,7 +47,7 @@ export default function ConditionalLayout({ children }) {
         result = true
       }
     })
-    return result 
+    return result
   }
 
   // If the current route is excluded, render only the children
@@ -54,22 +55,24 @@ export default function ConditionalLayout({ children }) {
   // Default layout for other routes
   return (
     <ThemeProvider theme={theme}>
-      <ConversationContextProvider>
-        {isCurrentRouteExcluded() ? (
-          children
-        ) : (
-          <div className='flex font-inter'>
-            <Sidebar />
-            <div className='flex flex-col flex-grow h-screen'>
-              <TopBar />
-              <main className='flex-grow overflow-y-auto p-4 bg-gray-100 h-[90%] font-inter'>
-                {children}
-                <ToastWrapper />
-              </main>
+      <FullscreenLoadingContextProvider>
+        <ConversationContextProvider>
+          {isCurrentRouteExcluded() ? (
+            children
+          ) : (
+            <div className='flex font-inter'>
+              <Sidebar />
+              <div className='flex flex-col flex-grow h-screen'>
+                <TopBar />
+                <main className='flex-grow overflow-y-auto p-4 bg-gray-100 h-[90%] font-inter'>
+                  {children}
+                  <ToastWrapper />
+                </main>
+              </div>
             </div>
-          </div>
-        )}
-      </ConversationContextProvider>
+          )}
+        </ConversationContextProvider>
+      </FullscreenLoadingContextProvider>
     </ThemeProvider>
   )
 }
