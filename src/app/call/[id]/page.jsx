@@ -3,35 +3,59 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import VideoStream from "@/app/call/[id]/components/VideoStream";
 import Peer from "peerjs";
-import { FaVideo, FaMicrophone } from 'react-icons/fa6';
-
-const mockPeers = [
-	"1bfaf1a4-6226-4d53-9b88-f9e2fad906a9",
-	"9bd3de10-8f30-47c0-9764-92752c33e9db",
-	"9bd3de10-8f30-47c0-9764-92752c33e9dc",
-];
+import { FaVideo, FaMicrophone, FaPhoneSlash } from 'react-icons/fa6';
+import { getSession } from "next-auth/react";
+import { validateRoomData } from "./actions";
+import { redirect, usePathname, useSearchParams } from "next/navigation";
 
 const CallPage = () => {
+
+	const conversationId = usePathname().split('/')[2]
+	const roomType = useSearchParams().get('type')
+
 	const peerInstance = useRef(null);
-	const [peerId, setPeerId] = useState(mockPeers[0]);
+	const [peerId, setPeerId] = useState('')
+
+	const [roomData, setRoomData] = useState({})
+	const roomParticipants = useMemo(() => roomData?.participants || [], [roomData])
+	const targetParticipants = useMemo(
+		() => roomParticipants.filter(participants => participants._id !== peerId),
+		[peerId, roomParticipants]
+	);
+	const displayedRoomName = useMemo(() => {
+		if (roomData?.name) {
+			return roomData.name
+		}
+		if (targetParticipants?.[0]?.fullName){
+			return targetParticipants[0].fullName
+		}
+		return 'Initiating call...'
+
+	}, [roomData, targetParticipants])
 
 	const userStream = useRef(null);
 	const [userStreamState, setUserStreamState] = useState(userStream.current);
 	const [videoStatus, setVideoStatus] = useState(false);
 	const [audioStatus, setAudioStatus] = useState(false);
-	const targetParticipants = useMemo(
-		() => mockPeers.filter((mockPeer) => mockPeer !== peerId),
-		[peerId]
-	);
 	const remoteStreams = useRef(new Map());
 	const [remoteStreamsState, setRemoteStreamsState] = useState(
 		remoteStreams.current
 	);
+	const [peerOpened, setPeerOpened] = useState(false)
+	const [peerDoneSetup, setPeerDoneSetup] = useState(false)
 
-	useEffect(() => {
+	const setupRoomData = () => {
+		validateRoomData(roomType, conversationId)
+			.then(handleSuccessValidateRoomData)
+	}
+	const handleSuccessValidateRoomData = res => {
+		setRoomData(res.body)
+	}
+	
+	const setupPeerInstance = () => {
 		const peer = new Peer(peerId);
 		peer.on("open", (id) => {
-			setPeerId(id);
+			setPeerOpened(true)
 		});
 
 		navigator.mediaDevices.getUserMedia({
@@ -43,7 +67,7 @@ const CallPage = () => {
 			setUserStreamState(userStream.current);
 			toggleMic()
 			toggleVideo()
-		});
+		})
 
 		peer.on("call", async (call) => {
 			call.answer(userStream.current.srcObject);
@@ -52,20 +76,30 @@ const CallPage = () => {
 				remoteStreams.current.get(call.peer).play();
 				setRemoteStreamsState(new Map(remoteStreams.current));
 			});
+			call.on('close', (incomingStream) => {
+				remoteStreams.current.get(call.peer).srcObject = null
+				setRemoteStreamsState(new Map(remoteStreams.current));
+			})
 		});
 
 		peerInstance.current = peer;
-	}, [targetParticipants, peerId]);
 
-	const handleCall = async () => {
-		targetParticipants.forEach((mockPeer) => {
-			const call = peerInstance.current.call(mockPeer, userStream.current.srcObject);
+		setPeerDoneSetup(true)
+	}
+
+	const initiateCall = async () => {
+		targetParticipants.forEach((targetParticipant) => {
+			const call = peerInstance.current.call(targetParticipant._id, userStream.current.srcObject);
 
 			call.on("stream", (incomingStream) => {
-				remoteStreams.current.get(mockPeer).srcObject = incomingStream;
-				remoteStreams.current.get(mockPeer).play();
+				remoteStreams.current.get(targetParticipant._id).srcObject = incomingStream;
+				remoteStreams.current.get(targetParticipant._id).play();
 				setRemoteStreamsState(new Map(remoteStreams.current));
 			});
+			call.on('close', (incomingStream) => {
+				remoteStreams.current.get(call.peer).srcObject = null
+				setRemoteStreamsState(new Map(remoteStreams.current));
+			})
 		});
 	};
 
@@ -89,30 +123,50 @@ const CallPage = () => {
 		setUserStreamState(userStream.current);
 	};
 
+	const hangupCall = () => {
+		if (peerInstance.current) {
+			peerInstance.current.disconnect()
+			peerInstance.current.destroy()
+		}
+		window.close()
+	}
+
+	useEffect(() => {
+		getSession()
+			.then((session) => {
+				!session && redirect('/login')
+				const { user } = session
+				setPeerId(user.id)
+				setupRoomData()
+			})
+	}, []);
+
+	useEffect(() => {
+		if (roomData?._id) {
+			setupPeerInstance()
+		}
+	}, [roomData])
+
+	useEffect(() => {
+		if (peerOpened && peerDoneSetup) {
+			initiateCall()
+		}
+	}, [peerOpened, peerDoneSetup])
+
 	return (
 		<section className="flex flex-col h-[100vh] p-4 bg-neutral-700">
-			<h1 className="text-neutral-50">Current user id is {peerId}</h1>
-			<div>
-				<select value={peerId} onChange={(e) => setPeerId(e.target.value)}>
-					{mockPeers.map((mockPeer) => (
-						<option key={mockPeer} value={mockPeer}>
-							{mockPeer}
-						</option>
-					))}
-				</select>
-				<button className="text-neutral-50" onClick={handleCall}>Call</button>
-			</div>
+			<h1 className="text-primary font-bold text-xl">{displayedRoomName}</h1>
 			<div className="flex my-4 gap-2 h-full justify-center items-center flex-wrap overflow-auto">
 				<VideoStream
-					peerId={peerId}
+					participant={{_id: peerId}}
 					mediaStream={userStream}
 					mediaStreamState={userStreamState}
 					isUserStream={true}
 				/>
-				{targetParticipants.map((mockPeer) => (
+				{targetParticipants.map((targetParticipant) => (
 					<VideoStream
-						key={mockPeer}
-						peerId={mockPeer}
+						key={targetParticipant._id}
+						participant={targetParticipant}
 						mediaStream={remoteStreams}
 						mediaStreamState={remoteStreamsState}
 						isUserStream={false}
@@ -135,6 +189,14 @@ const CallPage = () => {
 					onClick={toggleMic}
 				>
 					<FaMicrophone />
+				</button>
+				<button
+					className={
+						"text-neutral-50 rounded-full p-5 bg-red-600"
+					}
+					onClick={hangupCall}
+				>
+					<FaPhoneSlash />
 				</button>
 			</div>
 		</section>

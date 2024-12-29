@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 
-const VideoStream = ({ peerId, mediaStream, mediaStreamState, isUserStream }) => {
+const VideoStream = ({ participant, mediaStream, mediaStreamState, isUserStream }) => {
 
-	const [usedMediaStreamState, setUsedMediaStreamState] = useState(isUserStream ? mediaStreamState : mediaStreamState.get(peerId))
+	const [usedMediaStreamState, setUsedMediaStreamState] = useState(isUserStream ? mediaStreamState : mediaStreamState.get(participant._id))
 
 	useEffect(() => {
-		setUsedMediaStreamState(isUserStream ? mediaStreamState : mediaStreamState.get(peerId))
-	}, [isUserStream, mediaStreamState, peerId])
+		setUsedMediaStreamState(isUserStream ? mediaStreamState : mediaStreamState.get(participant._id))
+	}, [isUserStream, mediaStreamState, participant])
 
 	const handleMountMediaStream = node => {
 		if (isUserStream) {
 			mediaStream.current = node
 		} else {
-			mediaStream.current.set(peerId, node)
+			mediaStream.current.set(participant._id, node)
 		}
 	}
 
 	return (
 		<div
-			className="rounded-2xl bg-neutral-800 max-h-full aspect-video w-[32%] flex-grow justify-center items-center"
+			className="rounded-2xl bg-black max-h-full aspect-video w-[32%] flex-grow justify-center items-center relative"
 			style={
 				(!usedMediaStreamState?.srcObject && isUserStream) ||
 				usedMediaStreamState?.srcObject
@@ -36,7 +36,7 @@ const VideoStream = ({ peerId, mediaStream, mediaStreamState, isUserStream }) =>
 				}
 				ref={handleMountMediaStream}
 			></video>
-			<span
+			{/* <span
 				className="text-neutral-50"
 				style={
 					usedMediaStreamState?.srcObject &&
@@ -45,8 +45,15 @@ const VideoStream = ({ peerId, mediaStream, mediaStreamState, isUserStream }) =>
 						: { display: "inline" }
 				}
 			>
-				Ketutup
-			</span>
+				{
+					participant.fullName ?? 'You'
+				}
+			</span> */}
+			<div className="text-neutral-50 text-sm absolute bottom-3 left-3">
+				{
+					isUserStream ? 'You' : participant.fullName
+				}
+			</div>
 		</div>
 	);
 };
