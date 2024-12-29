@@ -25,7 +25,6 @@ export async function POST(req) {
 
     const { user } = await getServerSession(authOptions)
     const userOnCall = result.onCall.indexOf(user.id)
-    console.log(result, userOnCall)
     if (userOnCall > -1) {
       result.onCall.splice(userOnCall, 1)
       await result.save()

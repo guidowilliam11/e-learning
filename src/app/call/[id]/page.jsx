@@ -7,9 +7,11 @@ import { FaVideo, FaMicrophone, FaPhoneSlash } from 'react-icons/fa6';
 import { getSession } from "next-auth/react";
 import { validateRoomData } from "./actions";
 import { redirect, usePathname, useSearchParams } from "next/navigation";
+import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext";
 
 const CallPage = () => {
 
+  const { setIsFullscreenLoading } = useFullscreenLoadingContext()
 	const conversationId = usePathname().split('/')[2]
 	const roomType = useSearchParams().get('type')
 
@@ -57,17 +59,6 @@ const CallPage = () => {
 		peer.on("open", (id) => {
 			setPeerOpened(true)
 		});
-
-		navigator.mediaDevices.getUserMedia({
-			video: true,
-			audio: true,
-		}).then(mediaStream => {
-			userStream.current.srcObject = mediaStream;
-			userStream.current.play();
-			setUserStreamState(userStream.current);
-			toggleMic()
-			toggleVideo()
-		})
 
 		peer.on("call", async (call) => {
 			call.answer(userStream.current.srcObject);
@@ -132,13 +123,24 @@ const CallPage = () => {
 	}
 
 	useEffect(() => {
-		getSession()
+		setIsFullscreenLoading(true)
+		navigator.mediaDevices.getUserMedia({
+			video: true,
+			audio: true,
+		}).then(mediaStream => {
+			userStream.current.srcObject = mediaStream;
+			userStream.current.play();
+			setUserStreamState(userStream.current);
+			toggleMic()
+			toggleVideo()
+			getSession()
 			.then((session) => {
 				!session && redirect('/login')
 				const { user } = session
 				setPeerId(user.id)
 				setupRoomData()
 			})
+		})
 	}, []);
 
 	useEffect(() => {
@@ -150,6 +152,7 @@ const CallPage = () => {
 	useEffect(() => {
 		if (peerOpened && peerDoneSetup) {
 			initiateCall()
+			setIsFullscreenLoading(false)
 		}
 	}, [peerOpened, peerDoneSetup])
 
