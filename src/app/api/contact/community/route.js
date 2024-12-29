@@ -104,22 +104,26 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
-    const { communityId } = await req.json()
+    const { communityId, studentId } = await req.json()
 
     if (!communityId) {
       return NextResponse.json({ error: 'COMMUNITY_ID_REQUIRED' }, { status: 400 })
     }
+    if (!studentId) {
+      return NextResponse.json({ error: 'STUDENT_ID_REQUIRED' }, { status: 400 })
+    }
 
-    const { user } = await getServerSession(authOptions)
 
     const community = await Communities.findById(communityId)
 
-    const userIndex = community.participants.indexOf(user.id)
+    const userIndex = community.participants.indexOf(studentId)
 
     community.participants.splice(userIndex, 1)
     await community.save()
 
-    return NextResponse.json({ message: 'You have left the community.' })
+    await community.populate('participants', 'fullName picture email')
+
+    return NextResponse.json(community.toObject())
   } catch (error) {
     console.error('Error when leaving community: ', error)
     return NextResponse.json({ error: error.message }, { status: 500 })

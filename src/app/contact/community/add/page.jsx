@@ -10,12 +10,14 @@ import {createCommunity, getPeers} from "@/app/contact/community/add/actions";
 import {toast} from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext";
+import { useConversationContext } from "@/contexts/conversationContext";
 
 const AddCommunityPage = () => {
 
   const router = useRouter()
 
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
+  const { setActivePeerProfileId } = useConversationContext()
 
   const [peers, setPeers] = useState([]);
   const selectedPeers = useMemo(() => peers.filter(peer => peer.selected), [peers]);
@@ -35,6 +37,11 @@ const AddCommunityPage = () => {
       nextPeers[peerIndex].selected = !nextPeers[peerIndex].selected;
       setPeers([...nextPeers]);
     }
+  }
+
+  const handleClickPeerProfile = (peer) => {
+    setActivePeerProfileId(peer._id)
+    router.push('/contact/peer')
   }
 
   const handleGetPeerResult = (res) => {
@@ -157,11 +164,12 @@ const AddCommunityPage = () => {
           {
             selectedPeers.map(peer => (
               <div
-                className="p-5 border-b-[1px] border-neutral-300 flex gap-4 cursor-pointer hover:bg-gray-100 bg-neutral-50 transition duration-300"
+                className="p-5 border-b-[1px] border-neutral-300 flex gap-4 cursor-pointer hover:bg-neutral-200 bg-neutral-50 transition duration-300"
                 key={peer._id}
-                onClick={() => handleClickPeer(peer)}
               >
-                <div>
+                <div
+                  onClick={() => handleClickPeerProfile(peer)}
+                >
                   <Image
                     src={peer.picture || '/images/default-profile-picture.webp'}
                     className="rounded-full"
@@ -170,13 +178,19 @@ const AddCommunityPage = () => {
                     alt="profile-picture"
                   />
                 </div>
-                <div className="flex flex-grow items-center justify-between">
+                <div 
+                  className="flex flex-grow items-center justify-between"
+                  onClick={() => handleClickPeerProfile(peer)}
+                >
                   <div className="font-semibold text-md line-clamp-2">
                     {peer.fullName}
                   </div>
-                  <div className="font-semibold text-lg text-neutral-500">
-                    <FaUserMinus />
-                  </div>
+                </div>
+                <div
+                  className="flex items-center font-semibold text-lg text-neutral-500 hover:scale-125 transition"
+                  onClick={() => handleClickPeer(peer)}
+                >
+                  <FaUserMinus />
                 </div>
               </div>
             ))
@@ -191,12 +205,13 @@ const AddCommunityPage = () => {
           {
             peers.map(peer => (
               <div
-                className="p-5 border-b-[1px] border-neutral-300 flex gap-4 cursor-pointer hover:bg-gray-100 bg-neutral-50 transition duration-300"
+                className="p-5 border-b-[1px] border-neutral-300 flex gap-4 cursor-pointer hover:bg-neutral-200 bg-neutral-50 transition duration-300"
                 key={peer._id}
-                onClick={() => handleClickPeer(peer)}
                 style={peer.selected ? {display: "none"} : {display: "flex"} }
               >
-                <div>
+                <div
+                  onClick={() => handleClickPeerProfile(peer)}
+                >
                   <Image
                     src={peer.picture || '/images/default-profile-picture.webp'}
                     className="rounded-full"
@@ -205,13 +220,19 @@ const AddCommunityPage = () => {
                     alt="profile-picture"
                   />
                 </div>
-                <div className="flex flex-grow items-center justify-between">
+                <div
+                  className="flex flex-grow items-center justify-between"
+                  onClick={() => handleClickPeerProfile(peer)}
+                >
                   <div className="font-semibold text-md line-clamp-2">
                     {peer.fullName}
                   </div>
-                  <div className="font-semibold text-lg text-neutral-500">
-                    <FaUserPlus />
-                  </div>
+                </div>
+                <div
+                  className="flex items-center font-semibold text-lg text-neutral-500 hover:scale-125 transition"
+                  onClick={() => handleClickPeer(peer)}
+                >
+                  <FaUserPlus />
                 </div>
               </div>
             ))

@@ -6,11 +6,11 @@ export const getCommunity = async (communityId) => {
   return fetch(`${baseUrl}/api/contact/community?communityId=${communityId}`).then(_responseAdapter)
 }
 
-export const leaveCommunity = async (communityId) => {
+export const removeMember = async (communityId, studentId) => {
   return fetch(`${baseUrl}/api/contact/community`, {
     method: 'DELETE',
     'Content-Type': 'application/json',
-    body: JSON.stringify({ communityId })
+    body: JSON.stringify({ communityId, studentId })
   }).then(_responseAdapter)
 }
 
@@ -19,5 +19,17 @@ export const editCommunity = async (formData) => {
     method: 'PATCH',
     'Content-Type': 'multipart/formdata',
     body: formData
+  }).then(_responseAdapter)
+}
+
+export const getPeersToInvite = async (communityId) => {
+  return fetch(`${baseUrl}/api/contact/community/invite?communityId=${communityId}`).then(_responseAdapter)
+}
+
+export const invitePeer = async (communityId, peerStudentId) => {
+  return fetch(`${baseUrl}/api/contact/community/invite`, {
+    method: 'POST',
+    'Content-Type': 'multipart/formdata',
+    body: JSON.stringify({ communityId, peerStudentId })
   }).then(_responseAdapter)
 }
