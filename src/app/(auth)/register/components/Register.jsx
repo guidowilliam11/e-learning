@@ -7,6 +7,7 @@ import { object, string } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import AuthCard from '@/components/AuthCard'
 import { redirect } from 'next/navigation'
+import { registerNewUser } from '../../action'
 
 const schema = object({
   fullName: string().min(6, { message: 'Name is required' }),
@@ -57,35 +58,25 @@ const Register = () => {
       email: data.email,
       password: data.password,
     }
-    console.log(userData)
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      })
+      const register = await registerNewUser(userData)
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Sign-up failed')
-      } else {
-        const data = await response.json()
-        alert(data.message)
+      if (register) {
         setTimeout(() => {
-          reset({
-            fullName: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-          })
           redirect('/login')
         }, 500)
       }
+
+      alert(register.message)
+      reset({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      })
     } catch (error) {
-      throw error
+      console.error(error)
     }
   }
 

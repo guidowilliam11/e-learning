@@ -2,7 +2,6 @@
 
 import { Button, Grid2, styled, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import { useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import AuthCard from '@/components/AuthCard'
@@ -56,7 +55,6 @@ const Login = () => {
         const errorData = await res.json()
         throw new Error(errorData.message || 'Sign-in failed')
       } else {
-        toast.success('Successfully signed in!')
         setTimeout(() => {
           reset({
             email: '',
@@ -114,9 +112,7 @@ const Login = () => {
                 helperText={errors.email?.message}
                 fullWidth
                 size='small'
-                sx={{
-                  my: 2,
-                }}
+                sx={{ my: 2 }}
               />
             )}
           />
