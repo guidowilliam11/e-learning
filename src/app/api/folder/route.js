@@ -26,4 +26,35 @@ export async function GET(req) {
             { message: 'User already exists' },
             { status: 400 }
         )    }
-};
+}
+
+// POST: Create a new folder
+export async function POST(req) {
+    try {
+        await connectToDatabase();
+        const session = await getServerSession(authOptions);
+        if (!session) return res.status(401).json({ message: 'Unauthorized' });
+
+        const userId = session.user.id;
+        const { folderName } = await req.json();
+
+        if (!folderName) {
+            return NextResponse.json(
+                { message: 'Folder name is required' },
+                { status: 400 }
+            );
+        }
+
+        const newFolder = await Folder.create({ ownerId: userId, name: folderName, notes: []});
+        return NextResponse.json(
+            { folder: newFolder },
+            { status: 201 }
+        );
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json(
+            { message: 'Error creating folder' },
+            { status: 500 }
+        );
+    }
+}
