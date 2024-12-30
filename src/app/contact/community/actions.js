@@ -9,7 +9,9 @@ export const getCommunity = async (communityId) => {
 export const removeMember = async (communityId, studentId) => {
   return fetch(`${baseUrl}/api/contact/community`, {
     method: 'DELETE',
-    'Content-Type': 'application/json',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({ communityId, studentId })
   }).then(_responseAdapter)
 }
@@ -17,7 +19,6 @@ export const removeMember = async (communityId, studentId) => {
 export const editCommunity = async (formData) => {
   return fetch(`${baseUrl}/api/contact/community`, {
     method: 'PATCH',
-    'Content-Type': 'multipart/formdata',
     body: formData
   }).then(_responseAdapter)
 }
@@ -29,7 +30,9 @@ export const getPeersToInvite = async (communityId) => {
 export const invitePeer = async (communityId, peerStudentId) => {
   return fetch(`${baseUrl}/api/contact/community/invite`, {
     method: 'POST',
-    'Content-Type': 'multipart/formdata',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({ communityId, peerStudentId })
   }).then(_responseAdapter)
 }

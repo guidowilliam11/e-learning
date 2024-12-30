@@ -25,16 +25,15 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const newCommunity = {}
+
+    const { user } = await getServerSession(authOptions)
+
     const formData = await req.formData()
 
-    const session = await getServerSession(authOptions)
-
-    const { user } = session
-
+    const newCommunity = {}
     newCommunity.name = formData.get('name')
-    newCommunity.participants = formData.get('participants')
-    const picture = formData.get('picture')
+    newCommunity.participants = formData.get('participants').split(',')
+    const picture = formData.get('picture') === 'null' ? null : formData.get('picture')
 
     if (picture) {
       const bufferBytes = await picture.arrayBuffer()
@@ -48,15 +47,12 @@ export async function POST(req) {
       await writeFile(relativePath, buffer)
 
       newCommunity.picture = path
-    } else {
-      newCommunity.picture = '/public/images/default-community-picture.png'
     }
 
     newCommunity.participants.push(user.id)
     const community = await Communities.create(newCommunity)
 
     return NextResponse.json(community.toObject())
-
   } catch (error) {
     console.error('Error when creating community: ', error)
     return NextResponse.json({ error: error.message }, { status: 500 })

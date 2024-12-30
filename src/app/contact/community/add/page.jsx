@@ -62,21 +62,20 @@ const AddCommunityPage = () => {
   const handleCreateCommunity = async (e) => {
     e.preventDefault()
 
-    const newCommunity = {
-      name: communityName,
-      description: '',
-      participants: selectedPeers.map(peer => peer._id),
-      picture
-    }
+    const formData = new FormData(createCommunityForm)
+
+    formData.set('name', communityName)
+    formData.set('participants', selectedPeers.map(peer => peer._id))
+    formData.set('picture', picture)
 
     setIsFullscreenLoading(true)
-    createCommunity(newCommunity)
+    createCommunity(formData)
       .then(handleCreateCommunityResult)
       .finally(() => setIsFullscreenLoading(false))
   }
 
   const handleCreateCommunityResult = (res) => {
-    if (res?._id) {
+    if (res.body?._id) {
       setTimeout(() => router.push('/contact'), 1000)
       toast.success('Community has been created!')
     }
@@ -100,7 +99,7 @@ const AddCommunityPage = () => {
         </span>
       </div>
       <div className="flex w-full flex-col items-start mt-3 mb-5">
-        <form className="flex w-full gap-2 items-center mb-1" onSubmit={handleCreateCommunity}>
+        <form className="flex w-full gap-2 items-center mb-1" onSubmit={handleCreateCommunity} id="createCommunityForm">
           <div
             className="rounded-full mr-4 image-upload-wrapper h-[100px] w-[100px] relative cursor-pointer"
           >
@@ -125,6 +124,8 @@ const AddCommunityPage = () => {
           />
           <textarea
             required
+            name="name"
+            value={communityName}
             className="rounded drop-shadow-sm p-2 w-[30%] resize-none focus:outline-none focus:ring-primary focus:ring-2"
             placeholder="Community Name"
             onChange={e => setCommunityName(e.target.value)}

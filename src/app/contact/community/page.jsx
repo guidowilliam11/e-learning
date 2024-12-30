@@ -33,9 +33,9 @@ const CommunityPage = () => {
   }, [community])
   const isCommunityEdited = useMemo(() => {
     return ( 
-      prevCommunity.name != community.name ||
-      prevCommunity.description != community.description ||
-      prevCommunity.picture != community.picture
+      prevCommunity?.name != community?.name ||
+      prevCommunity?.description != community?.description ||
+      prevCommunity?.picture != community?.picture
     )
   }, [prevCommunity, community])
 
