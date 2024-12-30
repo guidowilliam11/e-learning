@@ -339,7 +339,6 @@ const Schedule = ({ user }) => {
                               }
                               sx={{
                                 color: '#050505a8',
-                                textTransform: 'none',
                                 fontSize: '16px',
                                 ml: 0.75,
                               }}

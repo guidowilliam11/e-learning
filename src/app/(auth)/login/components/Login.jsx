@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Grid2, styled, TextField } from '@mui/material'
+import { Button, Grid2, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { signIn } from 'next-auth/react'
@@ -68,28 +68,6 @@ const Login = () => {
     }
   }
 
-  const CustomTextField = styled(TextField)({
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '8px',
-      '&:hover fieldset': {
-        borderColor: '#F2994A',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#F2994A',
-        borderWidth: '2px',
-      },
-    },
-    '& .MuiInputLabel-root.Mui-focused': {
-      color: '#F2994A',
-    },
-    '& .MuiInputBase-root': {
-      fontSize: '0.925rem',
-    },
-    '& .MuiInputLabel-root': {
-      fontSize: '0.925rem',
-    },
-  })
-
   return (
     <AuthCard
       title='Login to ZEAL'
@@ -104,7 +82,7 @@ const Login = () => {
             control={control}
             rules={{ required: 'Email is required' }}
             render={({ field }) => (
-              <CustomTextField
+              <TextField
                 {...field}
                 label='Email'
                 placeholder='your@email.com'
@@ -121,7 +99,7 @@ const Login = () => {
             control={control}
             rules={{ required: 'Password is required' }}
             render={({ field }) => (
-              <CustomTextField
+              <TextField
                 {...field}
                 label='Password'
                 type='password'

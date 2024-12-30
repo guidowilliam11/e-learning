@@ -4,44 +4,15 @@ import { usePathname } from 'next/navigation'
 import Sidebar from '../components/sidebar'
 import TopBar from '../components/topbar'
 import { ToastWrapper } from '@/libs/ToastWrapper'
-import { createTheme, ThemeProvider } from '@mui/material'
+import { ThemeProvider } from '@mui/material'
+import MUITheme from '@/libs/MUITheme'
 
 export default function ConditionalLayout({ children }) {
-  const theme = createTheme({
-    typography: {
-      allVariants: {
-        fontFamily: 'Inter',
-      },
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            fontFamily: 'Inter',
-            textTransform: 'none',
-          },
-        },
-      },
-      MuiTextField: {
-        styleOverrides: {
-          root: {
-            fontFamily: 'Inter',
-          },
-        },
-      },
-    },
-  })
-
   const pathname = usePathname()
 
-  // Define routes to exclude from the layout
   const excludedRoutes = ['/login', '/register']
-
-  // If the current route is excluded, render only the children
-
-  // Default layout for other routes
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={MUITheme}>
       {excludedRoutes.includes(pathname) ? (
         children
       ) : (
