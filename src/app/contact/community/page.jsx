@@ -15,7 +15,6 @@ const CommunityPage = () => {
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
   const { 
     activeCommunityProfileId,
-    setActivePeerProfileId,
     setActiveConversation
   } = useConversationContext()
 
@@ -81,8 +80,7 @@ const CommunityPage = () => {
     }
   }
   const handleClickMember = (member) => {
-    setActivePeerProfileId(member._id)
-    router.push(`/contact/peer`)
+    router.push(`/contact/peer?email=${member.email}`)
   }
 
   const handleClickRemoveMember = (studentId) => {

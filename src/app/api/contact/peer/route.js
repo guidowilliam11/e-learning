@@ -3,15 +3,16 @@ import { authOptions } from "../../auth/[...nextauth]/route"
 import { connectToDatabase } from "@/libs/mongo/config"
 import Peers from "@/models/PeerModel"
 import { NextResponse } from "next/server"
+import Students from "@/models/StudentModel"
 
 export async function GET(req) {
   try {
 
     const url = new URL(req.url)
 
-    const targetStudentId = url.searchParams.get('targetStudentId')
+    const email = url.searchParams.get('email')
 
-    if (!targetStudentId) {
+    if (!email) {
       return NextResponse.json({ error: 'TARGET_STUDENT_ID_REQUIRED' }, { status: 400 })
     }
 
@@ -21,6 +22,8 @@ export async function GET(req) {
 
     await connectToDatabase()
 
+    const targetStudent = await Students.findOne({ email })
+
     let notPeers = false
     const peer = await Peers.findOne({
       participants: {
@@ -28,7 +31,7 @@ export async function GET(req) {
       }
     }).findOne({
       participants: {
-        $in: targetStudentId
+        $in: targetStudent._id
       }
     }).populate('participants', 'fullName picture email')
 

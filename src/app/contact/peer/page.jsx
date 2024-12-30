@@ -1,9 +1,8 @@
 "use client"
 
 import {FaArrowLeft, FaBan} from "react-icons/fa6";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import Image from "next/image";
-import {useConversationContext} from "@/contexts/conversationContext";
 import {useEffect, useState} from "react";
 import {getPeerData} from "@/app/contact/peer/actions";
 import { toast } from "react-toastify";
@@ -12,22 +11,22 @@ import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext
 const PeerPage = () => {
 
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
-  const { activePeerProfileId } = useConversationContext();
+  const peerEmail = useSearchParams().get('email')
 
   const router = useRouter();
   const [peer, setPeerData]  = useState({})
 
   useEffect(() => {
     setIsFullscreenLoading(true)
-    if (!activePeerProfileId) {
+    if (!peerEmail) {
       router.push(`/contact`);
     }
 
-    getPeerData(activePeerProfileId)
+    getPeerData(peerEmail)
       .then(handlePeerData)
       .catch(handleFailGetPeerData)
       .finally(() => setIsFullscreenLoading(false))
-  }, [activePeerProfileId])
+  }, [peerEmail])
 
   const handlePeerData = res => {
     setPeerData(res.body)

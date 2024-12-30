@@ -17,7 +17,6 @@ const AddCommunityPage = () => {
   const router = useRouter()
 
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
-  const { setActivePeerProfileId } = useConversationContext()
 
   const [peers, setPeers] = useState([]);
   const selectedPeers = useMemo(() => peers.filter(peer => peer.selected), [peers]);
@@ -40,8 +39,7 @@ const AddCommunityPage = () => {
   }
 
   const handleClickPeerProfile = (peer) => {
-    setActivePeerProfileId(peer._id)
-    router.push('/contact/peer')
+    router.push(`/contact/peer?email=${peer.email}`)
   }
 
   const handleGetPeerResult = (res) => {

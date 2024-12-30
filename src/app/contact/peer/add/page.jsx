@@ -24,7 +24,6 @@ const errorModeEnum = {
 const Result = ({ isLoading, result, errorMode }) => {
 
   const router = useRouter()
-  const { setActivePeerProfileId } = useConversationContext()
 
   const handleClickAdd = () => {
     addPeer(result)
@@ -44,8 +43,7 @@ const Result = ({ isLoading, result, errorMode }) => {
   }
 
   const handleClickViewProfile = () => {
-    setActivePeerProfileId(result._id)
-    router.push('/contact/peer')
+    router.push(`/contact/peer?email=${result.email}`)
   }
 
   switch (errorMode) {

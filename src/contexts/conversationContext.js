@@ -10,7 +10,6 @@ export const ConversationContextProvider = ({ children }) => {
     const [activeConversation, setActiveConversation] = useState({});
     const [activeConversationMessages, setActiveConversationMessages] = useState({});
     const [isFetchingConversationData, setIsFetchingConversationData] = useState(false);
-    const [activePeerProfileId, setActivePeerProfileId] = useState('');
     const [activeCommunityProfileId, setActiveCommunityProfileId] = useState('');
     const [isCallOngoing, setIsCallOngoing] = useState(false)
 
@@ -27,8 +26,6 @@ export const ConversationContextProvider = ({ children }) => {
                 setActiveConversation,
                 activeConversationMessages,
                 setActiveConversationMessages,
-                activePeerProfileId,
-                setActivePeerProfileId,
                 activeCommunityProfileId,
                 setActiveCommunityProfileId,
                 isCallOngoing,
