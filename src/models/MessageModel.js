@@ -2,19 +2,27 @@ import mongoose, { Types } from 'mongoose'
 
 const messageSchema = new mongoose.Schema(
   {
-    chatId: {
+    conversationId: {
       $type: Types.ObjectId,
-      refPath: 'type',
+      refPath: 'conversationType',
       required: true
     },
-    type: {
+    conversationType: {
       $type: String,
       required: true,
       enum: ['peers', 'communities']
     },
-    value: {
+    text: {
       $type: String,
-      required: true
+      default: ''
+    },
+    fileName: {
+      $type: String,
+      default: ''
+    },
+    file: {
+      $type: String,
+      default: ''
     },
     sender: {
       $type: Types.ObjectId,

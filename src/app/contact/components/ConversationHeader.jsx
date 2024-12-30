@@ -1,45 +1,56 @@
-import Image from "next/image";
-import {FaArrowLeft, FaPhone} from "react-icons/fa6"
-import {useConversationContext} from "@/contexts/conversationContext";
-import {useRouter} from "next/navigation";
+import Image from "next/image"
+import { FaArrowLeft, FaPhone } from "react-icons/fa6"
+import { useConversationContext } from "@/contexts/conversationContext"
+import { useRouter } from "next/navigation"
+import { toast } from "react-toastify"
+import { validateRoomData } from "@/app/call/[id]/actions"
+import { profileConstructor } from "@/utils/conversationHelper"
 
-const ConversationHeader = () => {
-
+const ConversationHeader = ({ userId }) => {
   const router = useRouter()
 
   const {
-    activeConversationId,
     activeConversation,
     setActiveConversationId,
-    setActiveContactId
+    isCallOngoing,
+    setIsCallOngoing,
   } = useConversationContext()
 
-  const {
-    profilePicture,
-    name,
-    isCommunity
-  } = activeConversation;
+  const { type } = activeConversation
+  const { displayedName, displayedPicture, peer } = profileConstructor(
+    activeConversation,
+    userId
+  )
 
   const handleBackButtonClick = () => {
     setActiveConversationId(null)
   }
 
   const handleProfileClick = () => {
-    setActiveContactId(activeConversationId)
-    if (isCommunity) {
-      router.push(`/contact/community`)
+    if (type === "peer") {
+      router.push(`/contact/peer?email=${peer.email}`)
       return
     }
-    router.push(`/contact/peer`)
+    router.push(`/contact/community?communityId=${activeConversation._id}`)
   }
 
   const initiateCall = () => {
-    let popup = null
-    popup = window.open(
-      `/call/${activeConversationId}`,
-      '_blank',
-      'menubar=no,status=no,width=1280'
-    )
+    if (!isCallOngoing) {
+      setIsCallOngoing(true)
+      let popup = null
+      popup = window.open(
+        `/call/${activeConversation._id}?type=${type}`,
+        "_blank",
+        "menubar=no,status=no,width=1280"
+      )
+      popup.addEventListener("beforeunload", () => {
+        validateRoomData(type, activeConversation._id).then(() =>
+          setIsCallOngoing(false)
+        )
+      })
+      return
+    }
+    toast.error("You must leave the other call first.")
   }
 
   return (
@@ -49,10 +60,10 @@ const ConversationHeader = () => {
           className="text-secondary font-semibold text-xl cursor-pointer"
           onClick={handleBackButtonClick}
         >
-          <FaArrowLeft/>
+          <FaArrowLeft />
         </div>
         <Image
-          src={profilePicture || '/images/default-profile-picture.webp'}
+          src={displayedPicture || "/images/default-profile-picture.webp"}
           height={48}
           width={48}
           alt="Profile picture"
@@ -63,14 +74,11 @@ const ConversationHeader = () => {
           className="font-semibold text-lg cursor-pointer line-clamp-1"
           onClick={handleProfileClick}
         >
-          {name}
+          {displayedName}
         </div>
       </div>
       <div className="flex items-center gap-5 text-secondary font-semibold text-2xl">
-        <FaPhone
-          className="cursor-pointer"
-          onClick={initiateCall}
-        />
+        <FaPhone className="cursor-pointer" onClick={initiateCall} />
       </div>
     </section>
   )

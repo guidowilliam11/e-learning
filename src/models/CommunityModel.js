@@ -10,11 +10,8 @@ const communitySchema = new mongoose.Schema(
     ],
     lastMessage: {
       type: Types.ObjectId,
-      ref: 'messages'
-    },
-    unreadCount: {
-      type: Number,
-      default: 0
+      ref: 'messages',
+      default: null
     },
     onCall: [
       {

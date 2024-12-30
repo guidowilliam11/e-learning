@@ -13,10 +13,6 @@ const peerSchema = new mongoose.Schema(
       ref: 'messages',
       default: null
     },
-    unreadCount: {
-      type: Number,
-      default: 0
-    },
     onCall: [
       {
         type: Types.ObjectId,
