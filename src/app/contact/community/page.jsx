@@ -1,10 +1,10 @@
 "use client"
 
 import { FaDoorOpen, FaUserGroup, FaFloppyDisk, FaArrowLeft, FaUserPlus, FaUserMinus } from "react-icons/fa6"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { useConversationContext } from "@/contexts/conversationContext"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { editCommunity, getCommunity, getPeersToInvite, invitePeer, removeMember } from "./actions"
 import { getSession } from "next-auth/react"
 import { toast } from "react-toastify"
@@ -12,9 +12,9 @@ import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext
 
 const CommunityPage = () => {
 
+  const communityId = useSearchParams().get('communityId')
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
   const { 
-    activeCommunityProfileId,
     setActiveConversation
   } = useConversationContext()
 
@@ -50,7 +50,7 @@ const CommunityPage = () => {
   const handleLeaveCommunity = async () => {
     setIsFullscreenLoading(true)
     const { user } = await getSession()
-    removeMember(activeCommunityProfileId, user.id)
+    removeMember(communityId, user.id)
       .then(handleSuccessLeaveCommunity)
       .finally(() => setIsFullscreenLoading(false))
   }
@@ -85,7 +85,7 @@ const CommunityPage = () => {
 
   const handleClickRemoveMember = (studentId) => {
     setIsFullscreenLoading(true)
-    removeMember(activeCommunityProfileId, studentId)
+    removeMember(communityId, studentId)
       .then(handleSuccessRemoveMember)
       .finally(() => setIsFullscreenLoading(false))
   }
@@ -95,7 +95,7 @@ const CommunityPage = () => {
 
   const handleInitiateAddPeers = () => {
     setIsFullscreenLoading(true)
-    getPeersToInvite(activeCommunityProfileId)
+    getPeersToInvite(communityId)
       .then(handleSuccessInitiateAddPeers)
       .finally(() => setIsFullscreenLoading(false))
   }
@@ -105,7 +105,7 @@ const CommunityPage = () => {
 
   const handleClickInvitePeer = (peerId) => {
     setIsFullscreenLoading(true)
-    invitePeer(activeCommunityProfileId, peerId)
+    invitePeer(communityId, peerId)
       .then(handleSuccessInvitePeer)
       .finally(() => setIsFullscreenLoading(false))
   }
@@ -124,12 +124,12 @@ const CommunityPage = () => {
 
   useEffect(() => {
     setIsFullscreenLoading(true)
-    if (!activeCommunityProfileId) {
+    if (!communityId) {
       router.back()
     }
     getSession()
       .then(({user}) => setUserId(user.id))
-    getCommunity(activeCommunityProfileId)
+    getCommunity(communityId)
       .then(handleSuccessGetCommunity)
       .finally(() => setIsFullscreenLoading(false))
   }, [])
