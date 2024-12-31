@@ -16,8 +16,18 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
     },
+    picture: {
+      type: String,
+      default: ''
+    }
   },
-  { timestamps: true, versionKey: false }
+  {
+    timestamps: true,
+    versionKey: false,
+    toObject: {
+      virtuals: true
+    }
+  }
 )
 
 const Students =

@@ -21,13 +21,12 @@ export const formatMessageTime = (lastMessageTime, shouldShowTime = false) => {
     const epoch = new Date(lastMessageTime)
     const now = new Date()
     const options = []
-
-    if (getTimeDifferenceInDays(now, lastMessageTime) > 0) {
+    if (getTimeDifferenceInDays(now, epoch) > 0) {
         options.push({ year: 'numeric' }, { month: '2-digit' }, { day: '2-digit' })
         return formatTime(epoch, options, '/')
     } else if (
         shouldShowTime ||
-        getTimeDifferenceInDays(now, lastMessageTime) === 0
+        getTimeDifferenceInDays(now, epoch) === 0
     ) {
         options.push({ timeStyle: 'short', hour12: false })
         return formatTime(epoch, options, ':')
