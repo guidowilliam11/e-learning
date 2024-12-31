@@ -17,3 +17,12 @@ export const profileConstructor = (conversation, userId) => {
     displayedName, displayedPicture, peer
   }
 }
+
+export const classifyConversationsData = (conversationsData, conversationType) => {
+  const conversationsDataIterator = conversationsData[Symbol.iterator]()
+  const result = []
+  for (const entry of conversationsDataIterator) {
+    entry[1].type === conversationType && result.push(entry[1])
+  }
+  return result
+}

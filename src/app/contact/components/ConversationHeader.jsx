@@ -16,7 +16,7 @@ const ConversationHeader = ({ userId }) => {
     setIsCallOngoing,
   } = useConversationContext()
 
-  const { type } = activeConversation
+  const { type, onCall } = activeConversation
   const { displayedName, displayedPicture, peer } = profileConstructor(
     activeConversation,
     userId
@@ -35,19 +35,22 @@ const ConversationHeader = ({ userId }) => {
   }
 
   const initiateCall = () => {
+    setIsCallOngoing(true)
     if (!isCallOngoing) {
-      setIsCallOngoing(true)
       let popup = null
       popup = window.open(
         `/call/${activeConversation._id}?type=${type}`,
         "_blank",
         "menubar=no,status=no,width=1280"
       )
-      popup.addEventListener("beforeunload", () => {
-        validateRoomData(type, activeConversation._id).then(() =>
-          setIsCallOngoing(false)
-        )
-      })
+      popup.onbeforeunload = () => {
+        validateRoomData(type, activeConversation._id)
+        setIsCallOngoing(false)
+      }
+      popup.onclose = () => {
+        validateRoomData(type, activeConversation._id)
+        setIsCallOngoing(false)
+      }
       return
     }
     toast.error("You must leave the other call first.")
@@ -77,7 +80,12 @@ const ConversationHeader = ({ userId }) => {
           {displayedName}
         </div>
       </div>
-      <div className="flex items-center gap-5 text-secondary font-semibold text-2xl">
+      <div
+        className={
+          "flex items-center gap-5 font-semibold text-2xl " +
+          (onCall.length > 0 ? "text-primary animate-bounce" : "text-secondary")
+        }
+      >
         <FaPhone className="cursor-pointer" onClick={initiateCall} />
       </div>
     </section>

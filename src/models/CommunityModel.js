@@ -1,22 +1,26 @@
+"use server"
+
 import mongoose, { Types } from 'mongoose'
+import Messages from './MessageModel'
+import Students from './StudentModel'
 
 const communitySchema = new mongoose.Schema(
   {
     participants: [
       {
         type: Types.ObjectId,
-        ref: 'students'
+        ref: Students.modelName
       }
     ],
     lastMessage: {
       type: Types.ObjectId,
-      ref: 'messages',
+      ref: Messages.modelName,
       default: null
     },
     onCall: [
       {
         type: Types.ObjectId,
-        ref: 'students'
+        ref: Students.modelName
       }
     ],
     name: {

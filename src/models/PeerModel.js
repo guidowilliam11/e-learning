@@ -1,4 +1,7 @@
+"use server"
+
 import mongoose, { Types } from 'mongoose'
+import Messages from './MessageModel'
 
 const peerSchema = new mongoose.Schema(
   {
@@ -10,7 +13,7 @@ const peerSchema = new mongoose.Schema(
     ],
     lastMessage: {
       type: Types.ObjectId,
-      ref: 'messages',
+      ref: Messages.modelName,
       default: null
     },
     onCall: [

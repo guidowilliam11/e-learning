@@ -5,9 +5,10 @@ import { formatMessageTime } from "@/utils/time"
 import { useConversationContext } from "@/contexts/conversationContext"
 import Image from "next/image"
 import { profileConstructor } from "@/utils/conversationHelper"
+import { FaPhone } from "react-icons/fa6"
 
 const UnreadCount = ({ userId, lastMessage, unreadCount }) => {
-  let isUnread = lastMessage ? lastMessage.sender !== userId : false
+  let isUnread = lastMessage ? lastMessage.sender._id !== userId : false
 
   return (
     <>
@@ -28,7 +29,7 @@ const UnreadCount = ({ userId, lastMessage, unreadCount }) => {
 const Conversation = ({ conversation }) => {
   const { setActiveConversationId } = useConversationContext()
 
-  const { userId, unreadCount, lastMessage } = conversation
+  const { userId, unreadCount, lastMessage, onCall } = conversation
 
   const { displayedName, displayedPicture } = profileConstructor(
     conversation,
@@ -63,8 +64,13 @@ const Conversation = ({ conversation }) => {
       </div>
       <div className="flex flex-grow">
         <div className="flex flex-col w-4/5 justify-center">
-          <div className="font-semibold text-md line-clamp-2">
-            {displayedName}
+          <div className="font-semibold text-md flex items-center gap-2">
+            <span className="line-clamp-2 max-w-full break-all">
+              {displayedName}
+            </span>
+            {onCall.length > 0 && (
+              <FaPhone className="flex-shrink-0 text-primary" />
+            )}
           </div>
           <div className="text-neutral-600 line-clamp-2 text-pretty break-all">
             {displayedLastMessage}

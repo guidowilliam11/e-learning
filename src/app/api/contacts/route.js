@@ -21,12 +21,29 @@ export async function GET(req) {
       participants: {
         $in: user.id
       }
-    }).populate('participants', 'fullName picture email').populate('lastMessage').sort({ 'lastMessage.createdAt': 1 })
+    }).populate('participants', 'fullName picture email')
+      .populate({
+        path: 'lastMessage',
+        model: 'messages',
+        populate: {
+          path: 'sender',
+          model: 'students',
+          select: 'fullName email picture'
+        }
+      }).sort({ 'updatedAt': 1 })
     communities = await Communities.find({
       participants: {
         $in: user.id
       }
-    }).populate('lastMessage').sort({ 'lastMessage.createdAt': 1 })
+    }).populate({
+      path: 'lastMessage',
+      model: 'messages',
+      populate: {
+        path: 'sender',
+        model: 'students',
+        select: 'fullName email picture'
+      }
+    }).sort({ 'updatedAt': 1 })
 
     result = {
       peers,

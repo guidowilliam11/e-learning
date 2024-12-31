@@ -49,20 +49,40 @@ export async function POST(req) {
     const message = await Messages.create(newMessage)
     await message.populate('sender', 'fullName email picture')
 
+    let result = {}
     switch (conversationType) {
       case 'peers':
-        await Peers.findByIdAndUpdate(conversationId, {
+        result = await Peers.findByIdAndUpdate(conversationId, {
           lastMessage: message._id
-        })
+        }, {
+          new: true
+        }).populate('participants')
+          .populate({
+            path: 'lastMessage',
+            populate: {
+              path: 'sender',
+              select: 'fullName email picture',
+              model: 'students'
+            }
+          })
         break
       case 'communities':
-        await Communities.findByIdAndUpdate(conversationId, {
+        result = await Communities.findByIdAndUpdate(conversationId, {
           lastMessage: message._id
+        }, {
+          new: true
+        }).populate({
+          path: 'lastMessage',
+          populate: {
+            path: 'sender',
+            select: 'fullName email picture',
+            model: 'students'
+          }
         })
         break
     }
 
-    return NextResponse.json(message)
+    return NextResponse.json(result)
 
   } catch (error) {
     console.error('Error when validating messages: ', error)

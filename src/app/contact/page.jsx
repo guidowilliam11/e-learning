@@ -11,6 +11,7 @@ import { getSession } from "next-auth/react"
 import { useConversationContext } from "@/contexts/conversationContext"
 import { redirect } from "next/navigation"
 import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext"
+import { classifyConversationsData } from "@/utils/conversationHelper"
 
 const contactTabs = [
   {
@@ -39,21 +40,11 @@ const ContactPage = () => {
   )
 
   const peers = useMemo(() => {
-    const conversationsDataIterator = conversationsData[Symbol.iterator]()
-    const result = []
-    for (const entry of conversationsDataIterator) {
-      entry[1].type === "peer" && result.push(entry[1])
-    }
-    return result
+    return classifyConversationsData(conversationsData, "peer")
   }, [conversationsData])
 
   const communities = useMemo(() => {
-    const conversationsDataIterator = conversationsData[Symbol.iterator]()
-    const result = []
-    for (const entry of conversationsDataIterator) {
-      entry[1].type === "community" && result.push(entry[1])
-    }
-    return result
+    return classifyConversationsData(conversationsData, "community")
   }, [conversationsData])
 
   const handleGetContactResult = (res) => {

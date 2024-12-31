@@ -11,6 +11,8 @@ const ConversationFooter = ({ userId }) => {
     activeConversationId,
     activeConversation,
     setActiveConversationMessages,
+    conversationsData,
+    setConversationsData,
   } = useConversationContext()
 
   const messageInput = useRef(null)
@@ -50,7 +52,14 @@ const ConversationFooter = ({ userId }) => {
   }
 
   const handleSuccessPostMessage = (res) => {
-    setActiveConversationMessages((prev) => [...prev, res.body])
+    const conversation = res.body
+    setActiveConversationMessages((prev) => [...prev, conversation.lastMessage])
+    const tempConversationsData = new Map(conversationsData)
+    tempConversationsData.set(conversation._id, {
+      ...conversation,
+      type: conversationsData.get(conversation._id).type,
+    })
+    setConversationsData(tempConversationsData)
     messageInput.current.value = ""
     fileInput.current.value = ""
     setFileInputState(null)
