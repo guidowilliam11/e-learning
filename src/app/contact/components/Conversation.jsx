@@ -4,11 +4,14 @@ import { useMemo } from "react"
 import { formatMessageTime } from "@/utils/time"
 import { useConversationContext } from "@/contexts/conversationContext"
 import Image from "next/image"
-import { profileConstructor } from "@/utils/conversationHelper"
+import {
+  profileConstructor,
+  validateIsUnread,
+} from "@/utils/conversationHelper"
 import { FaPhone } from "react-icons/fa6"
 
 const UnreadCount = ({ userId, lastMessage, unreadCount }) => {
-  let isUnread = lastMessage ? lastMessage.sender._id !== userId : false
+  let isUnread = validateIsUnread(userId, lastMessage)
 
   return (
     <>

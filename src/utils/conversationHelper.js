@@ -24,5 +24,19 @@ export const classifyConversationsData = (conversationsData, conversationType) =
   for (const entry of conversationsDataIterator) {
     entry[1].type === conversationType && result.push(entry[1])
   }
-  return result
+  return result.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+}
+
+export const validateIsUnread = (userId, lastMessage) => {
+  if (!lastMessage?.seenBy) {
+    return false
+  }
+  for (const studentId of lastMessage.seenBy) {
+    if (studentId === userId) {
+      return false
+    }
+  }
+  if (lastMessage.sender._id !== userId) {
+    return true
+  }
 }

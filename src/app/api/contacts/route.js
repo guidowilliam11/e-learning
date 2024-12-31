@@ -30,7 +30,7 @@ export async function GET(req) {
           model: 'students',
           select: 'fullName email picture'
         }
-      }).sort({ 'updatedAt': 1 })
+      })
     communities = await Communities.find({
       participants: {
         $in: user.id
@@ -43,7 +43,7 @@ export async function GET(req) {
         model: 'students',
         select: 'fullName email picture'
       }
-    }).sort({ 'updatedAt': 1 })
+    })
 
     result = {
       peers,

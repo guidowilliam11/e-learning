@@ -5,8 +5,7 @@ import ConversationContent from "@/app/contact/components/ConversationContent"
 import ConversationFooter from "@/app/contact/components/ConversationFooter"
 
 const ConversationPage = ({ userId }) => {
-  const { activeConversationId, setActiveConversationMessages } =
-    useConversationContext()
+  const { activeConversationId } = useConversationContext()
 
   return (
     <>

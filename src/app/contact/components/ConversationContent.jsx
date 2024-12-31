@@ -11,6 +11,8 @@ const ConversationContent = ({ userId }) => {
   const {
     activeConversationId,
     activeConversationMessages,
+    conversationsData,
+    setConversationsData,
     setActiveConversationMessages,
   } = useConversationContext()
 
@@ -24,6 +26,13 @@ const ConversationContent = ({ userId }) => {
   }
   const handleSuccessValidateMessages = (res) => {
     setActiveConversationMessages(res.body)
+    const tempConversationsData = new Map(conversationsData)
+    const tempSeenBy =
+      tempConversationsData.get(activeConversationId).lastMessage?.seenBy
+    if (tempSeenBy) {
+      tempSeenBy.indexOf(userId) === -1 && tempSeenBy.push(userId)
+    }
+    setConversationsData(tempConversationsData)
   }
 
   useEffect(() => {
