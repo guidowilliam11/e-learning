@@ -5,6 +5,10 @@ import { authOptions } from "../../auth/[...nextauth]/route"
 import { writeFile } from "fs/promises"
 import Communities from "@/models/CommunityModel"
 import Peers from "@/models/PeerModel"
+import { pusherServer } from "@/libs/pusher/pusherServer"
+import { pusherConfigs } from "@/configs/pusherConfigs"
+
+const { channelName, event } = pusherConfigs
 
 export async function POST(req) {
   try {
@@ -71,16 +75,23 @@ export async function POST(req) {
           lastMessage: message._id
         }, {
           new: true
-        }).populate({
-          path: 'lastMessage',
-          populate: {
-            path: 'sender',
-            select: 'fullName email picture',
-            model: 'students'
-          }
         })
+          .populate('participants', 'fullName')
+          .populate({
+            path: 'lastMessage',
+            populate: {
+              path: 'sender',
+              select: 'fullName email picture',
+              model: 'students'
+            }
+          })
         break
     }
+
+    pusherServer.trigger(channelName.contact, event.contactUpdate, {
+      ...result.toObject(),
+      type: conversationType === 'peers' ? 'peer' : 'community'
+    })
 
     return NextResponse.json(result)
 

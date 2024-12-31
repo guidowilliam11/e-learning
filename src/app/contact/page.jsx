@@ -1,28 +1,32 @@
-"use client"
+'use client'
 
-import ContentNavigationBar from "@/components/ContentNavigationBar"
-import ConversationPage from "@/app/contact/components/ConversationPage"
-import { useEffect, useMemo, useState } from "react"
-import Conversation from "@/app/contact/components/Conversation"
-import { FaUser, FaUserGroup } from "react-icons/fa6"
-import { getContacts } from "./actions"
-import Link from "next/link"
-import { getSession } from "next-auth/react"
-import { useConversationContext } from "@/contexts/conversationContext"
-import { redirect } from "next/navigation"
-import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext"
-import { classifyConversationsData } from "@/utils/conversationHelper"
+import ContentNavigationBar from '@/components/ContentNavigationBar'
+import ConversationPage from '@/app/contact/components/ConversationPage'
+import { useEffect, useMemo, useState } from 'react'
+import Conversation from '@/app/contact/components/Conversation'
+import { FaUser, FaUserGroup } from 'react-icons/fa6'
+import { getContacts } from './actions'
+import Link from 'next/link'
+import { getSession } from 'next-auth/react'
+import { useConversationContext } from '@/contexts/conversationContext'
+import { redirect } from 'next/navigation'
+import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext'
+import { classifyConversationsData } from '@/utils/conversationHelper'
+import { pusherClient } from '@/libs/pusher/pusherClient'
+import { pusherConfigs } from '@/configs/pusherConfigs'
 
 const contactTabs = [
   {
-    name: "Private",
-    value: "peer",
+    name: 'Private',
+    value: 'peer',
   },
   {
-    name: "Community",
-    value: "community",
+    name: 'Community',
+    value: 'community',
   },
 ]
+
+const { channelName, event } = pusherConfigs
 
 const ContactPage = () => {
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
@@ -33,18 +37,14 @@ const ContactPage = () => {
     setActiveContactTab,
   } = useConversationContext()
 
-  const [userId, setUserId] = useState("")
-  const activeContactType = useMemo(
-    () => contactTabs[activeContactTab].value,
-    [activeContactTab]
-  )
+  const [userId, setUserId] = useState('')
 
   const peers = useMemo(() => {
-    return classifyConversationsData(conversationsData, "peer")
+    return classifyConversationsData(conversationsData, 'peer')
   }, [conversationsData])
 
   const communities = useMemo(() => {
-    return classifyConversationsData(conversationsData, "community")
+    return classifyConversationsData(conversationsData, 'community')
   }, [conversationsData])
 
   const handleGetContactResult = (res) => {
@@ -54,31 +54,50 @@ const ContactPage = () => {
     peers.forEach((peer) => {
       tempConversationsData.set(peer._id, {
         ...peer,
-        type: "peer",
+        type: 'peer',
       })
     })
     communities.forEach((community) => {
       tempConversationsData.set(community._id, {
         ...community,
-        type: "community",
+        type: 'community',
       })
     })
     setConversationsData(tempConversationsData)
   }
 
-  useEffect(() => {
-    getSession().then((session) => {
-      !session && redirect("/login")
-      const { user } = session
-      setUserId(user.id)
+  const handlePusherContactUpdate = (data) => {
+    let isMessageForStudent = false
+    for (const participant of data.participants) {
+      if (participant._id !== userId) {
+        isMessageForStudent = true
+      }
+    }
+    if (!isMessageForStudent) {
+      return
+    }
+    setConversationsData((prev) => {
+      const newConversationsData = new Map(prev)
+      newConversationsData.set(data._id, data)
+      return newConversationsData
     })
-  }, [])
+  }
 
   useEffect(() => {
     setIsFullscreenLoading(true)
-    getContacts()
-      .then(handleGetContactResult)
-      .finally(() => setIsFullscreenLoading(false))
+    getSession().then((session) => {
+      !session && redirect('/login')
+      const { user } = session
+      setUserId(user.id)
+      pusherClient.subscribe(channelName.contact)
+      pusherClient.bind(event.contactUpdate, handlePusherContactUpdate)
+      getContacts()
+        .then(handleGetContactResult)
+        .finally(() => setIsFullscreenLoading(false))
+    })
+    return () => {
+      pusherClient.unsubscribe(channelName.contact)
+    }
   }, [])
 
   return (

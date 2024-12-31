@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useMemo } from "react"
-import { formatMessageTime } from "@/utils/time"
-import { useConversationContext } from "@/contexts/conversationContext"
-import Image from "next/image"
+import { useMemo } from 'react'
+import { formatMessageTime } from '@/utils/time'
+import { useConversationContext } from '@/contexts/conversationContext'
+import Image from 'next/image'
 import {
   profileConstructor,
   validateIsUnread,
-} from "@/utils/conversationHelper"
-import { FaPhone } from "react-icons/fa6"
+} from '@/utils/conversationHelper'
+import { FaPhone } from 'react-icons/fa6'
 
 const UnreadCount = ({ userId, lastMessage, unreadCount }) => {
   let isUnread = validateIsUnread(userId, lastMessage)
@@ -18,11 +18,11 @@ const UnreadCount = ({ userId, lastMessage, unreadCount }) => {
       {isUnread && (
         <div
           className={
-            "rounded-full bg-secondary w-fit px-2 text-neutral-50 text-xs font-semibold " +
-            (unreadCount ? "py-1 " : "py-2")
+            'rounded-full bg-secondary w-fit px-2 text-neutral-50 text-xs font-semibold ' +
+            (unreadCount ? 'py-1 ' : 'py-2')
           }
         >
-          {unreadCount ? unreadCount : " "}
+          {unreadCount ? unreadCount : ' '}
         </div>
       )}
     </>
@@ -72,7 +72,7 @@ const Conversation = ({ conversation }) => {
               {displayedName}
             </span>
             {onCall.length > 0 && (
-              <FaPhone className="flex-shrink-0 text-primary" />
+              <FaPhone className="flex-shrink-0 text-primary animate-bounce" />
             )}
           </div>
           <div className="text-neutral-600 line-clamp-2 text-pretty break-all">

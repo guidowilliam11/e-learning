@@ -3,6 +3,10 @@ import Peers from "@/models/PeerModel"
 import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 import { authOptions } from "../auth/[...nextauth]/route"
+import { pusherConfigs } from "@/configs/pusherConfigs"
+import { pusherServer } from "@/libs/pusher/pusherServer"
+
+const { channelName, event } = pusherConfigs
 
 export async function POST(req) {
   try {
@@ -16,10 +20,24 @@ export async function POST(req) {
 
     switch (roomType) {
       case 'peer':
-        result = await Peers.findById(conversationId).populate('participants', 'fullName picture')
+        result = await Peers.findById(conversationId).populate('participants', 'fullName picture').populate({
+          path: 'lastMessage',
+          populate: {
+            path: 'sender',
+            select: 'fullName',
+            model: 'students'
+          }
+        })
         break
       case 'community':
-        result = await Communities.findById(conversationId).populate('participants', 'fullName picture')
+        result = await Communities.findById(conversationId).populate('participants', 'fullName picture').populate({
+          path: 'lastMessage',
+          populate: {
+            path: 'sender',
+            select: 'fullName',
+            model: 'students'
+          }
+        })
         break
     }
 
@@ -27,14 +45,20 @@ export async function POST(req) {
     const userOnCall = result.onCall.indexOf(user.id)
     if (userOnCall > -1) {
       result.onCall.splice(userOnCall, 1)
-      await result.save()
-      return NextResponse.json(result.toObject())
+    } else {
+      result.onCall.push(user.id)
     }
 
-    result.onCall.push(user.id)
     await result.save()
+    const returnedResult = {
+      ...result.toObject(),
+      isCall: true,
+      type: roomType
+    }
 
-    return NextResponse.json(result.toObject())
+    pusherServer.trigger(channelName.contact, event.contactUpdate, returnedResult)
+
+    return NextResponse.json(returnedResult)
 
   } catch (error) {
     console.error('Error when getting room data: ', error)

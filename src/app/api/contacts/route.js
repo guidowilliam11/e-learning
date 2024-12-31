@@ -35,15 +35,16 @@ export async function GET(req) {
       participants: {
         $in: user.id
       }
-    }).populate({
-      path: 'lastMessage',
-      model: 'messages',
-      populate: {
-        path: 'sender',
-        model: 'students',
-        select: 'fullName email picture'
-      }
-    })
+    }).populate('participants', 'fullName')
+      .populate({
+        path: 'lastMessage',
+        model: 'messages',
+        populate: {
+          path: 'sender',
+          model: 'students',
+          select: 'fullName email picture'
+        }
+      })
 
     result = {
       peers,

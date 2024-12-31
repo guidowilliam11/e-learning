@@ -1,16 +1,15 @@
-import { FaPlus } from "react-icons/fa6"
-import { HiOutlinePaperAirplane } from "react-icons/hi2"
-import { useConversationContext } from "@/contexts/conversationContext"
-import { useRef, useState } from "react"
-import Spinner from "@/components/Spinner"
-import { postMessage } from "../actions"
-import { toast } from "react-toastify"
+import { FaPlus } from 'react-icons/fa6'
+import { HiOutlinePaperAirplane } from 'react-icons/hi2'
+import { useConversationContext } from '@/contexts/conversationContext'
+import { useRef, useState } from 'react'
+import Spinner from '@/components/Spinner'
+import { postMessage } from '../actions'
+import { toast } from 'react-toastify'
 
 const ConversationFooter = ({ userId }) => {
   const {
     activeConversationId,
     activeConversation,
-    setActiveConversationMessages,
     conversationsData,
     setConversationsData,
   } = useConversationContext()
@@ -29,7 +28,7 @@ const ConversationFooter = ({ userId }) => {
   }
 
   const handleClearFileInput = () => {
-    fileInput.current.value = ""
+    fileInput.current.value = ''
     setFileInputState(null)
   }
 
@@ -42,7 +41,7 @@ const ConversationFooter = ({ userId }) => {
     }
 
     const formData = new FormData(messageInputForm)
-    formData.set("file", fileInputState)
+    formData.set('file', fileInputState)
 
     setIsSendingMessage(true)
     postMessage(formData)
@@ -53,20 +52,19 @@ const ConversationFooter = ({ userId }) => {
 
   const handleSuccessPostMessage = (res) => {
     const conversation = res.body
-    setActiveConversationMessages((prev) => [...prev, conversation.lastMessage])
     const tempConversationsData = new Map(conversationsData)
     tempConversationsData.set(conversation._id, {
       ...conversation,
       type: conversationsData.get(conversation._id).type,
     })
     setConversationsData(tempConversationsData)
-    messageInput.current.value = ""
-    fileInput.current.value = ""
+    messageInput.current.value = ''
+    fileInput.current.value = ''
     setFileInputState(null)
   }
 
   const handleFailPostMessage = () => {
-    toast.error("Oops, something went wrong. Please try that again.")
+    toast.error('Oops, something went wrong. Please try that again.')
   }
 
   return (
@@ -91,7 +89,7 @@ const ConversationFooter = ({ userId }) => {
         type="text"
         name="conversationType"
         defaultValue={
-          activeConversation.type === "peer" ? "peers" : "communities"
+          activeConversation.type === 'peer' ? 'peers' : 'communities'
         }
         hidden
       />

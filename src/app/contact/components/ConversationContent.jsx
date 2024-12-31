@@ -1,10 +1,10 @@
-import { formatMessageTime } from "@/utils/time"
-import { useEffect, useRef, useState } from "react"
-import { useConversationContext } from "@/contexts/conversationContext"
-import { validateMessages } from "../actions"
-import Spinner from "@/components/Spinner"
-import { FaFile } from "react-icons/fa6"
-import { useRouter } from "next/navigation"
+import { formatMessageTime } from '@/utils/time'
+import { useEffect, useRef, useState } from 'react'
+import { useConversationContext } from '@/contexts/conversationContext'
+import { validateMessages } from '../actions'
+import Spinner from '@/components/Spinner'
+import { FaFile } from 'react-icons/fa6'
+import { useRouter } from 'next/navigation'
 
 const ConversationContent = ({ userId }) => {
   const router = useRouter()
@@ -46,6 +46,24 @@ const ConversationContent = ({ userId }) => {
       .finally(() => setIsFetchingConversationMessages(false))
   }, [activeConversationId])
 
+  useEffect(() => {
+    const lastMessage =
+      activeConversationMessages[activeConversationMessages.length - 1]
+    if (!lastMessage) {
+      return
+    }
+    const lastMessageFromConversationsData =
+      conversationsData.get(activeConversationId).lastMessage
+
+    if (lastMessage._id === lastMessageFromConversationsData._id) {
+      return
+    }
+    setActiveConversationMessages((prev) => [
+      ...prev,
+      lastMessageFromConversationsData,
+    ])
+  }, [conversationsData])
+
   return (
     <section
       ref={conversationPane}
@@ -79,34 +97,34 @@ const ConversationContent = ({ userId }) => {
             <div
               key={_id}
               className={
-                "flex flex-col justify-center mb-5 " +
-                (isSentByStudent ? "items-end " : "items-start ")
+                'flex flex-col justify-center mb-5 ' +
+                (isSentByStudent ? 'items-end ' : 'items-start ')
               }
             >
               <button
                 onClick={() => handleClickSender(sender)}
                 className="truncate max-w-1/2"
               >
-                {conversationType === "communities" &&
+                {conversationType === 'communities' &&
                   !isSentByStudent &&
                   sender.fullName}
               </button>
               <div
                 className={
-                  "p-4 max-w-[70%] mt-1 rounded-lg " +
+                  'p-4 max-w-[70%] mt-1 rounded-lg ' +
                   (isSentByStudent
-                    ? "bg-secondary text-neutral-50"
-                    : "bg-neutral-50 text-neutral-950")
+                    ? 'bg-secondary text-neutral-50'
+                    : 'bg-neutral-50 text-neutral-950')
                 }
               >
                 {file && (
                   <a
                     className={
-                      "cursor pointer p-2 border-[1px] rounded-md flex gap-2 items-center hover:bg-neutral-50/25 transition " +
-                      (text && "mb-2 ") +
+                      'cursor pointer p-2 border-[1px] rounded-md flex gap-2 items-center hover:bg-neutral-50/25 transition ' +
+                      (text && 'mb-2 ') +
                       (isSentByStudent
-                        ? "hover:bg-neutral-50/25"
-                        : "hover:bg-neutral-400/25 border-neutral-950")
+                        ? 'hover:bg-neutral-50/25'
+                        : 'hover:bg-neutral-400/25 border-neutral-950')
                     }
                     target="_blank"
                     href={file}
