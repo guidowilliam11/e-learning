@@ -15,7 +15,30 @@ export async function GET() {
   try {
     await connectToDatabase()
 
-    const forum = await Forum.find({})
+    const forums = await Forum.find({})
+      .populate({
+        path: 'tags',
+        select: 'tag',
+      })
+      .populate({
+        path: 'studentId',
+        select: 'fullName',
+      })
+
+    const forumPost = forums.map((forum) => ({
+      id: forum._id,
+      title: forum.title,
+      description: forum.description,
+      publishDate: forum.publishDate,
+      tags: forum.tags.map((tag) => tag.tag),
+      studentName: forum.studentId.fullName,
+      views: forum.views,
+      likes: forum.likes,
+      images: forum.images,
+      comments: forum.comments,
+      createdAt: forum.createdAt,
+      updatedAt: forum.updatedAt,
+    }))
 
     const tags = await Tag.find({})
 
@@ -23,7 +46,7 @@ export async function GET() {
       return NextResponse.json({ message: 'No tags found' }, { status: 404 })
     }
 
-    return NextResponse.json({ forum, tags })
+    return NextResponse.json({ forumPost, tags })
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 })
   }
@@ -57,10 +80,7 @@ export async function POST(req) {
       const filePath = path.join(uploadDir, file.name)
 
       await fs.writeFile(filePath, buffer)
-      filePaths.push({
-        originalName: file.name,
-        filePath: `/uploads/${file.name}`,
-      })
+      filePaths.push(`/uploads/${file.name}`)
     }
 
     const tagDocs = await Tag.find({ tag: { $in: tags } }).select('_id')

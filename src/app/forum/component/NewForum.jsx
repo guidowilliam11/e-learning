@@ -7,14 +7,17 @@ import {
   DialogContent,
   DialogTitle,
   Grid2,
+  IconButton,
   TextField,
   Typography,
 } from '@mui/material'
 import AttachmentIcon from '@mui/icons-material/Attachment'
+import CloseIcon from '@mui/icons-material/Close'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { insertNewForumPost } from '../action'
+import { toast } from 'react-toastify'
 
 const schema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
@@ -33,6 +36,7 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
     watch,
   } = useForm({
     resolver: zodResolver(schema),
@@ -50,6 +54,11 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
     return files
       .filter((file) => file instanceof File)
       .map((file) => URL.createObjectURL(file))
+  }
+
+  const handleRemoveImage = (index) => {
+    const updatedImages = watchedImages.filter((_, i) => i !== index)
+    setValue('images', updatedImages, { shouldValidate: true })
   }
 
   useEffect(() => {
@@ -75,12 +84,33 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
         form.append('file', image)
       })
 
-      const insert = await insertNewForumPost(form)
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(async () => {
+          const insert = await insertNewForumPost(form)
 
-      if (insert) {
-        fetchData()
-        closeForm()
-      }
+          if (insert) {
+            fetchData()
+            closeForm()
+            resolve(insert)
+          } else reject(insert)
+        }, 500)
+      })
+
+      return toast.promise(promise, {
+        pending: 'Processing...',
+        success: {
+          render() {
+            return 'Forum post insert success!'
+          },
+          autoClose: 2000,
+        },
+        error: {
+          render() {
+            return 'Forum post insert failed!'
+          },
+          autoClose: 2000,
+        },
+      })
     } catch (error) {
       console.error('Validation failed:', error.errors)
     }
@@ -202,8 +232,9 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
                     accept='image/*'
                     multiple
                     onChange={(e) => {
-                      const files = Array.from(e.target.files || [])
-                      field.onChange(files)
+                      const newFiles = Array.from(e.target.files || [])
+                      const updatedFiles = [...field.value, ...newFiles]
+                      field.onChange(updatedFiles)
                     }}
                   />
                 </Button>
@@ -220,13 +251,25 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
           {watchedImages.length > 0 && (
             <Grid2 display='flex' gap='2' flexWrap='wrap' my={2.5}>
               {getPreviewURLs(watchedImages).map((url, index) => (
-                <Avatar
+                <Grid2
                   key={index}
-                  src={url}
-                  alt={`Preview ${index + 1}`}
-                  variant='rounded'
-                  sx={{ width: 100, height: 100, mr: 3 }}
-                />
+                  sx={{ display: 'inline-block', position: 'relative' }}
+                >
+                  <Avatar
+                    key={index}
+                    src={url}
+                    alt={`Preview ${index + 1}`}
+                    variant='rounded'
+                    sx={{ width: 150, height: 150, mr: 3 }}
+                  />
+                  <IconButton
+                    sx={{ position: 'absolute', top: 0, right: 25 }}
+                    onClick={() => handleRemoveImage(index)}
+                    aria-label='close'
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </Grid2>
               ))}
             </Grid2>
           )}

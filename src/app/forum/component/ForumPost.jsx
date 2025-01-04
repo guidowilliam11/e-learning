@@ -1,7 +1,10 @@
 import Image from 'next/image'
+import PersonIcon from '@mui/icons-material/Person'
+import { useRouter } from 'next/navigation'
 
 export default function ForumPost({
-  avatarSrc,
+  id,
+  image,
   author,
   date,
   content,
@@ -10,9 +13,28 @@ export default function ForumPost({
   likes,
   comments,
 }) {
+  const router = useRouter()
+
+  const handleRedirect = () => {
+    router.push(`/forum/${id}`)
+  }
+
   return (
-    <div className='flex flex-grow gap-5 p-4 bg-white rounded-lg shadow-md'>
-      <div className='w-full max-w-[180px] h-auto aspect-square bg-[#E5E7FB] rounded-md'></div>
+    <div
+      className='flex flex-grow gap-5 p-4 bg-white rounded-lg shadow-md'
+      onDoubleClick={handleRedirect}
+    >
+      {image && image !== '' ? (
+        <Image
+          alt=''
+          src={image}
+          width={180}
+          height={180}
+          className='aspect-square bg-[#E5E7FB] rounded-md'
+        />
+      ) : (
+        <div className='w-full max-w-[180px] h-auto aspect-square bg-[#E5E7FB] rounded-md' />
+      )}
       <div className='flex flex-col justify-between flex-grow'>
         <div>
           {/* Post Content */}
@@ -34,13 +56,7 @@ export default function ForumPost({
         <div className='flex justify-between'>
           {/* Post Header */}
           <div className='flex items-center gap-3'>
-            <Image
-              src={avatarSrc}
-              alt={`${author}`}
-              width={36}
-              height={36}
-              className='bg-[#E5E7FB] rounded-full h-[36px] w-[36px]'
-            />
+            <PersonIcon className='rounded-full h-[36px] w-[36px]' />
             <div>
               <h3 className='text-sm font-semibold text-gray-800'>{author}</h3>
               <p className='text-xs text-gray-500'>{date}</p>
