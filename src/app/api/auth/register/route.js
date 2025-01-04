@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
 import Students from '@/models/StudentModel'
-import { connectToDatabase } from '@/libs/mongo/config'
+import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
 
 export async function POST(req) {
   try {
@@ -16,7 +16,6 @@ export async function POST(req) {
       )
     }
 
-    // Check if the user already exists
     const existingUser = await Students.findOne({ email })
     if (existingUser) {
       return NextResponse.json(
@@ -25,13 +24,11 @@ export async function POST(req) {
       )
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create a new user
     const newUser = new Students({ fullName, email, password: hashedPassword })
     await newUser.save()
-
+    await closeDatabase()
     return NextResponse.json(
       { message: 'User created successfully' },
       { status: 201 }
@@ -42,7 +39,5 @@ export async function POST(req) {
       { message: 'Internal server error' },
       { status: 500 }
     )
-  } finally {
-    await closeDatabase()
   }
 }

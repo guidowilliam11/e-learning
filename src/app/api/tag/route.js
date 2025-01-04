@@ -1,4 +1,4 @@
-import { connectToDatabase } from '@/libs/mongo/config'
+import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
 import Tag from '@/models/TagModel'
 import { NextResponse } from 'next/server'
 
@@ -15,14 +15,12 @@ export async function POST(req) {
     await connectToDatabase()
 
     const newTags = await Tag.insertMany(tags.map((tag) => ({ tag })))
-
+    await closeDatabase()
     return NextResponse.json(
       { message: 'Tags created successfully', tags: newTags },
       { status: 201 }
     )
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 })
-  } finally {
-    await closeDatabase()
   }
 }

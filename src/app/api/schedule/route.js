@@ -1,4 +1,4 @@
-import { connectToDatabase } from '@/libs/mongo/config'
+import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
 import Assignment from '@/models/AssignmentModel'
 import Schedule from '@/models/ScheduleModel'
 import { NextResponse } from 'next/server'
@@ -65,7 +65,7 @@ export async function POST(req) {
     const populatedSchedule = await Schedule.findById(newSchedule._id).populate(
       'assignmentId'
     )
-
+    await closeDatabase()
     return NextResponse.json(
       { message: 'Schedule created successfully', schedule: populatedSchedule },
       { status: 201 }
@@ -75,7 +75,5 @@ export async function POST(req) {
       { message: 'Internal server error' },
       { status: 500 }
     )
-  } finally {
-    await closeDatabase()
   }
 }

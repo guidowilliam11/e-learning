@@ -1,4 +1,4 @@
-import { connectToDatabase } from '@/libs/mongo/config'
+import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
 import Schedule from '@/models/ScheduleModel'
 import { NextResponse } from 'next/server'
 
@@ -20,7 +20,7 @@ export async function POST(req) {
       { checked: checkStatus },
       { new: true }
     )
-
+    await closeDatabase()
     return NextResponse.json(
       { message: 'Schedule checked successfully', schedule: checkedSchedule },
       { status: 201 }
@@ -30,7 +30,5 @@ export async function POST(req) {
       { message: 'Internal server error' },
       { status: 500 }
     )
-  } finally {
-    await closeDatabase()
   }
 }

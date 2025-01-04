@@ -1,4 +1,4 @@
-import { connectToDatabase } from '@/libs/mongo/config'
+import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
 import Students from '@/models/StudentModel'
 import bcrypt from 'bcrypt'
 import { NextResponse } from 'next/server'
@@ -32,6 +32,7 @@ export async function POST(req) {
         { status: 401 }
       )
     }
+    await closeDatabase()
     return NextResponse.json(
       { message: 'Login successful', user: { email: user.email } },
       { status: 200 }
@@ -41,7 +42,5 @@ export async function POST(req) {
       { message: 'Internal server error' },
       { status: 500 }
     )
-  } finally {
-    await closeDatabase()
   }
 }

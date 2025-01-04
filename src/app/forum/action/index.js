@@ -11,7 +11,22 @@ export async function fetchForumsAndTags() {
       return data
     }
   } catch (error) {
-    console.error('Error fetching tags:', error)
+    console.error('Error fetching forums and tags:', error)
+  }
+}
+
+export async function fetchForumPost(id) {
+  try {
+    const response = await fetch(`${baseUrl}/api/forum-post?id=${id}`)
+
+    if (!response.ok) {
+      console.error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error fetching post:', error)
   }
 }
 

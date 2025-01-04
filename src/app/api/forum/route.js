@@ -45,12 +45,11 @@ export async function GET() {
     if (!tags) {
       return NextResponse.json({ message: 'No tags found' }, { status: 404 })
     }
+    await closeDatabase()
 
     return NextResponse.json({ forumPost, tags })
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 })
-  } finally {
-    await closeDatabase()
   }
 }
 
@@ -97,6 +96,8 @@ export async function POST(req) {
       publishDate: new Date().toISOString(),
     })
 
+    await closeDatabase()
+
     return NextResponse.json(
       {
         message: 'Forum post created successfully',
@@ -111,7 +112,5 @@ export async function POST(req) {
       { message: 'An error occurred', error: error.message },
       { status: 500 }
     )
-  } finally {
-    await closeDatabase()
   }
 }

@@ -17,12 +17,12 @@ export async function connectToDatabase() {
 
 export async function closeDatabase() {
   try {
-    if (isConnected) {
-      await mongoose.connection.close();
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect()
     } else {
-      console.log('No active database connection to close');
+      console.log('No active database connection to close')
     }
   } catch (error) {
-    console.error('Error while closing database connection', error);
+    console.error('Error while closing database connection', error)
   }
 }
