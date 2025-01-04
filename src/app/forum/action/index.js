@@ -5,28 +5,13 @@ export async function fetchForumsAndTags() {
     const response = await fetch(`${baseUrl}/api/forum`)
 
     if (!response.ok) {
-      console.error(`Error: ${response.status} - ${response.statusText}`)
-    } else {
-      const data = await response.json()
-      return data
-    }
-  } catch (error) {
-    console.error('Error fetching forums and tags:', error)
-  }
-}
-
-export async function fetchForumPost(id) {
-  try {
-    const response = await fetch(`${baseUrl}/api/forum-post?id=${id}`)
-
-    if (!response.ok) {
       console.error(`${response.status} - ${response.statusText}`)
     } else {
       const data = await response.json()
       return data
     }
   } catch (error) {
-    console.error('Error fetching post:', error)
+    console.error('Error fetching forums and tags:', error)
   }
 }
 

@@ -7,7 +7,7 @@ export async function fetchDailySchedule(user, date) {
     )
 
     if (!response.ok) {
-      console.error(`Error: ${response.status} - ${response.statusText}`)
+      console.error(`${response.status} - ${response.statusText}`)
     } else {
       const data = await response.json()
       return data
@@ -30,7 +30,7 @@ export async function insertSchedule(studentId, title, date) {
     })
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.status} - ${response.statusText}`)
+      throw new Error(`${response.status} - ${response.statusText}`)
     } else {
       const data = await response.json()
       return data
@@ -53,7 +53,7 @@ export async function updateScheduleCheckStatus(scheduleId, checkStatus) {
     })
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.status} - ${response.statusText}`)
+      throw new Error(`${response.status} - ${response.statusText}`)
     } else {
       const data = await response.json()
       return data
@@ -70,7 +70,7 @@ export async function fetchAssignmentByAssignmentId(assignmentId) {
     )
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.status} - ${response.statusText}`)
+      throw new Error(`${response.status} - ${response.statusText}`)
     } else {
       const data = await response.json()
       return data
@@ -93,7 +93,7 @@ export async function updateAssignment(id, title, desc, list) {
     })
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.status} - ${response.statusText}`)
+      throw new Error(`${response.status} - ${response.statusText}`)
     } else {
       const data = await response.json()
       return data
