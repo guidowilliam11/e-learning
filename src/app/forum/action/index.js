@@ -14,3 +14,23 @@ export async function fetchForumsAndTags() {
     console.error('Error fetching tags:', error)
   }
 }
+
+export async function insertNewForumPost(formData) {
+  try {
+    const response = await fetch(`${baseUrl}/api/forum`, {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || 'Failed to upload forum post')
+    }
+
+    const data = await response.json()
+    console.log('Forum post uploaded successfully:', data)
+    return data
+  } catch (error) {
+    console.error('Error uploading forum post:', error)
+  }
+}

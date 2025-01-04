@@ -14,9 +14,13 @@ const forumSchema = new mongoose.Schema(
       type: Date,
       required: [true, 'Please provide a date'],
     },
-    content: {
+    title: {
       type: String,
-      required: [true, 'Please provide the content'],
+      required: [true, 'Please provide the title'],
+    },
+    description: {
+      type: String,
+      required: [true, 'Please provide the description'],
     },
     tags: [
       {
@@ -32,6 +36,12 @@ const forumSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    images: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
     comments: [
       {
         type: Types.ObjectId,

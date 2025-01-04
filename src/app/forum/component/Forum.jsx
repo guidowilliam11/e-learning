@@ -28,8 +28,9 @@ const Forum = ({ user }) => {
 
   console.log(forum, tags)
 
-  const handleOpenNewForum = () => setOpen(true)
-  const handleCloseNewForum = () => setOpen(false)
+  const handleOpenNewForum = () => {
+    tags.length > 0 && setOpen(true)
+  }
 
   const posts = [
     {
@@ -176,10 +177,10 @@ const Forum = ({ user }) => {
 
       <NewForum
         open={open}
-        onClose={handleCloseNewForum}
+        setOpen={setOpen}
         tags={tags}
-        fetchData={fetchData}
         user={user}
+        fetchData={fetchData}
       />
 
       <div className='flex flex-col flex-grow space-y-6'>

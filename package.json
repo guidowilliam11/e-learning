@@ -30,6 +30,7 @@
     "bcrypt": "^5.1.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "fs": "^0.0.1-security",
     "mongoose": "^8.8.4",
     "next": "^15.0.2",
     "next-auth": "^4.24.11",

@@ -8,5 +8,5 @@ export default async function Page() {
 
   !session && redirect('/login')
 
-  return <Forum user={session.user} />
+  return <Forum user={session.user.id} />
 }

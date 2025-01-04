@@ -1,7 +1,15 @@
-import { connectToDatabase } from "@/libs/mongo/config";
-import Forum from "@/models/ForumModel";
-import Tag from "@/models/TagModel";
-import { NextResponse } from "next/server";
+import { connectToDatabase } from '@/libs/mongo/config'
+import Forum from '@/models/ForumModel'
+import Tag from '@/models/TagModel'
+import fs from 'fs/promises'
+import path from 'path'
+import { NextResponse } from 'next/server'
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
 
 export async function GET() {
   try {
@@ -25,27 +33,61 @@ export async function POST(req) {
   try {
     await connectToDatabase()
 
-    const { studentId, title, tags } = await req.json()
+    const formData = await req.formData()
 
-    if (!studentId, !title, !tags) {
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads')
+    await fs.mkdir(uploadDir, { recursive: true })
+
+    const studentId = formData.get('studentId')
+    const title = formData.get('title')
+    const description = formData.get('description')
+    const tags = formData.getAll('tags')
+    const files = formData.getAll('file')
+
+    if (!studentId || !title || !description || !tags || !Array.isArray(tags)) {
       return NextResponse.json(
-        { error: 'Student ID, title, and tag is required' },
+        { message: 'Missing or invalid fields' },
         { status: 400 }
       )
     }
 
+    const filePaths = []
+    for (const file of files) {
+      const buffer = Buffer.from(await file.arrayBuffer())
+      const filePath = path.join(uploadDir, file.name)
+
+      await fs.writeFile(filePath, buffer)
+      filePaths.push({
+        originalName: file.name,
+        filePath: `/uploads/${file.name}`,
+      })
+    }
+
+    const tagDocs = await Tag.find({ tag: { $in: tags } }).select('_id')
+    const tagIds = tagDocs.map((tag) => tag._id)
+
     const newForumPost = await Forum.create({
       studentId,
+      title,
+      description,
+      tags: tagIds,
+      images: filePaths,
       publishDate: new Date().toISOString(),
-      content: title,
-      tags,
     })
 
     return NextResponse.json(
-      { message: 'Forum post created successfully', forumPost: newForumPost },
+      {
+        message: 'Forum post created successfully',
+        forumPost: newForumPost,
+        files: filePaths,
+      },
       { status: 201 }
     )
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
+    console.error('Error:', error)
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
   }
 }
