@@ -13,6 +13,7 @@ const FutureSchedules = ({
   handleAddNewClick,
   handleTitleChange,
   handleSaveNewAssignment,
+  handleCancelAdd,
 }) => {
   const futureSchedules = schedules.filter(
     ({ timeSlot }) =>

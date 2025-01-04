@@ -289,6 +289,7 @@ const Schedule = ({ user }) => {
                     assignmentTitles={assignmentTitles}
                     isAddingBySlot={isAddingBySlot}
                     handleCheck={handleCheck}
+                    handleCancelAdd={handleCancelAdd}
                     handleViewAssignment={handleViewAssignment}
                     handleAddNewClick={handleAddNewClick}
                     handleTitleChange={handleTitleChange}
