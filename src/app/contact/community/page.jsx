@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   FaDoorOpen,
@@ -8,31 +8,31 @@ import {
   FaUserPlus,
   FaUserMinus,
   FaCircleInfo,
-} from "react-icons/fa6"
-import { useRouter, useSearchParams } from "next/navigation"
-import Image from "next/image"
-import { useConversationContext } from "@/contexts/conversationContext"
-import { useEffect, useMemo, useState } from "react"
+} from 'react-icons/fa6'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
+import { useConversationContext } from '@/contexts/conversationContext'
+import { useEffect, useMemo, useState } from 'react'
 import {
   editCommunity,
   getCommunity,
   getPeersToInvite,
   invitePeer,
   removeMember,
-} from "./actions"
-import { getSession } from "next-auth/react"
-import { toast } from "react-toastify"
-import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext"
+} from './actions'
+import { getSession } from 'next-auth/react'
+import { toast } from 'react-toastify'
+import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext'
 
 const CommunityPage = () => {
-  const communityId = useSearchParams().get("communityId")
+  const communityId = useSearchParams().get('communityId')
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
   const { setActiveConversationId } = useConversationContext()
 
   const router = useRouter()
   const [prevCommunity, setPrevCommunity] = useState({})
   const [community, setCommunity] = useState({})
-  const [userId, setUserId] = useState("")
+  const [userId, setUserId] = useState('')
   const [peersToInvite, setPeersToInvite] = useState(null)
   const members = useMemo(
     () =>
@@ -41,8 +41,8 @@ const CommunityPage = () => {
       ) || []
   )
   const picturePreview = useMemo(() => {
-    if (!community?.picture || typeof community?.picture === "string") {
-      return ""
+    if (!community?.picture || typeof community?.picture === 'string') {
+      return ''
     }
     return URL.createObjectURL(community.picture)
   }, [community])
@@ -55,11 +55,20 @@ const CommunityPage = () => {
   }, [prevCommunity, community])
 
   const fallbackPicture =
-    prevCommunity.picture || "/images/default-community-picture.png"
+    prevCommunity.picture || '/images/default-community-picture.png'
 
   const handleSuccessGetCommunity = (res) => {
     setPrevCommunity(res.body)
     setCommunity(res.body)
+  }
+  const handleFailGetCommunity = (res) => {
+    const { error } = res.body
+    if (error === 'COMMUNITY_NOT_FOUND') {
+      toast.error(`The community doesn't exist.`)
+      setTimeout(() => router.push('/contact'), 1000)
+      return
+    }
+    toast.error('Oops, something went wrong. Please try that again.')
   }
   const handleClickBack = () => {
     router.back()
@@ -73,13 +82,13 @@ const CommunityPage = () => {
   }
   const handleSuccessLeaveCommunity = () => {
     setActiveConversationId(null)
-    setTimeout(() => router.push("/contact"), 1000)
-    toast.success("You have left the community.")
+    setTimeout(() => router.push('/contact'), 1000)
+    toast.success('You have left the community.')
   }
   const handleClickSave = () => {
     const formData = new FormData(editCommunityForm)
 
-    formData.set("picture", community.picture)
+    formData.set('picture', community.picture)
 
     setIsFullscreenLoading(true)
     editCommunity(formData)
@@ -88,7 +97,7 @@ const CommunityPage = () => {
   }
   const handleSuccessSave = (res) => {
     if (res.body._id) {
-      toast.success("Community has been edited.")
+      toast.success('Community has been edited.')
     }
   }
   const handlePictureChange = (e) => {
@@ -147,6 +156,7 @@ const CommunityPage = () => {
     getSession().then(({ user }) => setUserId(user.id))
     getCommunity(communityId)
       .then(handleSuccessGetCommunity)
+      .catch(handleFailGetCommunity)
       .finally(() => setIsFullscreenLoading(false))
   }, [])
 
@@ -191,7 +201,7 @@ const CommunityPage = () => {
               src={picturePreview || fallbackPicture}
               width={175}
               height={175}
-              alt={community?.name || "Community"}
+              alt={community?.name || 'Community'}
               className="rounded-full mb-3 drop-shadow-lg cursor-pointer"
               title="Click to upload a new picture"
             />
@@ -207,7 +217,7 @@ const CommunityPage = () => {
           <input
             className="text-3xl font-bold text-primary mb-2 text-center bg-neutral-50 focus:outline-none border-primary focus:border-b-2"
             name="name"
-            value={community.name || "Name"}
+            value={community.name || 'Name'}
             onChange={(e) =>
               setCommunity({ ...community, name: e.target.value })
             }
@@ -216,7 +226,7 @@ const CommunityPage = () => {
           <textarea
             className="text-lg font-semibold text-neutral-600 w-[75%] break-all text-center resize-none bg-neutral-50 focus:outline-none border-neutral-600 focus:border-b-2"
             name="description"
-            value={community.description || "Description"}
+            value={community.description || 'Description'}
             onChange={(e) =>
               setCommunity({ ...community, description: e.target.value })
             }
@@ -233,7 +243,7 @@ const CommunityPage = () => {
         <div className="p-5 border-b-[1px] border-neutral-300 flex gap-4 bg-neutral-50 transition duration-300">
           <div>
             <Image
-              src={"/images/default-profile-picture.webp"}
+              src={'/images/default-profile-picture.webp'}
               className="rounded-full"
               height={48}
               width={48}
@@ -251,7 +261,7 @@ const CommunityPage = () => {
           >
             <div onClick={() => handleClickMember(member)}>
               <Image
-                src={member.picture || "/images/default-profile-picture.webp"}
+                src={member.picture || '/images/default-profile-picture.webp'}
                 className="rounded-full"
                 height={48}
                 width={48}
@@ -301,7 +311,7 @@ const CommunityPage = () => {
             >
               <div onClick={() => handleClickMember(peer)}>
                 <Image
-                  src={peer.picture || "/images/default-profile-picture.webp"}
+                  src={peer.picture || '/images/default-profile-picture.webp'}
                   className="rounded-full"
                   height={48}
                   width={48}
