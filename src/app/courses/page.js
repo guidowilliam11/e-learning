@@ -1,34 +1,12 @@
-"use client";
+import { getServerSession } from 'next-auth'
+import Courses from './Courses'
+import { redirect } from 'next/navigation'
+import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 
-import CourseCard from '../../components/courseCard';
-import {useEffect, useState} from "react";
+export default async function page() {
+  const session = await getServerSession(authOptions)
 
-export default function Home() {
-const [coursesData, setCoursesData] = useState([]);
+  !session && redirect('/login')
 
-// Fetch notes data
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await fetch('/api/courses');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setCoursesData(data);
-      } catch (error) {
-        console.error("Failed to fetch notes:", error);
-      }
-    };
-
-    fetchCourses();
-  }, []);
-
-  return (
-    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {coursesData.courses.map((course) => (
-        <CourseCard key={course._id} {...course} />
-      ))}
-    </div>
-  );
+  return <Courses user={session.user}/>
 }

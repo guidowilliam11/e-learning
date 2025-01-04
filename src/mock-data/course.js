@@ -4,25 +4,26 @@ const mockData = {
     courses: [
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234570"),
-            thumbnail: "64a7f5e8d8f1b1c0d1234570.png",
+            thumbnail: "https://m.media-amazon.com/images/I/61JGJcZJfDL._AC_UF1000,1000_QL80_.jpg",
             title: "Introduction to Computer Science",
             description: "Explore the basics of algorithms, programming, and data structures.",
             subscribers: [
-                new ObjectId("67663f44d703aed0356b5b63"),
-                new ObjectId("6767927ea3b1157d451cb820"),
+                new ObjectId("17663f44d703aed0356b5b63"),
+                new ObjectId("1767927ea3b1157d451cb820"),
             ],
             sessions: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234580"),
                 new ObjectId("64a7f5e8d8f1b1c0d1234583"),
+                new ObjectId("64a7f5e8d8f1b1c0d1234606"),
             ],
         },
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234571"),
-            thumbnail: "64a7f5e8d8f1b1c0d1234571.png",
+            thumbnail: "https://media.geeksforgeeks.org/wp-content/uploads/20230727175201/Calculus.webp",
             title: "Calculus I: Limits and Derivatives",
             description: "Learn the foundations of calculus, including limits, derivatives, and applications.",
             subscribers: [
-                new ObjectId("6767939e271a78f2fec485d1"),
+                new ObjectId("1767939e271a78f2fec485d1"),
             ],
             sessions: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234585"),
@@ -30,12 +31,12 @@ const mockData = {
         },
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234572"),
-            thumbnail: "64a7f5e8d8f1b1c0d1234572.png",
+            thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW4oO1yc2Nktqr2-hAltLQ3oTocSNGLK1Eyw&s",
             title: "Web Development with JavaScript",
             description: "Build dynamic websites and web applications using JavaScript, HTML, and CSS.",
             subscribers: [
-                new ObjectId("67663f44d703aed0356b5b63"),
-                new ObjectId("6767927ea3b1157d451cb820"),
+                new ObjectId("27663f44d703aed0356b5b63"),
+                new ObjectId("2767927ea3b1157d451cb820"),
             ],
             sessions: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234588"),
@@ -43,12 +44,12 @@ const mockData = {
         },
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234573"),
-            thumbnail: "64a7f5e8d8f1b1c0d1234573.png",
+            thumbnail: "https://www.mcgill.ca/continuingstudies/files/continuingstudies/017-02-20-scs_shortprograms_fundamentalsofartificial.jpg",
             title: "Artificial Intelligence Fundamentals",
             description: "Learn the basics of AI, neural networks, and deep learning applications.",
             subscribers: [
-                new ObjectId("67663f44d703aed0356b5b63"),
-                new ObjectId("6767939e271a78f2fec485d1"),
+                new ObjectId("37663f44d703aed0356b5b63"),
+                new ObjectId("2767939e271a78f2fec485d1"),
             ],
             sessions: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234598"),
@@ -56,12 +57,12 @@ const mockData = {
         },
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234574"),
-            thumbnail: "64a7f5e8d8f1b1c0d1234574.png",
+            thumbnail: "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230318230239/Python-Data-Science-Tutorial.jpg",
             title: "Data Science with Python",
             description: "Analyze data and build machine learning models with Python.",
             subscribers: [
-                new ObjectId("6767927ea3b1157d451cb820"),
-                new ObjectId("6767939e271a78f2fec485d1"),
+                new ObjectId("3767927ea3b1157d451cb820"),
+                new ObjectId("3767939e271a78f2fec485d1"),
             ],
             sessions: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234599"),
@@ -70,14 +71,33 @@ const mockData = {
         },
     ],
     subscribers: [
-        { _id: new ObjectId("67663f44d703aed0356b5b63"), progress: 80 },
-        { _id: new ObjectId("6767927ea3b1157d451cb820"), progress: 45 },
-        { _id: new ObjectId("6767939e271a78f2fec485d1"), progress: 60 },
+        { _id: new ObjectId("17663f44d703aed0356b5b63"), studentId: new ObjectId("67663f44d703aed0356b5b63"), progress: 80 },
+        { _id: new ObjectId("1767927ea3b1157d451cb820"), studentId: new ObjectId("6767927ea3b1157d451cb820"), progress: 45 },
+        { _id: new ObjectId("1767939e271a78f2fec485d1"), studentId: new ObjectId("6767939e271a78f2fec485d1"), progress: 60 },
+
+        { _id: new ObjectId("27663f44d703aed0356b5b63"), studentId: new ObjectId("67663f44d703aed0356b5b63"), progress: 90 },
+        { _id: new ObjectId("2767927ea3b1157d451cb820"), studentId: new ObjectId("6767927ea3b1157d451cb820"), progress: 45 },
+        { _id: new ObjectId("2767939e271a78f2fec485d1"), studentId: new ObjectId("6767939e271a78f2fec485d1"), progress: 60 },
+
+        { _id: new ObjectId("37663f44d703aed0356b5b63"), studentId: new ObjectId("67663f44d703aed0356b5b63"), progress: 100 },
+        { _id: new ObjectId("3767927ea3b1157d451cb820"), studentId: new ObjectId("6767927ea3b1157d451cb820"), progress: 50 },
+        { _id: new ObjectId("3767939e271a78f2fec485d1"), studentId: new ObjectId("6767939e271a78f2fec485d1"), progress: 10 },
+
+
     ],
     sessions: [
         {
+            _id: new ObjectId("64a7f5e8d8f1b1c0d1234606"),
+            video: "https://www.youtube.com/watch?v=0JUN9aDxVmI",
+            name: "Advanced Algorithms",
+            summaries: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234607"),
+            ],
+        },
+        {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234580"),
-            video: "/path-to-video1.mp4",
+            video: "https://www.youtube.com/watch?v=rL8X2mlNHPM",
+            name: "Introduction to Algorithms",
             summaries: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234591"),
                 new ObjectId("64a7f5e8d8f1b1c0d1234592"),
@@ -85,7 +105,8 @@ const mockData = {
         },
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234583"),
-            video: "/path-to-video2.mp4",
+            video: "https://www.youtube.com/watch?v=l26oaHV7D40",
+            name: "Programming Basics",
             summaries: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234593"),
             ],
@@ -93,6 +114,7 @@ const mockData = {
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234585"),
             video: "/path-to-video3.mp4",
+            name: "Understanding Limits",
             summaries: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234594"),
                 new ObjectId("64a7f5e8d8f1b1c0d1234595"),
@@ -101,6 +123,7 @@ const mockData = {
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234588"),
             video: "/path-to-video4.mp4",
+            name: "JavaScript Essentials",
             summaries: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234596"),
                 new ObjectId("64a7f5e8d8f1b1c0d1234597"),
@@ -109,6 +132,7 @@ const mockData = {
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234598"),
             video: "/path-to-video5.mp4",
+            name: "Introduction to Neural Networks",
             summaries: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234601"),
                 new ObjectId("64a7f5e8d8f1b1c0d1234602"),
@@ -117,6 +141,7 @@ const mockData = {
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234599"),
             video: "/path-to-video6.mp4",
+            name: "Python Basics for Data Science",
             summaries: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234603"),
             ],
@@ -124,6 +149,7 @@ const mockData = {
         {
             _id: new ObjectId("64a7f5e8d8f1b1c0d1234600"),
             video: "/path-to-video7.mp4",
+            name: "Building Predictive Models",
             summaries: [
                 new ObjectId("64a7f5e8d8f1b1c0d1234604"),
                 new ObjectId("64a7f5e8d8f1b1c0d1234605"),
@@ -131,18 +157,20 @@ const mockData = {
         },
     ],
     summaries: [
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234591"), content: "Introduction to algorithms.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234592"), content: "Programming fundamentals.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234593"), content: "Data structures overview.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234594"), content: "Introduction to limits.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234595"), content: "Derivatives basics.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234596"), content: "JavaScript basics.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234597"), content: "Building web pages with HTML.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234601"), content: "Introduction to neural networks.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234602"), content: "Deep learning applications.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234603"), content: "Data preprocessing techniques.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234604"), content: "Python for machine learning.", type: "text" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234605"), content: "Building predictive models.", type: "text" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234591"), content: "Introduction to algorithms.", type: "simple" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234592"), content: "Programming fundamentals.", type: "expanded" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234593"), content: "Data structures overview.", type: "simple" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234594"), content: "Introduction to limits.", type: "expanded" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234595"), content: "Derivatives basics.", type: "simple" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234596"), content: "JavaScript basics.", type: "expanded" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234597"), content: "Building web pages with HTML.", type: "simple" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234601"), content: "Introduction to neural networks.", type: "expanded" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234602"), content: "Deep learning applications.", type: "simple" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234603"), content: "Data preprocessing techniques.", type: "expanded" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234604"), content: "Python for machine learning.", type: "simple" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234605"), content: "Building predictive models.", type: "expanded" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234607"), content: "Exploration of advanced algorithmic concepts.", type: "expanded"},
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234609"), content: "Techniques for optimizing algorithms for performance.", type: "simple"}
     ],
 };
 
