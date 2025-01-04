@@ -36,6 +36,13 @@ const forumSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    likedBy: [
+      {
+        type: Types.ObjectId,
+        ref: Students.modelName,
+        default: [],
+      },
+    ],
     images: [
       {
         type: String,

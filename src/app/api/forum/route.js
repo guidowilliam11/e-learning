@@ -5,12 +5,6 @@ import fs from 'fs/promises'
 import path from 'path'
 import { NextResponse } from 'next/server'
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
-
 export async function GET() {
   try {
     await connectToDatabase()

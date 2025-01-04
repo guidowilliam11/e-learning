@@ -6,11 +6,11 @@ export async function POST(req) {
   try {
     await connectToDatabase()
 
-    const { forumId, studentId } = req.json()
+    const { forumId, studentId } = await req.json()
 
     if (!forumId || !studentId) {
       return NextResponse.json(
-        { message: 'Forum ID and User ID are required' },
+        { message: 'Forum ID and Student ID are required' },
         { status: 400 }
       )
     }
@@ -18,17 +18,17 @@ export async function POST(req) {
     const forum = await Forum.findById(forumId)
 
     if (!forum) {
+      console.log('Found')
       return NextResponse.json({ message: 'Forum not found' }, { status: 400 })
     }
 
     const hasLiked = forum.likedBy.includes(studentId)
 
     if (hasLiked) {
-      forum.likedBy = forum.likedBy.filter((id) => id.toString() !== userId)
+      forum.likedBy = forum.likedBy.filter((id) => id.toString() !== studentId)
       forum.likes -= 1
     } else {
-      // Like the post
-      forum.likedBy.push(userId)
+      forum.likedBy.push(studentId)
       forum.likes += 1
     }
 

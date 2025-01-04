@@ -263,7 +263,12 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
                     sx={{ width: 150, height: 150, mr: 3 }}
                   />
                   <IconButton
-                    sx={{ position: 'absolute', top: 0, right: 25 }}
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      right: 25,
+                      color: 'white',
+                    }}
                     onClick={() => handleRemoveImage(index)}
                     aria-label='close'
                   >
@@ -274,41 +279,32 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
             </Grid2>
           )}
 
-          <Grid2 xs={12} className='flex items-center justify-between gap-4'>
-            <Typography
+          <Grid2 className='flex justify-end gap-4'>
+            <Button
               onClick={closeForm}
-              color='primary'
-              style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              variant='contained'
+              color='error'
+              sx={{
+                borderRadius: '0.5rem',
+              }}
             >
-              Clear Data
-            </Typography>
-            <Grid2 className='flex items-center gap-4'>
-              <Button
-                onClick={closeForm}
-                variant='contained'
-                color='error'
-                sx={{
-                  borderRadius: '0.5rem',
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                sx={{
-                  backgroundColor: '#6C63FF',
-                  color: 'white',
-                  borderRadius: '0.5rem',
-                  '&:hover': {
-                    backgroundColor: '#5750d9',
-                  },
-                  transition: 'all 0.3s ease-in-out',
-                }}
-                type='submit'
-                variant='contained'
-              >
-                Submit
-              </Button>
-            </Grid2>
+              Cancel
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: '#6C63FF',
+                color: 'white',
+                borderRadius: '0.5rem',
+                '&:hover': {
+                  backgroundColor: '#5750d9',
+                },
+                transition: 'all 0.3s ease-in-out',
+              }}
+              type='submit'
+              variant='contained'
+            >
+              Submit
+            </Button>
           </Grid2>
         </form>
       </DialogContent>
