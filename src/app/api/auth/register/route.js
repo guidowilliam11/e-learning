@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
 import Students from '@/models/StudentModel'
-import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
+import { connectToDatabase } from '@/libs/mongo/config'
 
 export async function POST(req) {
   try {
@@ -28,7 +28,6 @@ export async function POST(req) {
 
     const newUser = new Students({ fullName, email, password: hashedPassword })
     await newUser.save()
-    await closeDatabase()
     return NextResponse.json(
       { message: 'User created successfully' },
       { status: 201 }

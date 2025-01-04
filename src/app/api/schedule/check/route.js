@@ -1,4 +1,4 @@
-import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
+import { connectToDatabase } from '@/libs/mongo/config'
 import Schedule from '@/models/ScheduleModel'
 import { NextResponse } from 'next/server'
 
@@ -7,7 +7,6 @@ export async function POST(req) {
     await connectToDatabase()
     const { scheduleId, checkStatus } = await req.json()
 
-    console.log(scheduleId, checkStatus)
     if (scheduleId == null || checkStatus == null) {
       return NextResponse.json(
         { message: 'Schedule ID and check status are required.' },
@@ -20,7 +19,7 @@ export async function POST(req) {
       { checked: checkStatus },
       { new: true }
     )
-    await closeDatabase()
+
     return NextResponse.json(
       { message: 'Schedule checked successfully', schedule: checkedSchedule },
       { status: 201 }

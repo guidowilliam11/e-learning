@@ -1,4 +1,4 @@
-import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
+import { connectToDatabase } from '@/libs/mongo/config'
 import Forum from '@/models/ForumModel'
 import Tag from '@/models/TagModel'
 import fs from 'fs/promises'
@@ -45,7 +45,6 @@ export async function GET() {
     if (!tags) {
       return NextResponse.json({ message: 'No tags found' }, { status: 404 })
     }
-    await closeDatabase()
 
     return NextResponse.json({ forumPost, tags })
   } catch (error) {
@@ -95,8 +94,6 @@ export async function POST(req) {
       images: filePaths,
       publishDate: new Date().toISOString(),
     })
-
-    await closeDatabase()
 
     return NextResponse.json(
       {

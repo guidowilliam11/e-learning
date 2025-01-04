@@ -1,4 +1,4 @@
-import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
+import { connectToDatabase } from '@/libs/mongo/config'
 import Forum from '@/models/ForumModel'
 import { NextResponse } from 'next/server'
 
@@ -19,9 +19,21 @@ export async function GET(req) {
     const forum = await Forum.findOne({
       _id: forumId,
     })
+      .populate({
+        path: 'tags',
+        select: 'tag',
+      })
+      .populate({
+        path: 'studentId',
+        select: 'fullName',
+      })
 
-    await closeDatabase()
-    return NextResponse.json(forum)
+    const forumPopulated = {
+      ...forum.toObject(),
+      tags: forum.tags.map((tag) => tag.tag),
+    }
+
+    return NextResponse.json(forumPopulated)
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 })
   }

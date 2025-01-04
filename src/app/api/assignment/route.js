@@ -1,4 +1,4 @@
-import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
+import { connectToDatabase } from '@/libs/mongo/config'
 import Assignment from '@/models/AssignmentModel'
 import Schedule from '@/models/ScheduleModel'
 import { NextResponse } from 'next/server'
@@ -27,7 +27,6 @@ export async function GET(req) {
         { status: 404 }
       )
     }
-    await closeDatabase()
 
     return NextResponse.json(assignment)
   } catch (error) {
@@ -75,7 +74,6 @@ export async function POST(req) {
       )
     }
 
-    await closeDatabase()
     return NextResponse.json({
       success: true,
       data: {
