@@ -5,8 +5,9 @@ import Sidebar from '../components/sidebar'
 import TopBar from '../components/topbar'
 import { ToastWrapper } from '@/libs/ToastWrapper'
 import { createTheme, ThemeProvider } from '@mui/material'
-import { ConversationContextProvider } from "@/contexts/conversationContext";
+import { ConversationContextProvider } from '@/contexts/conversationContext'
 import { FullscreenLoadingContextProvider } from '@/contexts/fullscreenLoadingContext'
+import { SessionProvider } from 'next-auth/react'
 
 export default function ConditionalLayout({ children }) {
   const theme = createTheme({
@@ -41,7 +42,7 @@ export default function ConditionalLayout({ children }) {
 
   const isCurrentRouteExcluded = () => {
     let result = false
-    excludedRoutes.forEach(route => {
+    excludedRoutes.forEach((route) => {
       let regex = new RegExp(route)
       if (regex.test(pathname)) {
         result = true
@@ -54,25 +55,27 @@ export default function ConditionalLayout({ children }) {
 
   // Default layout for other routes
   return (
-    <ThemeProvider theme={theme}>
-      <FullscreenLoadingContextProvider>
-        <ConversationContextProvider>
-          {isCurrentRouteExcluded() ? (
-            children
-          ) : (
-            <div className='flex font-inter'>
-              <Sidebar />
-              <div className='flex flex-col flex-grow h-screen'>
-                <TopBar />
-                <main className='flex-grow overflow-y-auto p-4 bg-gray-100 h-[90%] font-inter'>
-                  {children}
-                  <ToastWrapper />
-                </main>
+    <SessionProvider>
+      <ThemeProvider theme={theme}>
+        <FullscreenLoadingContextProvider>
+          <ConversationContextProvider>
+            {isCurrentRouteExcluded() ? (
+              children
+            ) : (
+              <div className="flex font-inter">
+                <Sidebar />
+                <div className="flex flex-col flex-grow h-screen">
+                  <TopBar />
+                  <main className="flex-grow overflow-y-auto p-4 bg-gray-100 h-[90%] font-inter">
+                    {children}
+                    <ToastWrapper />
+                  </main>
+                </div>
               </div>
-            </div>
-          )}
-        </ConversationContextProvider>
-      </FullscreenLoadingContextProvider>
-    </ThemeProvider>
+            )}
+          </ConversationContextProvider>
+        </FullscreenLoadingContextProvider>
+      </ThemeProvider>
+    </SessionProvider>
   )
 }

@@ -1,44 +1,51 @@
-"use client";
+'use client'
 
-import Link from "next/link"
+import Link from 'next/link'
 import {
   FaArrowLeft,
   FaMagnifyingGlass,
   FaHourglass,
   FaTriangleExclamation,
-  FaPersonCircleQuestion
-} from "react-icons/fa6"
-import {useState} from "react";
-import Image from "next/image";
-import {addPeer, searchPeer} from "@/app/contact/peer/add/actions";
-import {toast} from "react-toastify";
-import {useRouter} from "next/navigation";
-import {useConversationContext} from "@/contexts/conversationContext";
+  FaPersonCircleQuestion,
+  FaUserSecret,
+} from 'react-icons/fa6'
+import { useState } from 'react'
+import Image from 'next/image'
+import { addPeer, searchPeer } from '@/app/contact/peer/add/actions'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
+import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext'
 
 const errorModeEnum = {
-  notFound: "NOT_FOUND",
-  yourself: "YOURSELF",
-  serverError: "500"
+  notFound: 'NOT_FOUND',
+  yourself: 'YOURSELF',
+  serverError: '500',
+  inviteNotAllowed: 'INVITE_NOT_ALLOWED',
 }
 
-const Result = ({ isLoading, result, errorMode }) => {
-
+const Result = ({ isLoading, result, setResult, errorMode }) => {
   const router = useRouter()
+  const { setIsFullscreenLoading } = useFullscreenLoadingContext()
 
   const handleClickAdd = () => {
+    setIsFullscreenLoading(true)
     addPeer(result)
       .then(handleAddResult)
       .catch(handleFailAddPeer)
+      .finally(() => setIsFullscreenLoading(false))
   }
 
   const handleAddResult = (res) => {
-    if (res.body._id) {
-      setTimeout(() => router.push('/contact'), 1000)
-      toast.success('Successfully added peer!')
-    }
+    setResult(res.body)
+    toast.success('Successfully added peer!')
   }
 
   const handleFailAddPeer = (res) => {
+    const { error } = res.body
+    if (error === 'INVITE_NOT_ALLOWED') {
+      toast.error(`They don't want to be invited`)
+      return
+    }
     toast.error('Oops, something went wrong. Please try that again.')
   }
 
@@ -50,33 +57,42 @@ const Result = ({ isLoading, result, errorMode }) => {
     case errorModeEnum.notFound:
       return (
         <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-          <FaPersonCircleQuestion className="mb-4"/>
-          <div className="text-lg">We searched high and low, but found no one...</div>
+          <FaPersonCircleQuestion className="mb-4" />
+          <div className="text-lg">
+            We searched high and low, but found no one...
+          </div>
           <div className="text-lg">Make sure the email is correct</div>
         </div>
       )
     case errorModeEnum.yourself:
       return (
         <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-          <FaPersonCircleQuestion className="mb-4"/>
+          <FaPersonCircleQuestion className="mb-4" />
           <div className="text-lg">You can&#39;t add yourself...</div>
         </div>
       )
     case errorModeEnum.serverError:
       return (
         <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-          <FaTriangleExclamation className="mb-4"/>
+          <FaTriangleExclamation className="mb-4" />
           <div className="text-lg">Oops, something went wrong...</div>
           <div className="text-lg">Please try that again</div>
         </div>
       )
+    case errorModeEnum.inviteNotAllowed:
+      return (
+        <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
+          <FaUserSecret className="mb-4" />
+          <div className="text-lg">They don't want to be invited...</div>
+        </div>
+      )
     default:
-      break;
+      break
   }
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-        <FaHourglass className="mb-4"/>
+        <FaHourglass className="mb-4" />
         <div className="text-lg">Looking for the person...</div>
       </div>
     )
@@ -85,40 +101,35 @@ const Result = ({ isLoading, result, errorMode }) => {
     return (
       <div className="flex flex-col justify-center items-center">
         <Image
-          src={result.profilePicture || '/images/default-profile-picture.webp'}
+          src={result.picture || '/images/default-profile-picture.webp'}
           className="rounded-full mb-2"
           height={80}
           width={80}
           alt="profile-picture"
         />
         <div className="text-lg font-semibold mb-3">{result.fullName}</div>
-        {
-          result.alreadyPeers ?
-            (
-              <button
-                className="px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
-                onClick={handleClickViewProfile}
-              >
-                View Profile
-              </button>
-            ) :
-            (
-              <button
-                className="px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
-                onClick={handleClickAdd}
-              >
-                Add
-              </button>
-            )
-        }
+        {result.alreadyPeers ? (
+          <button
+            className="px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
+            onClick={handleClickViewProfile}
+          >
+            View Profile
+          </button>
+        ) : (
+          <button
+            className="px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
+            onClick={handleClickAdd}
+          >
+            Add
+          </button>
+        )}
       </div>
     )
   }
-  return '';
+  return ''
 }
 
 const AddPeerPage = () => {
-
   const [peerEmail, setPeerEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState({})
@@ -150,9 +161,7 @@ const AddPeerPage = () => {
         <Link href="/contact">
           <FaArrowLeft />
         </Link>
-        <span className="cursor-default">
-          Add New Peer
-        </span>
+        <span className="cursor-default">Add New Peer</span>
       </div>
       <span className="text-sm text-neutral-500">
         Email has to be an exact match
@@ -163,13 +172,13 @@ const AddPeerPage = () => {
           className="rounded drop-shadow-sm p-2 w-[40%] focus:outline-none focus:ring-primary focus:ring-2"
           type="email"
           placeholder="Input peer email"
-          onChange={e => setPeerEmail(e.target.value)}
+          onChange={(e) => setPeerEmail(e.target.value)}
         />
         <button
           className="p-3 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
           type="submit"
         >
-          <FaMagnifyingGlass/>
+          <FaMagnifyingGlass />
         </button>
       </form>
       <div className="flex h-full bg-neutral-50 rounded-md drop-shadow-md justify-center items-center">
@@ -177,6 +186,7 @@ const AddPeerPage = () => {
           isLoading={isLoading}
           result={result}
           errorMode={errorMode}
+          setResult={setResult}
         />
       </div>
     </section>

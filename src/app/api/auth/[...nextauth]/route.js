@@ -28,15 +28,35 @@ export const authOptions = {
           throw new Error('Invalid password')
         }
 
-        return { id: user._id, email: user.email }
+        return {
+          id: user._id,
+          email: user.email,
+          fullName: user.fullName,
+          picture: user.picture,
+          preferences: user.preferences
+        }
       },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: 'jwt', maxAge: 604800 },
   callbacks: {
+    async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.user = {
+          ...user
+        }
+      }
+      if (trigger === 'update' && session?.newPreferences) {
+        token.user.preferences = session.newPreferences
+      }
+      if (trigger === 'update' && session?.newProfile) {
+        token.user = session.newProfile
+      }
+      return token
+    },
     async session({ session, token }) {
-      session.user.id = token.sub
+      session.user = token.user
       return session
     },
   },

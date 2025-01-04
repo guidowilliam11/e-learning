@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
     FaChevronDown,
@@ -13,12 +13,15 @@ import {
     FaAddressBook,
     FaChevronLeft
 } from 'react-icons/fa';
-import {IoLogOut, IoSettingsSharp, IoIosArrowBack} from "react-icons/io5";
-import {FaPlus, FaX} from "react-icons/fa6";
+import { IoLogOut, IoSettingsSharp, IoIosArrowBack } from "react-icons/io5";
+import { FaPlus, FaX } from "react-icons/fa6";
+import { useSession } from 'next-auth/react';
 
 // Dummy notes data for users
 
 export default function Sidebar() {
+    const { data: session } = useSession()
+
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [expandedTopics, setExpandedTopics] = useState({});
@@ -44,7 +47,7 @@ export default function Sidebar() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({folderId, newNote}),
+                body: JSON.stringify({ folderId, newNote }),
             });
 
             if (response.ok) {
@@ -141,7 +144,7 @@ export default function Sidebar() {
 
     // Toggle topic expansion
     const toggleTopic = (topic) => {
-        setExpandedTopics(prev => ({...prev, [topic]: !prev[topic]}));
+        setExpandedTopics(prev => ({ ...prev, [topic]: !prev[topic] }));
     };
 
     return (<div
@@ -152,8 +155,8 @@ export default function Sidebar() {
             className={`absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2 z-20 transition-all duration-300 rounded-full bg-[#F99B26] p-1 
         ${isSidebarCollapsed ? 'opacity-100' : 'opacity-0 pointer-events-none'} group-hover:opacity-100 group-hover:pointer-events-auto`}
         >
-            {isSidebarCollapsed ? <FaChevronRight className="text-white text-base"/> :
-                <FaChevronLeft className="text-white text-base2"/>}
+            {isSidebarCollapsed ? <FaChevronRight className="text-white text-base" /> :
+                <FaChevronLeft className="text-white text-base2" />}
         </button>
         {/* Sidebar */}
         <aside
@@ -170,10 +173,10 @@ export default function Sidebar() {
                             onClick={() => setShowOverlay(false)}
                             className="text-[#F99B26] font-semibold"
                         >
-                        <span
-                            className="flex justify-center gap-2 items-center text-3xl font-bold text-[#F99B26] mb-8 pt-4">
-                            {<FaChevronLeft/>} Notes
-                        </span>
+                            <span
+                                className="flex justify-center gap-2 items-center text-3xl font-bold text-[#F99B26] mb-8 pt-4">
+                                {<FaChevronLeft />} Notes
+                            </span>
                         </button>
                         {notesData.notes.map((folder) => (
                             <div
@@ -190,9 +193,8 @@ export default function Sidebar() {
                                     <div className="flex items-center">
                                         <button
                                             id={folder._id}
-                                            className={` mr-2 transition-opacity duration-200 ${
-                                                hoveredFolder === folder._id ? 'opacity-100' : 'opacity-0'
-                                            }`}
+                                            className={` mr-2 transition-opacity duration-200 ${hoveredFolder === folder._id ? 'opacity-100' : 'opacity-0'
+                                                }`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleAddNote(folder._id);
@@ -209,9 +211,8 @@ export default function Sidebar() {
                                         {folder.notes.map((notes) => (
                                             <li
                                                 key={notes._id}
-                                                className={`cursor-pointer ${
-                                                    selectedSession === notes._id ? 'font-medium text-[#F99B26]' : 'text-gray-700'
-                                                }`}
+                                                className={`cursor-pointer ${selectedSession === notes._id ? 'font-medium text-[#F99B26]' : 'text-gray-700'
+                                                    }`}
                                                 onClick={() => setSelectedSession(notes._id)}
                                             >
                                                 <NavItem
@@ -292,50 +293,50 @@ export default function Sidebar() {
                 <div
                     className={`${showOverlay ? 'opacity-50' : 'opacity-100'} transition-opacity`}>
                     {/* Logo */}
-                    <div className="text-3xl font-bold text-[#F99B26] mb-8 pt-4">Notilde ~</div>
+                    <div className="text-3xl font-bold text-[#F99B26] mb-8 pt-4">~ ZEAL.</div>
 
                     <div
                         className="h-36 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
                         <div className="flex justify-between items-center mb-2">
-                            <p className="text-lg font-semibold">John Doe</p>
+                            <p className="text-lg font-semibold">{session?.user?.fullName}</p>
                             <button
-                                className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Switch
+                                className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
                             </button>
                         </div>
                         <p className="font-bold">Student</p>
-                        <p className="text-sm">undergraduate<br/>BINUS University</p>
+                        <p className="text-sm">undergraduate<br />BINUS University</p>
                     </div>
 
                     {/* Navigation Links */}
                     <nav className="space-y-4">
-                        <NavItem href="/" icon={<FaHome/>} label="Dashboard"
-                                 onClick={handleNavClick}/>
-                        <NavItem href="/courses" icon={<FaBook/>} label="Courses"
-                                 onClick={handleNavClick}/>
-                        <NavItem href="/notes" icon={<FaStickyNote/>} label="Notes"
-                                 onClick={handleNavClick}/>
-                        <NavItem href="/forum" icon={<FaUsers/>} label="Forum"
-                                 onClick={handleNavClick}/>
-                        <NavItem href="/schedule" icon={<FaCalendar/>} label="Schedule"
-                                 onClick={handleNavClick}/>
-                        <NavItem href="/contact" icon={<FaAddressBook/>} label="Contact"
-                                 onClick={handleNavClick}/>
+                        <NavItem href="/" icon={<FaHome />} label="Dashboard"
+                            onClick={handleNavClick} />
+                        <NavItem href="/courses" icon={<FaBook />} label="Courses"
+                            onClick={handleNavClick} />
+                        <NavItem href="/notes" icon={<FaStickyNote />} label="Notes"
+                            onClick={handleNavClick} />
+                        <NavItem href="/forum" icon={<FaUsers />} label="Forum"
+                            onClick={handleNavClick} />
+                        <NavItem href="/schedule" icon={<FaCalendar />} label="Schedule"
+                            onClick={handleNavClick} />
+                        <NavItem href="/contact" icon={<FaAddressBook />} label="Contact"
+                            onClick={handleNavClick} />
                     </nav>
                 </div>
 
                 <div
                     className={`space-y-4 ${showOverlay ? 'opacity-50' : 'opacity-100'} transition-opacity`}>
-                    <NavItem href="/settings" icon={<IoSettingsSharp/>}
-                             label="Settings & Privacy" onClick={handleNavClick}/>
-                    <NavItem href="/logout" icon={<IoLogOut/>} label="Logout"
-                             onClick={handleNavClick}/>
+                    <NavItem href="/settings" icon={<IoSettingsSharp />}
+                        label="Settings" onClick={handleNavClick} />
+                    <NavItem href="/logout" icon={<IoLogOut />} label="Logout"
+                        onClick={handleNavClick} />
                 </div>
             </div>
         </aside>
     </div>);
 }
 
-function NavItem({href, icon, label, onClick}) {
+function NavItem({ href, icon, label, onClick }) {
     const isLogout = label === "Logout";
 
     return (<div onClick={() => onClick(href)} className="w-full">

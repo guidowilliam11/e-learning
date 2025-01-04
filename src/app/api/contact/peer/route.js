@@ -16,35 +16,31 @@ export async function GET(req) {
       return NextResponse.json({ error: 'TARGET_STUDENT_ID_REQUIRED' }, { status: 400 })
     }
 
+    const targetStudent = await Students.findOne({ email }, 'fullName picture email preferences')
+    if (!targetStudent) {
+      return NextResponse.json({ error: 'PEER_NOT_FOUND' }, { status: 404 })
+    }
+
     const session = await getServerSession(authOptions)
 
     const { user } = session
-
     await connectToDatabase()
 
-    const targetStudent = await Students.findOne({ email })
 
-    let notPeers = false
+    let alreadyPeers = false
     const peer = await Peers.findOne({
       participants: {
-        $in: user.id
+        $all: [user.id, targetStudent._id]
       }
-    }).findOne({
-      participants: {
-        $in: targetStudent._id
-      }
-    }).populate('participants', 'fullName picture email')
+    })
 
-    if (!peer) {
-      notPeers = true
+    if (peer) {
+      alreadyPeers = true
     }
 
-    // Get target student
-    const result = peer.participants.find(participant => !participant._id.equals(user.id))
-
     return NextResponse.json({
-      ...result.toObject(),
-      notPeers
+      ...targetStudent.toObject(),
+      alreadyPeers
     })
 
   } catch (error) {

@@ -19,6 +19,12 @@ const studentSchema = new mongoose.Schema(
     picture: {
       type: String,
       default: ''
+    },
+    preferences: {
+      allowPeerInvite: {
+        type: Boolean,
+        default: true
+      }
     }
   },
   {

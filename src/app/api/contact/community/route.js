@@ -15,6 +15,10 @@ export async function GET(req) {
 
     const community = await Communities.findById(communityId).populate('participants', 'fullName picture email')
 
+    if (!community) {
+      return NextResponse.json({ error: 'COMMUNITY_NOT_FOUND' }, { status: 404 })
+    }
+
     return NextResponse.json(community)
 
   } catch (error) {

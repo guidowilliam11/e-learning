@@ -19,7 +19,8 @@ export default function TopBar() {
     '/contact/community/add': 'Contact',
     '/contact/community/edit': 'Contact',
     '/contact/peer': 'Contact',
-    '/contact/peer/add': 'Contact'
+    '/contact/peer/add': 'Contact',
+    '/settings': 'Settings'
   };
 
   const title = pageTitles[path] || 'Dashboard'; // Default to 'Dashboard' if path doesn't match
