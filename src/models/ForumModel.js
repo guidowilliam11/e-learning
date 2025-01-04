@@ -32,10 +32,6 @@ const forumSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
     likedBy: [
       {
         type: Types.ObjectId,

@@ -26,10 +26,8 @@ export async function POST(req) {
 
     if (hasLiked) {
       forum.likedBy = forum.likedBy.filter((id) => id.toString() !== studentId)
-      forum.likes -= 1
     } else {
       forum.likedBy.push(studentId)
-      forum.likes += 1
     }
 
     await forum.save()

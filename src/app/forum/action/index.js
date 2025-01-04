@@ -28,7 +28,6 @@ export async function insertNewForumPost(formData) {
     }
 
     const data = await response.json()
-    console.log('Forum post uploaded successfully:', data)
     return data
   } catch (error) {
     console.error('Error uploading forum post:', error)

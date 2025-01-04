@@ -27,7 +27,7 @@ export async function GET() {
       tags: forum.tags.map((tag) => tag.tag),
       studentName: forum.studentId.fullName,
       views: forum.views,
-      likes: forum.likes,
+      likedBy: forum.likedBy,
       images: forum.images,
       comments: forum.comments,
       createdAt: forum.createdAt,
