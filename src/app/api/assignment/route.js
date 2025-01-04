@@ -31,6 +31,8 @@ export async function GET(req) {
     return NextResponse.json(assignment)
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 })
+  } finally {
+    await closeDatabase()
   }
 }
 
@@ -83,5 +85,7 @@ export async function POST(req) {
     })
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 })
+  } finally {
+    await closeDatabase()
   }
 }

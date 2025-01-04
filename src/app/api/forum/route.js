@@ -1,4 +1,4 @@
-import { connectToDatabase } from '@/libs/mongo/config'
+import { closeDatabase, connectToDatabase } from '@/libs/mongo/config'
 import Forum from '@/models/ForumModel'
 import Tag from '@/models/TagModel'
 import fs from 'fs/promises'
@@ -49,6 +49,8 @@ export async function GET() {
     return NextResponse.json({ forumPost, tags })
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 })
+  } finally {
+    await closeDatabase()
   }
 }
 
@@ -109,5 +111,7 @@ export async function POST(req) {
       { message: 'An error occurred', error: error.message },
       { status: 500 }
     )
+  } finally {
+    await closeDatabase()
   }
 }

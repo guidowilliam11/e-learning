@@ -41,5 +41,7 @@ export async function POST(req) {
       { message: 'Internal server error' },
       { status: 500 }
     )
+  } finally {
+    await closeDatabase()
   }
 }
