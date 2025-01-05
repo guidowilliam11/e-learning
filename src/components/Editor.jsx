@@ -46,33 +46,6 @@ const colors = [
   '#9BABB8',
   '#E3F4F4',
 ]
-const names = [
-  'Lea Thompson',
-  'Cyndi Lauper',
-  'Tom Cruise',
-  'Madonna',
-  'Jerry Hall',
-  'Joan Collins',
-  'Winona Ryder',
-  'Christina Applegate',
-  'Alyssa Milano',
-  'Molly Ringwald',
-  'Ally Sheedy',
-  'Debbie Harry',
-  'Olivia Newton-John',
-  'Elton John',
-  'Michael J. Fox',
-  'Axl Rose',
-  'Emilio Estevez',
-  'Ralph Macchio',
-  'Rob Lowe',
-  'Jennifer Grey',
-  'Mickey Rourke',
-  'John Cusack',
-  'Matthew Broderick',
-  'Justine Bateman',
-  'Lisa Bonet',
-]
 
 const defaultContent = `
   <p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>
@@ -82,18 +55,16 @@ const defaultContent = `
 const getRandomElement = list => list[Math.floor(Math.random() * list.length)]
 
 const getRandomColor = () => getRandomElement(colors)
-const getRandomName = () => getRandomElement(names)
-
-const getInitialUser = () => {
-  return {
-    name: getRandomName(),
-    color: getRandomColor(),
-  }
-}
 
 const Editor = ({
-  ydoc, provider, room,
+  ydoc, provider, room, user
 }) => {
+  const getInitialUser = () => {
+    return {
+      name: user.name,
+      color: getRandomColor(),
+    }
+  }
   const [status, setStatus] = useState('connecting')
   const [currentUser, setCurrentUser] = useState(getInitialUser)
   const [modal, setModal] = useState(false)

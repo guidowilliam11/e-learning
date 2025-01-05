@@ -16,7 +16,6 @@ export async function GET(req) {
 
         const userId = session.user.id;
         const folders = await Folder.find({ ownerId: userId }).populate('notes');
-        console.log(folders)
         return NextResponse.json(
             { notes: folders },
             { status: 200 }
