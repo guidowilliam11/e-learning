@@ -1,19 +1,20 @@
 import mongoose, {Schema, Types} from 'mongoose'
 import Students from './StudentModel'
+import Session from "@/models/SessionModel";
 
 const subscriberSchema = new Schema(
     {
         studentId: {
             type: Types.ObjectId,
             required: true,
-            ref: Students.modelName, // Ensure Students.modelName is correctly defined
+            ref: Students.modelName,
         },
-        progress: {
-            type: Number,
-            default: 0,
-            min: [0, 'Progress cannot be less than 0'],
-            max: [100, 'Progress cannot be greater than 100'],
-        },
+        progress: [
+            {
+                type: Types.ObjectId,
+                ref: Session.modelName,
+            },
+        ],
     },
     {timestamps: true, versionKey: false}
 )

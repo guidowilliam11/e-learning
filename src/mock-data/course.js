@@ -71,17 +71,73 @@ const mockData = {
         },
     ],
     subscribers: [
-        { _id: new ObjectId("17663f44d703aed0356b5b63"), studentId: new ObjectId("67663f44d703aed0356b5b63"), progress: 80 },
-        { _id: new ObjectId("1767927ea3b1157d451cb820"), studentId: new ObjectId("6767927ea3b1157d451cb820"), progress: 45 },
-        { _id: new ObjectId("1767939e271a78f2fec485d1"), studentId: new ObjectId("6767939e271a78f2fec485d1"), progress: 60 },
+        {
+            _id: new ObjectId("17663f44d703aed0356b5b63"),
+            studentId: new ObjectId("67663f44d703aed0356b5b63"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234580"),
+                new ObjectId("64a7f5e8d8f1b1c0d1234583")
+            ]
+        },
+        {
+            _id: new ObjectId("1767927ea3b1157d451cb820"),
+            studentId: new ObjectId("6767927ea3b1157d451cb820"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234580")
+            ]
+        },
+        {
+            _id: new ObjectId("1767939e271a78f2fec485d1"),
+            studentId: new ObjectId("6767939e271a78f2fec485d1"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234585"),
+            ]
+        },
 
-        { _id: new ObjectId("27663f44d703aed0356b5b63"), studentId: new ObjectId("67663f44d703aed0356b5b63"), progress: 90 },
-        { _id: new ObjectId("2767927ea3b1157d451cb820"), studentId: new ObjectId("6767927ea3b1157d451cb820"), progress: 45 },
-        { _id: new ObjectId("2767939e271a78f2fec485d1"), studentId: new ObjectId("6767939e271a78f2fec485d1"), progress: 60 },
+        {
+            _id: new ObjectId("27663f44d703aed0356b5b63"),
+            studentId: new ObjectId("67663f44d703aed0356b5b63"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234588"),
+            ]
+        },
+        {
+            _id: new ObjectId("2767927ea3b1157d451cb820"),
+            studentId: new ObjectId("6767927ea3b1157d451cb820"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234588"),
+            ]
+        },
+        {
+            _id: new ObjectId("2767939e271a78f2fec485d1"),
+            studentId: new ObjectId("6767939e271a78f2fec485d1"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234598")
+            ]
+        },
 
-        { _id: new ObjectId("37663f44d703aed0356b5b63"), studentId: new ObjectId("67663f44d703aed0356b5b63"), progress: 100 },
-        { _id: new ObjectId("3767927ea3b1157d451cb820"), studentId: new ObjectId("6767927ea3b1157d451cb820"), progress: 50 },
-        { _id: new ObjectId("3767939e271a78f2fec485d1"), studentId: new ObjectId("6767939e271a78f2fec485d1"), progress: 10 },
+        {
+            _id: new ObjectId("37663f44d703aed0356b5b63"),
+            studentId: new ObjectId("67663f44d703aed0356b5b63"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234598"),
+            ]
+        },
+        {
+            _id: new ObjectId("3767927ea3b1157d451cb820"),
+            studentId: new ObjectId("6767927ea3b1157d451cb820"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234599")
+            ]
+        },
+        {
+            _id: new ObjectId("3767939e271a78f2fec485d1"),
+            studentId: new ObjectId("6767939e271a78f2fec485d1"),
+            progress: [
+                new ObjectId("64a7f5e8d8f1b1c0d1234599"),
+                new ObjectId("64a7f5e8d8f1b1c0d1234600"),
+            ]
+        },
 
 
     ],
@@ -157,8 +213,29 @@ const mockData = {
         },
     ],
     summaries: [
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234591"), content: "Introduction to algorithms.", type: "simple" },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234592"), content: "Programming fundamentals.", type: "expanded" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234591"), content: "Algorithms are like recipes for solving problems with a computer. This class teaches about smarter ways to solve puzzles that involve numbers and lists. For example:\n" +
+                "\n" +
+                "Imagine organizing a messy toy box quickly—that's like sorting.\n" +
+                "We'll also learn how computers save space and work fast, like figuring out the fastest way to solve a maze. This course doesn’t focus on coding games but on thinking like a computer to solve tricky problems.\n", type: "simple" },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234592"), content: "This course, CS224 Advanced Algorithms, delves into the theoretical and practical aspects of algorithm design. Key areas of focus include:\n" +
+                "\n" +
+                "Efficiency Models: Beyond time and space complexity, students learn alternative methods to measure algorithm performance.\n" +
+                "Algorithmic Techniques: Coverage of dynamic vs. static data structures, binary search trees, and more advanced concepts like Fusion Trees and Van Emde Boas Trees.\n" +
+                "Applications: Understanding how abstract algorithms impact real-world problems such as sorting, searching, and data retrieval at scale.\n" +
+                "Mathematical Rigor: Emphasis on recursive problem-solving, advanced sorting bounds (e.g., \n" +
+                "𝑂\n" +
+                "(\n" +
+                "𝑛\n" +
+                "log\n" +
+                "⁡\n" +
+                "𝑛\n" +
+                ")\n" +
+                "O(n \n" +
+                "logn\n" +
+                "​\n" +
+                " )), and cutting-edge developments in deterministic vs. randomized algorithms.\n" +
+                "This course emphasizes critical thinking, enabling students to analyze and model problems effectively.\n" +
+                "\n", type: "expanded" },
         { _id: new ObjectId("64a7f5e8d8f1b1c0d1234593"), content: "Data structures overview.", type: "simple" },
         { _id: new ObjectId("64a7f5e8d8f1b1c0d1234594"), content: "Introduction to limits.", type: "expanded" },
         { _id: new ObjectId("64a7f5e8d8f1b1c0d1234595"), content: "Derivatives basics.", type: "simple" },

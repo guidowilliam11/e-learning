@@ -3,14 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Course from "@/models/CourseModel";
 import { NextResponse } from "next/server";
+import Subscriber from "@/models/SubscriberModel";
 
 // GET: Check if the user is authorized to view the course
 export async function GET(req, { params }) {
-    const courseId = params.id; // Direct access to params.id
 
     try {
         // Connect to the database
         await connectToDatabase();
+        const courseId = params.id;
 
         // Check session for authentication
         const session = await getServerSession(authOptions);
@@ -23,7 +24,7 @@ export async function GET(req, { params }) {
 
         // Fetch the course with populated fields
         const course = await Course.findById(courseId).populate([
-            { path: 'sessions' },
+            { path: 'sessions', populate: 'summaries' },
             { path: 'subscribers' }
         ]);
 

@@ -1,12 +1,12 @@
 "use client";
 
-import CourseCard from '../../components/courseCard';
-import {useEffect, useState} from "react";
+import CourseCard from "../../components/courseCard";
+import { useEffect, useState } from "react";
 
-export default function Courses({user}) {
+export default function Courses({ user }) {
     const [coursesData, setCoursesData] = useState([]);
 
-// Fetch notes data
+    // Fetch courses data
     useEffect(() => {
         const fetchCourses = async () => {
             try {
@@ -15,9 +15,9 @@ export default function Courses({user}) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setCoursesData(data.courses);
+                setCoursesData(data.courses || []);
             } catch (error) {
-                console.error("Failed to fetch notes:", error);
+                console.error("Failed to fetch courses:", error);
             }
         };
 
