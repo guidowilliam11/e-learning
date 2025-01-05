@@ -134,7 +134,7 @@ const ProfileSection = ({ user, handleUpdateProfile }) => {
             id="newPassword"
             name="newPassword"
             className="w-full bg-neutral-50 text-black border-2 border-neutral-50 border-b-primary p-2 rounded-md focus:outline-0 focus:border-primary transition"
-            minlength="6"
+            minLength="6"
             value={newUserData?.newPassword || ''}
             onChange={(e) =>
               setNewUserData({ ...newUserData, newPassword: e.target.value })
