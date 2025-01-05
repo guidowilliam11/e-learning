@@ -49,13 +49,10 @@ const ConversationContent = ({ userId }) => {
   useEffect(() => {
     const lastMessage =
       activeConversationMessages[activeConversationMessages.length - 1]
-    if (!lastMessage) {
-      return
-    }
     const lastMessageFromConversationsData =
       conversationsData.get(activeConversationId).lastMessage
 
-    if (lastMessage._id === lastMessageFromConversationsData._id) {
+    if (lastMessage?._id === lastMessageFromConversationsData?._id) {
       return
     }
     setActiveConversationMessages((prev) => [
