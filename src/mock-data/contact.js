@@ -4,6 +4,7 @@ export const contactsMockData = [
     {
         id: crypto.randomUUID(),
         name: 'John',
+        email: 'john@example.com',
         profilePicture: '',
         lastMessage: 'Lorem ipsum',
         lastMessageTime: new Date().setMinutes(epoch.getMinutes() - 1),
@@ -12,6 +13,7 @@ export const contactsMockData = [
     {
         id: crypto.randomUUID(),
         name: 'Doe',
+        email: 'doe@example.com',
         profilePicture: '',
         lastMessage: 'Lorem ipsum',
         lastMessageTime: new Date().setMinutes(epoch.getMinutes() - 10),
@@ -20,6 +22,7 @@ export const contactsMockData = [
     {
         id: crypto.randomUUID(),
         name: 'Juno',
+        email: 'juno@example.com',
         profilePicture: '',
         lastMessage: 'Lorem ipsum',
         lastMessageTime: new Date().setDate(epoch.getDate() - 1),

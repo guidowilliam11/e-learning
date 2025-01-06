@@ -16,8 +16,24 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
     },
+    picture: {
+      type: String,
+      default: ''
+    },
+    preferences: {
+      allowPeerInvite: {
+        type: Boolean,
+        default: true
+      }
+    }
   },
-  { timestamps: true, versionKey: false }
+  {
+    timestamps: true,
+    versionKey: false,
+    toObject: {
+      virtuals: true
+    }
+  }
 )
 
 const Students =
