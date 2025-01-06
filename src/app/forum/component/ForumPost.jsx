@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import PersonIcon from '@mui/icons-material/Person'
 import { useRouter } from 'next/navigation'
 
 export default function ForumPost({
@@ -38,7 +37,7 @@ export default function ForumPost({
       <div className='flex flex-col justify-between flex-grow'>
         <div>
           {/* Post Content */}
-          <p className='mb-3 text-gray-700'>{content}</p>
+          <p className='mb-3 font-medium text-black'>{content}</p>
 
           {/* Tags */}
           <div className='flex mb-4 space-x-2'>
@@ -56,7 +55,13 @@ export default function ForumPost({
         <div className='flex justify-between'>
           {/* Post Header */}
           <div className='flex items-center gap-3'>
-            <PersonIcon className='rounded-full h-[36px] w-[36px]' />
+            <Image
+              alt='profile'
+              src='/images/default-profile-picture.webp'
+              width={36}
+              height={36}
+              className='rounded-full'
+            />
             <div>
               <h3 className='text-sm font-semibold text-gray-800'>{author}</h3>
               <p className='text-xs text-gray-500'>{date}</p>
