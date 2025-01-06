@@ -4,6 +4,8 @@ import { insertReplyToComment, updateLikeToComment } from '../action'
 import CommentField from './CommentField'
 import { toast } from 'react-toastify'
 import { Button } from '@mui/material'
+import Image from 'next/image'
+import { postFormattedDate } from '@/utils/time'
 
 const CommentSection = ({
   comments,
@@ -129,30 +131,47 @@ const CommentSection = ({
             key={index}
             className='w-full p-4 mt-2 text-black bg-gray-200 rounded-lg'
           >
-            <div className='mb-2 font-bold'>{comment.studentId.fullName}</div>
-            <p className='mb-4'>{comment.content}</p>
-            <CommentLike
-              isLiked={likedComments.includes(comment._id)}
-              likes={comment.likedBy?.length}
-              comments={comment.replies?.length}
-              handleLikeButton={() => handleLikeButton(comment._id)}
-              handleCommentButton={() => handleCommentButton(comment._id)}
-            />
-
-            {commentFieldStates[comment._id] && (
-              <CommentField
-                comment={newComments[comment._id] || ''}
-                isFocused={commentFieldStates[comment._id]}
-                setIsFocused={(state) => setIsFocused(comment._id, state)}
-                handleChangeComment={(e) =>
-                  handleChangeComment(comment._id, e.target.value)
-                }
-                handleCancelComment={() => handleCancelComment(comment._id)}
-                handleAddComment={() =>
-                  handleAddComment(comment._id, newComments[comment._id])
-                }
+            <div className='flex items-start mb-1'>
+              <Image
+                alt='profile'
+                src='/images/default-profile-picture.webp'
+                width={40}
+                height={40}
               />
-            )}
+              <div className='flex flex-col ml-2'>
+                <p className='text-sm font-bold'>
+                  {comment.studentId.fullName}
+                </p>
+                <p className='text-sm'>
+                  Posted on {postFormattedDate(comment.createdAt)}
+                </p>
+              </div>
+            </div>
+            <div className='ml-[3.25%]'>
+              <p className='mb-2'>{comment.content}</p>
+              <CommentLike
+                isLiked={likedComments.includes(comment._id)}
+                likes={comment.likedBy?.length}
+                comments={comment.replies?.length}
+                handleLikeButton={() => handleLikeButton(comment._id)}
+                handleCommentButton={() => handleCommentButton(comment._id)}
+              />
+              {commentFieldStates[comment._id] && (
+                <CommentField
+                  comment={newComments[comment._id] || ''}
+                  isFocused={commentFieldStates[comment._id]}
+                  setIsFocused={(state) => setIsFocused(comment._id, state)}
+                  handleChangeComment={(e) =>
+                    handleChangeComment(comment._id, e.target.value)
+                  }
+                  handleCancelComment={() => handleCancelComment(comment._id)}
+                  handleAddComment={() =>
+                    handleAddComment(comment._id, newComments[comment._id])
+                  }
+                />
+              )}
+            </div>
+
             {comment.replies.length > 0 && (
               <>
                 {currentReplies + 1 <= maxRepliesCount ? (

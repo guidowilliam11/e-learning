@@ -24,10 +24,7 @@ export const formatMessageTime = (lastMessageTime, shouldShowTime = false) => {
     if (getTimeDifferenceInDays(now, epoch) > 0) {
         options.push({ year: 'numeric' }, { month: '2-digit' }, { day: '2-digit' })
         return formatTime(epoch, options, '/')
-    } else if (
-        shouldShowTime ||
-        getTimeDifferenceInDays(now, epoch) === 0
-    ) {
+    } else if (shouldShowTime || getTimeDifferenceInDays(now, epoch) === 0) {
         options.push({ timeStyle: 'short', hour12: false })
         return formatTime(epoch, options, ':')
     }
@@ -46,4 +43,18 @@ export const generateTimeSlots = () => {
         const hour = 0 + index
         return formatHour(hour)
     })
+}
+
+export const postFormattedDate = (date) => {
+    return new Date(date)
+        .toLocaleString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        })
+        .replace(',', '')
+        .replace(':', '.')
 }

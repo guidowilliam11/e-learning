@@ -17,6 +17,7 @@ import CommentLike from './CommentLike'
 import CommentSection from './CommentSection'
 import CommentField from './CommentField'
 import { redirect } from 'next/navigation'
+import { postFormattedDate } from '@/utils/time'
 
 const Post = ({ id, user }) => {
   const [currentPost, setCurrentPost] = useState(null)
@@ -153,6 +154,8 @@ const Post = ({ id, user }) => {
     fetchCurrentPost()
   }, [])
 
+  console.log(currentPost)
+
   return (
     <div className='flex flex-col flex-grow gap-5 p-4 bg-white rounded-lg shadow-md'>
       {notFound ? (
@@ -161,6 +164,23 @@ const Post = ({ id, user }) => {
         <div>Loading...</div>
       ) : (
         <>
+          <div className='flex items-start'>
+            <Image
+              alt='profile'
+              src='/images/default-profile-picture.webp'
+              width={40}
+              height={40}
+            />
+            <div className='flex flex-col ml-2'>
+              <p className='text-sm font-bold'>
+                {currentPost.studentId.fullName}
+              </p>
+              <p className='text-sm'>
+                Posted on {postFormattedDate(currentPost.createdAt)}
+              </p>
+            </div>
+          </div>
+
           <h1 className='text-3xl font-medium'>{currentPost.title}</h1>
 
           <div className='flex justify-between'>
