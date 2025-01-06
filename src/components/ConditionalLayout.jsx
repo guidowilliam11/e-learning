@@ -13,7 +13,6 @@ import MUITheme from '@/libs/MUITheme'
 export default function ConditionalLayout({ children }) {
   const pathname = usePathname()
 
-  // Define routes to exclude from the layout
   const excludedRoutes = ['/login', '/register', '/call/.']
 
   const isCurrentRouteExcluded = () => {
@@ -27,9 +26,6 @@ export default function ConditionalLayout({ children }) {
     return result
   }
 
-  // If the current route is excluded, render only the children
-
-  // Default layout for other routes
   return (
     <SessionProvider>
       <ThemeProvider theme={MUITheme}>

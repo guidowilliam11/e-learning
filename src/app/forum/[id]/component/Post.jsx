@@ -72,7 +72,6 @@ const Post = ({ id, user }) => {
           ...prevPost,
           comments: post.comments,
         }))
-        console.log(post)
         setCommentDepth(commentDepth + 1)
         if (post.likedBy.includes(user)) {
           setIsLiked(true)
