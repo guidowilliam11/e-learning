@@ -3,17 +3,21 @@ import CommentLike from './CommentLike'
 import { insertReplyToComment, updateLikeToComment } from '../action'
 import CommentField from './CommentField'
 import { toast } from 'react-toastify'
+import { Button } from '@mui/material'
 
 const CommentSection = ({
   comments,
   user,
   fetchPost,
+  fetchPostMoreComment,
   currentReplies = 0,
   maxReplies = 4,
 }) => {
   const [likedComments, setLikedComments] = useState([])
   const [commentFieldStates, setCommentFieldStates] = useState({})
   const [newComments, setNewComments] = useState({})
+  const [repliesVisibility, setRepliesVisibility] = useState({})
+  const [maxRepliesCount, setMaxRepliesCount] = useState(maxReplies)
 
   const handleLikeButton = async (commentId) => {
     try {
@@ -73,7 +77,7 @@ const CommentSection = ({
           const newComment = await insertReplyToComment(commentId, user, value)
 
           if (newComment) {
-            fetchPost()
+            maxRepliesCount > 4 ? fetchPostMoreComment() : fetchPost()
             handleCancelComment(commentId)
             resolve(newComment)
           } else reject(newComment)
@@ -101,6 +105,13 @@ const CommentSection = ({
     }
   }
 
+  const toggleRepliesVisibility = (commentId) => {
+    setRepliesVisibility((prevState) => ({
+      ...prevState,
+      [commentId]: !prevState[commentId],
+    }))
+  }
+
   useEffect(() => {
     if (comments) {
       const likedByUser = comments
@@ -110,18 +121,12 @@ const CommentSection = ({
     }
   }, [comments, user])
 
-  console.log(comments)
-
-  if (currentReplies >= maxReplies) {
-    return <div>Show more comments</div>
-  }
-
   return (
     <div>
       {comments &&
-        comments.map((comment) => (
+        comments.map((comment, index) => (
           <div
-            key={comment._id}
+            key={index}
             className='w-full p-4 mt-2 text-black bg-gray-200 rounded-lg'
           >
             <div className='mb-2 font-bold'>{comment.studentId.fullName}</div>
@@ -148,17 +153,40 @@ const CommentSection = ({
                 }
               />
             )}
-
-            {comment.replies && (
-              <div className='ml-5'>
-                <CommentSection
-                  comments={comment.replies}
-                  user={user}
-                  fetchPost={fetchPost}
-                  currentReplies={currentReplies + 1}
-                  maxReplies={5}
-                />
-              </div>
+            {comment.replies.length > 0 && (
+              <>
+                {currentReplies + 1 <= maxRepliesCount ? (
+                  <Button onClick={() => toggleRepliesVisibility(comment._id)}>
+                    {repliesVisibility[comment._id]
+                      ? 'Hide Replies'
+                      : `View Replies (${comment.replies.length})`}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={async () => {
+                      const post = await fetchPostMoreComment()
+                      setMaxRepliesCount(maxRepliesCount + 1)
+                      if (post) {
+                        comment.content && toggleRepliesVisibility(comment._id)
+                      }
+                    }}
+                  >
+                    Show more comments
+                  </Button>
+                )}
+                {repliesVisibility[comment._id] && (
+                  <div className='pl-2 ml-5 border-l-2 border-gray-300'>
+                    <CommentSection
+                      comments={comment.replies}
+                      user={user}
+                      fetchPost={fetchPost}
+                      fetchPostMoreComment={fetchPostMoreComment}
+                      currentReplies={currentReplies + 1}
+                      maxReplies={maxRepliesCount}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         ))}

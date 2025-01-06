@@ -16,7 +16,7 @@ const CommentLike = ({
   return (
     <div className='flex items-center'>
       {view && (
-        <div className='flex items-center gap-2 pr-2 ml-0.5'>
+        <div className='flex items-center gap-2 pr-2 ml-0.5 text-secondary'>
           <GrView />
           {view}
         </div>

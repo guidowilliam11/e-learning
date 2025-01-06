@@ -32,6 +32,23 @@ export async function fetchForumPostNotView(id) {
   }
 }
 
+export async function fetchForumPostMoreComments(id, commentDepth) {
+  try {
+    const response = await fetch(
+      `${baseUrl}/api/forum-post?id=${id}&incrementViews=false&commentDepth=${commentDepth}`
+    )
+
+    if (!response.ok) {
+      console.error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error fetching post:', error)
+  }
+}
+
 export async function updateLikeToPost(forumId, studentId) {
   try {
     const likedPost = { forumId, studentId }

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 
 import {
   fetchForumPost,
+  fetchForumPostMoreComments,
   fetchForumPostNotView,
   insertCommentToPost,
   updateLikeToPost,
@@ -21,6 +22,7 @@ const Post = ({ id, user }) => {
   const [comment, setComment] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
+  const [commentDepth, setCommentDepth] = useState(5)
 
   const fetchCurrentPost = async () => {
     try {
@@ -43,6 +45,26 @@ const Post = ({ id, user }) => {
 
       if (post) {
         setCurrentPost(post)
+        if (post.likedBy.includes(user)) {
+          setIsLiked(true)
+        } else setIsLiked(false)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetchCurrentPostMoreComments = async () => {
+    try {
+      const post = await fetchForumPostMoreComments(id, commentDepth)
+
+      if (post) {
+        setCurrentPost((prevPost) => ({
+          ...prevPost,
+          comments: post.comments,
+        }))
+        console.log(post)
+        setCommentDepth(commentDepth + 1)
         if (post.likedBy.includes(user)) {
           setIsLiked(true)
         } else setIsLiked(false)
@@ -200,6 +222,7 @@ const Post = ({ id, user }) => {
             comments={currentPost.comments}
             user={user}
             fetchPost={fetchCurrentPostNoView}
+            fetchPostMoreComment={fetchCurrentPostMoreComments}
           />
         </>
       )}

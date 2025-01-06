@@ -1,6 +1,17 @@
 import { createTheme } from '@mui/material'
 
 const MUITheme = createTheme({
+  palette: {
+    primary: {
+      main: '#F99B26',
+      dark: '#943500',
+    },
+    secondary: {
+      main: '#545EE1',
+      dark: '#383e95',
+      light: '#E5E7FB',
+    },
+  },
   typography: {
     fontFamily: 'Inter',
     allVariants: {
@@ -18,6 +29,9 @@ const MUITheme = createTheme({
       },
     },
     MuiButton: {
+      defaultProps: {
+        color: 'secondary',
+      },
       styleOverrides: {
         root: {
           fontFamily: 'Inter',

@@ -29,8 +29,6 @@ const Forum = ({ user }) => {
     }
   }
 
-  console.log(forumPost, tags, isLoading)
-
   const handleOpenNewForum = () => {
     tags.length > 0 && setOpen(true)
   }
@@ -51,35 +49,40 @@ const Forum = ({ user }) => {
           className='px-6 py-3 ml-4 text-white bg-orange-500 rounded-lg hover:bg-orange-600'
           onClick={handleOpenNewForum}
         >
-          {isLoading ? 'Loading...' : 'Create Post'}
+          Create Post
         </button>
       </div>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <NewForum
+            open={open}
+            setOpen={setOpen}
+            tags={tags}
+            user={user}
+            fetchData={fetchData}
+          />
 
-      <NewForum
-        open={open}
-        setOpen={setOpen}
-        tags={tags}
-        user={user}
-        fetchData={fetchData}
-      />
-
-      <div className='flex flex-col flex-grow space-y-6'>
-        {forumPost.length > 0 &&
-          forumPost.map((post) => (
-            <ForumPost
-              key={post.id}
-              id={post.id}
-              image={post.images[0] || null}
-              author={post.studentName}
-              date={post.date}
-              content={post.title}
-              tags={post.tags}
-              views={post.views}
-              likes={post.likedBy?.length}
-              comments={post.comments?.length}
-            />
-          ))}
-      </div>
+          <div className='flex flex-col flex-grow space-y-6'>
+            {forumPost.length > 0 &&
+              forumPost.map((post) => (
+                <ForumPost
+                  key={post.id}
+                  id={post.id}
+                  image={post.images[0] || null}
+                  author={post.studentName}
+                  date={post.date}
+                  content={post.title}
+                  tags={post.tags}
+                  views={post.views}
+                  likes={post.likedBy?.length}
+                  comments={post.comments?.length}
+                />
+              ))}
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { connectToDatabase } from '@/libs/mongo/config'
 import Forum from '@/models/ForumModel'
 import { NextResponse } from 'next/server'
 
-const populateReplies = (depth = 4) => {
+const populateReplies = (depth) => {
   if (depth === 0) return []
 
   return [
@@ -31,6 +31,7 @@ export async function GET(req) {
     }
 
     const incrementViews = url.searchParams.get('incrementViews') !== 'false'
+    const commentDepth = Number(url.searchParams.get('commentDepth') || '4')
 
     const forum = await Forum.findOneAndUpdate(
       { _id: forumId },
@@ -52,7 +53,7 @@ export async function GET(req) {
             path: 'studentId',
             select: 'fullName',
           },
-          ...populateReplies(),
+          ...populateReplies(commentDepth),
         ],
       })
 
