@@ -14,3 +14,15 @@ export async function connectToDatabase() {
     console.error('Error connecting to MongoDB:', error)
   }
 }
+
+export async function closeDatabase() {
+  try {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect()
+    } else {
+      console.log('No active database connection to close')
+    }
+  } catch (error) {
+    console.error('Error while closing database connection', error)
+  }
+}

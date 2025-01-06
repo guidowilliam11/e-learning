@@ -32,6 +32,7 @@ export async function POST(req) {
         { status: 401 }
       )
     }
+
     return NextResponse.json(
       { message: 'Login successful', user: { email: user.email } },
       { status: 200 }

@@ -1,7 +1,13 @@
 import mongoose, { Schema, Types } from 'mongoose'
+import Students from './StudentModel'
 
 const commentSchema = new Schema(
   {
+    studentId: {
+      type: Types.ObjectId,
+      ref: Students.modelName,
+      required: [true, 'Please provide a Student ID'],
+    },
     content: {
       type: String,
       required: [true, 'Content is required'],
@@ -9,13 +15,17 @@ const commentSchema = new Schema(
     replies: [
       {
         type: Types.ObjectId,
-        ref: 'Comment',
+        ref: 'comments',
+        default: [],
       },
     ],
-    likes: {
-      type: Number,
-      default: 0,
-    },
+    likedBy: [
+      {
+        type: Types.ObjectId,
+        ref: Students.modelName,
+        default: [],
+      },
+    ],
   },
   { timestamps: true, versionKey: false }
 )

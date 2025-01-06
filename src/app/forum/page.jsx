@@ -1,12 +1,12 @@
 import { getServerSession } from 'next-auth'
-import Schedule from './components/Schedule'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import Forum from './component/Forum'
 
 export default async function Page() {
   const session = await getServerSession(authOptions)
 
   !session.user && redirect('/login')
 
-  return <Schedule user={session.user} />
+  return <Forum user={session.user.id} />
 }

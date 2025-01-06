@@ -7,7 +7,6 @@ export async function POST(req) {
     await connectToDatabase()
     const { scheduleId, checkStatus } = await req.json()
 
-    console.log(scheduleId, checkStatus)
     if (scheduleId == null || checkStatus == null) {
       return NextResponse.json(
         { message: 'Schedule ID and check status are required.' },

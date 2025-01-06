@@ -289,6 +289,7 @@ const Schedule = ({ user }) => {
                     assignmentTitles={assignmentTitles}
                     isAddingBySlot={isAddingBySlot}
                     handleCheck={handleCheck}
+                    handleCancelAdd={handleCancelAdd}
                     handleViewAssignment={handleViewAssignment}
                     handleAddNewClick={handleAddNewClick}
                     handleTitleChange={handleTitleChange}
@@ -339,7 +340,6 @@ const Schedule = ({ user }) => {
                               }
                               sx={{
                                 color: '#050505a8',
-                                textTransform: 'none',
                                 fontSize: '16px',
                                 ml: 0.75,
                               }}

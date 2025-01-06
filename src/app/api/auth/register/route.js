@@ -16,7 +16,6 @@ export async function POST(req) {
       )
     }
 
-    // Check if the user already exists
     const existingUser = await Students.findOne({ email })
     if (existingUser) {
       return NextResponse.json(
@@ -25,13 +24,10 @@ export async function POST(req) {
       )
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create a new user
     const newUser = new Students({ fullName, email, password: hashedPassword })
     await newUser.save()
-
     return NextResponse.json(
       { message: 'User created successfully' },
       { status: 201 }
