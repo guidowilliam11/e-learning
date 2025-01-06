@@ -57,6 +57,10 @@ export async function GET(req) {
         ],
       })
 
+    if (!forum) {
+      return NextResponse.json({ error: 'No forum found' }, { status: 404 })
+    }
+
     const forumPopulated = {
       ...forum.toObject(),
       tags: forum.tags.map((tag) => tag.tag),

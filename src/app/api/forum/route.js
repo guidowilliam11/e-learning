@@ -4,6 +4,7 @@ import Tag from '@/models/TagModel'
 import fs from 'fs/promises'
 import path from 'path'
 import { NextResponse } from 'next/server'
+import { Types } from 'mongoose'
 
 export async function GET() {
   try {
@@ -68,19 +69,28 @@ export async function POST(req) {
       )
     }
 
+    const newId = new Types.ObjectId()
+
     const filePaths = []
+    let count = 1
     for (const file of files) {
       const buffer = Buffer.from(await file.arrayBuffer())
-      const filePath = path.join(uploadDir, file.name)
+      const fileExtension = path.extname(file.name)
+      const fileName = `${newId}-${count}${fileExtension}`
+      const filePath = path.join(uploadDir, fileName)
 
       await fs.writeFile(filePath, buffer)
-      filePaths.push(`/uploads/${file.name}`)
+      filePaths.push(`/uploads/${fileName}`)
+      count += 1
     }
+
+    count = 0
 
     const tagDocs = await Tag.find({ tag: { $in: tags } }).select('_id')
     const tagIds = tagDocs.map((tag) => tag._id)
 
     const newForumPost = await Forum.create({
+      _id: newId,
       studentId,
       title,
       description,

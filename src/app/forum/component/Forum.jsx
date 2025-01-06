@@ -9,6 +9,7 @@ const Forum = ({ user }) => {
   const [open, setOpen] = useState(false)
   const [forumPost, setForumPost] = useState([])
   const [tags, setTags] = useState([])
+  const [title, setTitle] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchData = async () => {
@@ -42,6 +43,7 @@ const Forum = ({ user }) => {
       <div className='flex items-center justify-between mb-4'>
         <input
           type='text'
+          onChange={(e) => setTitle(e.target.value)}
           placeholder="Let's share what you want to discuss..."
           className='flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400'
         />
@@ -58,6 +60,7 @@ const Forum = ({ user }) => {
         <>
           <NewForum
             open={open}
+            title={title}
             setOpen={setOpen}
             tags={tags}
             user={user}

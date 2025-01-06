@@ -16,6 +16,7 @@ import {
 import CommentLike from './CommentLike'
 import CommentSection from './CommentSection'
 import CommentField from './CommentField'
+import { redirect } from 'next/navigation'
 
 const Post = ({ id, user }) => {
   const [currentPost, setCurrentPost] = useState(null)
@@ -23,10 +24,18 @@ const Post = ({ id, user }) => {
   const [isFocused, setIsFocused] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [commentDepth, setCommentDepth] = useState(5)
+  const [notFound, setNotFound] = useState(false)
 
   const fetchCurrentPost = async () => {
     try {
       const post = await fetchForumPost(id)
+      setNotFound(false)
+
+      if (post.error) {
+        setNotFound(true)
+
+        return setTimeout(() => redirect('/forum'), 1000)
+      }
 
       if (post) {
         setCurrentPost(post)
@@ -145,11 +154,11 @@ const Post = ({ id, user }) => {
     fetchCurrentPost()
   }, [])
 
-  console.log(currentPost)
-
   return (
     <div className='flex flex-col flex-grow gap-5 p-4 bg-white rounded-lg shadow-md'>
-      {!currentPost ? (
+      {notFound ? (
+        <div>Forum not found. Redirecting you back to the forum page.</div>
+      ) : !currentPost ? (
         <div>Loading...</div>
       ) : (
         <>
@@ -177,13 +186,11 @@ const Post = ({ id, user }) => {
                 className='relative flex items-center justify-center w-full h-auto overflow-hidden'
               >
                 <div
-                  className='absolute inset-0 blur-md'
+                  className='absolute inset-0 blur-md w-[100%] h-[100%]'
                   style={{
                     backgroundImage: `url(${image})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    height: '100%',
-                    width: '100%',
                   }}
                 />
 
@@ -191,10 +198,10 @@ const Post = ({ id, user }) => {
                   <Image
                     alt=''
                     src={image}
-                    layout='intrinsic'
+                    priority
                     width={900}
                     height={300}
-                    className='rounded-md'
+                    className='w-auto h-auto rounded-md'
                   />
                 </div>
               </div>

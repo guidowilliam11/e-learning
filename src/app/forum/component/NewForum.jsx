@@ -30,7 +30,7 @@ const schema = z.object({
   ),
 })
 
-const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
+const NewForum = ({ open, title, setOpen, tags, user, fetchData }) => {
   const {
     control,
     handleSubmit,
@@ -41,7 +41,7 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: '',
+      title: title || '',
       description: '',
       tags: [],
       images: [],
@@ -64,14 +64,14 @@ const NewForum = ({ open, setOpen, tags, user, fetchData }) => {
   useEffect(() => {
     reset(
       {
-        title: '',
+        title: title || '',
         description: '',
         tags: [],
         images: [],
       },
       { keepValues: false }
     )
-  }, [reset])
+  }, [reset, title])
 
   const onSubmit = async (data) => {
     try {

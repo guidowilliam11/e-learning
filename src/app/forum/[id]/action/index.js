@@ -6,12 +6,17 @@ export async function fetchForumPost(id) {
 
     if (!response.ok) {
       console.error(`${response.status} - ${response.statusText}`)
+      if (response.status === 404) {
+        return { error: 'Forum not found' }
+      }
+      throw new Error('Failed to fetch forum post')
     } else {
       const data = await response.json()
       return data
     }
   } catch (error) {
     console.error('Error fetching post:', error)
+    throw error
   }
 }
 
