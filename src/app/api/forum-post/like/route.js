@@ -18,7 +18,6 @@ export async function POST(req) {
     const forum = await Forum.findById(forumId)
 
     if (!forum) {
-      console.log('Found')
       return NextResponse.json({ message: 'Forum not found' }, { status: 400 })
     }
 

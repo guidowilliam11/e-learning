@@ -15,6 +15,23 @@ export async function fetchForumPost(id) {
   }
 }
 
+export async function fetchForumPostNotView(id) {
+  try {
+    const response = await fetch(
+      `${baseUrl}/api/forum-post?id=${id}&incrementViews=false`
+    )
+
+    if (!response.ok) {
+      console.error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error fetching post:', error)
+  }
+}
+
 export async function updateLikeToPost(forumId, studentId) {
   try {
     const likedPost = { forumId, studentId }
@@ -34,6 +51,75 @@ export async function updateLikeToPost(forumId, studentId) {
       return data
     }
   } catch (error) {
-    console.error('Error saving like to post:', error)
+    console.error('Error update like to post:', error)
+  }
+}
+
+export async function insertCommentToPost(forumId, studentId, content) {
+  try {
+    const commentPost = { content, forumId, studentId }
+
+    const response = await fetch(`${baseUrl}/api/forum-post/comment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(commentPost),
+    })
+
+    if (!response.ok) {
+      throw new Error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error insert comment to post: ', error)
+  }
+}
+
+export async function updateLikeToComment(commentId, studentId) {
+  try {
+    const likedComment = { commentId, studentId }
+
+    const response = await fetch(`${baseUrl}/api/forum-post/comment/like`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(likedComment),
+    })
+
+    if (!response.ok) {
+      throw new Error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error update like to comment:', error)
+  }
+}
+
+export async function insertReplyToComment(commentId, studentId, content) {
+  try {
+    const commentPost = { content, commentId, studentId }
+
+    const response = await fetch(`${baseUrl}/api/forum-post/reply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(commentPost),
+    })
+
+    if (!response.ok) {
+      throw new Error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error insert reply to comment: ', error)
   }
 }

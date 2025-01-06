@@ -75,8 +75,8 @@ const Forum = ({ user }) => {
               content={post.title}
               tags={post.tags}
               views={post.views}
-              likes={post.likes}
-              comments={post.comments}
+              likes={post.likedBy?.length}
+              comments={post.comments?.length}
             />
           ))}
       </div>

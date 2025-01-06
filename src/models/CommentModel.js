@@ -1,6 +1,5 @@
 import mongoose, { Schema, Types } from 'mongoose'
 import Students from './StudentModel'
-import Reply from './ReplyModel'
 
 const commentSchema = new Schema(
   {
@@ -16,7 +15,7 @@ const commentSchema = new Schema(
     replies: [
       {
         type: Types.ObjectId,
-        ref: Reply.modelName,
+        ref: 'comments',
         default: [],
       },
     ],

@@ -21,7 +21,7 @@ export default function ForumPost({
 
   return (
     <div
-      className='flex flex-grow gap-5 p-4 bg-white rounded-lg shadow-md'
+      className='flex flex-grow gap-5 p-4 bg-white rounded-lg shadow-md cursor-pointer'
       onDoubleClick={handleRedirect}
     >
       {image && image !== '' ? (
