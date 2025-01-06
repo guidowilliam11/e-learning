@@ -163,34 +163,45 @@ const CurrentAssignment = ({
       <div className='mt-1 ml-3'>
         <List>
           {listItems.map((item, index) => (
-            <ListItem key={index}>
-              <ListItemIcon>
-                <CircleIcon color='primary' />
-              </ListItemIcon>
-              {isEditing ? (
-                <TextField
-                  value={item}
-                  onChange={(e) => handleListItemChange(index, e.target.value)}
-                  placeholder='Type here...'
-                  variant='standard'
-                  size='small'
-                  autoFocus
-                  sx={{
-                    mt: 0.5,
-                    '& .MuiInput-root:before': {
-                      borderBottom: 'none',
-                    },
-                    '& .MuiInput-root:after': {
-                      borderBottom: 'none',
-                    },
-                    '& .MuiInput-root:hover:not(.Mui-disabled):before': {
-                      borderBottom: 'none',
-                    },
-                  }}
-                />
-              ) : (
-                <ListItemText primary={item} />
-              )}
+            <ListItem
+              key={index}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ListItemIcon>
+                  <CircleIcon color='primary' />
+                </ListItemIcon>
+                {isEditing ? (
+                  <TextField
+                    value={item}
+                    onChange={(e) =>
+                      handleListItemChange(index, e.target.value)
+                    }
+                    placeholder='Type here...'
+                    variant='standard'
+                    size='small'
+                    autoFocus
+                    sx={{
+                      mt: 0.5,
+                      '& .MuiInput-root:before': {
+                        borderBottom: 'none',
+                      },
+                      '& .MuiInput-root:after': {
+                        borderBottom: 'none',
+                      },
+                      '& .MuiInput-root:hover:not(.Mui-disabled):before': {
+                        borderBottom: 'none',
+                      },
+                    }}
+                  />
+                ) : (
+                  <ListItemText primary={item} />
+                )}
+              </div>
               {isEditing && (
                 <button
                   className='ml-2 text-red-500'
