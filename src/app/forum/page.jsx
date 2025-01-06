@@ -6,7 +6,7 @@ import Forum from './component/Forum'
 export default async function Page() {
   const session = await getServerSession(authOptions)
 
-  !session && redirect('/login')
+  !session.user && redirect('/login')
 
   return <Forum user={session.user.id} />
 }
