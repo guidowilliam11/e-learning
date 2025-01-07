@@ -61,7 +61,7 @@ const Editor = ({
 }) => {
   const getInitialUser = () => {
     return {
-      name: user.name,
+      name: user.fullName,
       color: getRandomColor(),
     }
   }
@@ -74,7 +74,7 @@ const Editor = ({
   useEffect(() => {
     const checkingAuth = async () => {
       try {
-        const response = await fetch('/api/folder/notes/' + room.split('-')[4]); // Adjust endpoint if necessary
+        const response = await fetch('/api/folder/notes/' + room.split('-')[4]);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

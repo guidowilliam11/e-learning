@@ -8,5 +8,5 @@ export default async function page() {
 
   !session.user && redirect('/login')
 
-  return <Home />
+  return <Home user={session.user} />
 }

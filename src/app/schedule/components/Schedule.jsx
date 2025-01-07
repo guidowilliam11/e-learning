@@ -22,8 +22,12 @@ import RemainingTasks from './RemainingTasks'
 import TaskPastDue from './TaskPastDue'
 import PastSchedules from './PastSchedules'
 import FutureSchedules from './FutureSchedules'
+import { useSearchParams } from 'next/navigation'
 
 const Schedule = ({ user }) => {
+  const searchParams = useSearchParams()
+  const assignmentId = searchParams.get('assignmentId')
+
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [currentPage, setCurrentPage] = useState('Daily')
   const [schedules, setSchedules] = useState([])
@@ -216,6 +220,10 @@ const Schedule = ({ user }) => {
     handleCloseAssignment()
   }, [currentDate])
 
+  useEffect(() => {
+    assignmentId && handleViewAssignment(assignmentId)
+  }, [assignmentId])
+
   return (
     <div className='flex justify-between font-inter'>
       <div className='w-[30%] mr-6'>
@@ -233,30 +241,6 @@ const Schedule = ({ user }) => {
       </div>
 
       <div className='flex flex-col w-full'>
-        <div className='bg-[#545EE1] p-3 text-white rounded-md'>
-          <Link
-            href={''}
-            className={`${
-              currentPage === 'Daily'
-                ? 'text-[#F99B26] border-b-2 border-current pb-[1px] inline-block'
-                : 'text-white'
-            } mr-4`}
-            onClick={() => setCurrentPage('Daily')}
-          >
-            Daily
-          </Link>
-          <Link
-            href={''}
-            className={`${
-              currentPage === 'Weekly'
-                ? 'text-[#F99B26] border-b-2 border-current pb-[1px] inline-block'
-                : 'text-white'
-            }`}
-            onClick={() => setCurrentPage('Weekly')}
-          >
-            Weekly
-          </Link>
-        </div>
         <div
           className={`flex ${
             selectedAssignment ? 'justify-between' : 'w-full'
@@ -271,7 +255,7 @@ const Schedule = ({ user }) => {
               {currentDate ? formattedDate(currentDate) : 'Loading...'}
             </div>
 
-            <div className='max-h-[70vh] overflow-y-auto pr-2'>
+            <div className='max-h-[75vh] overflow-y-auto pr-2'>
               {currentDate.toDate().getDate() === dayjs().toDate().getDate() ? (
                 <>
                   <PastSchedules

@@ -6,6 +6,7 @@ const nextConfig = {
             'media.geeksforgeeks.org',
             'encrypted-tbn0.gstatic.com',
             'www.mcgill.ca',
+            'static.vecteezy.com'
         ],
     },
 };
