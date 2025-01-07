@@ -33,7 +33,7 @@ const AssignmentList = ({
 
   return (
     <div
-      className='my-2 ml-2'
+      className='mt-2 mb-3 ml-2'
       style={{ display: 'flex', alignItems: 'center' }}
     >
       <Checkbox
