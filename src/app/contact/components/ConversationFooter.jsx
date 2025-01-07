@@ -83,6 +83,7 @@ const ConversationFooter = ({ userId }) => {
         type="text"
         name="conversationId"
         defaultValue={activeConversationId}
+        key={activeConversationId}
         hidden
       />
       <input
@@ -91,6 +92,7 @@ const ConversationFooter = ({ userId }) => {
         defaultValue={
           activeConversation.type === 'peer' ? 'peers' : 'communities'
         }
+        key={activeConversation.type}
         hidden
       />
       <input

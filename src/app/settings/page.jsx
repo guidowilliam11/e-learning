@@ -62,6 +62,7 @@ const ProfileSection = ({ user, handleUpdateProfile }) => {
           id="studentId"
           name="studentId"
           defaultValue={newUserData?.id}
+          key={newUserData?.id}
           required
           hidden
         />

@@ -192,8 +192,8 @@ const CommunityPage = () => {
           <input
             type="text"
             name="communityId"
-            id=""
             defaultValue={community?._id}
+            key={community?._id}
             hidden
           />
           <label htmlFor="imageInput">

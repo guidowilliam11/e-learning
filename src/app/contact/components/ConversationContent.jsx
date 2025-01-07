@@ -130,7 +130,7 @@ const ConversationContent = ({ userId }) => {
                     <span className="truncate">{fileName}</span>
                   </a>
                 )}
-                <div className="break-all text-pretty">{text}</div>
+                <div className="break-words text-pretty">{text}</div>
               </div>
               <div>{formatMessageTime(createdAt, true)}</div>
             </div>
