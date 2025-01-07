@@ -22,8 +22,12 @@ import RemainingTasks from './RemainingTasks'
 import TaskPastDue from './TaskPastDue'
 import PastSchedules from './PastSchedules'
 import FutureSchedules from './FutureSchedules'
+import { useSearchParams } from 'next/navigation'
 
 const Schedule = ({ user }) => {
+  const searchParams = useSearchParams()
+  const assignmentId = searchParams.get('assignmentId')
+
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [currentPage, setCurrentPage] = useState('Daily')
   const [schedules, setSchedules] = useState([])
@@ -215,6 +219,10 @@ const Schedule = ({ user }) => {
     fetchSchedule(currentDate.toISOString())
     handleCloseAssignment()
   }, [currentDate])
+
+  useEffect(() => {
+    assignmentId && handleViewAssignment(assignmentId)
+  }, [assignmentId])
 
   return (
     <div className='flex justify-between font-inter'>
