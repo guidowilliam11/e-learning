@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 export default function ForumPost({
   id,

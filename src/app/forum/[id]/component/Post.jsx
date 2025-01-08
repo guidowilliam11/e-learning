@@ -207,7 +207,7 @@ const Post = ({ id, user }) => {
                 <div
                   className='absolute inset-0 blur-md w-[100%] h-[100%]'
                   style={{
-                    backgroundImage: `url(${image})`,
+                    backgroundImage: `url(${encodeURI(image)})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                   }}
