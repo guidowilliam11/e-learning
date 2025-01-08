@@ -8,7 +8,7 @@ import {
   FaUserPlus,
   FaUserMinus,
 } from 'react-icons/fa6'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { HiOutlinePaperAirplane } from 'react-icons/hi2'
 import Image from 'next/image'
 import './style.css'
@@ -35,6 +35,7 @@ const AddCommunityPage = () => {
     }
     return URL.createObjectURL(picture)
   }, [picture])
+  const imageInput = useRef(null)
 
   const handleClickPeer = (peer) => {
     const nextPeers = peers
@@ -58,6 +59,11 @@ const AddCommunityPage = () => {
 
   const handlePictureChange = (e) => {
     if (e.target.files.length > 0) {
+      if (e.target.files[0].size > 10000000) {
+        toast.error('File size cannot exceed 10 MB!')
+        imageInput.current.value = ''
+        return
+      }
       setPicture(e.target.files[0])
       return
     }
@@ -128,6 +134,7 @@ const AddCommunityPage = () => {
           <input
             type="file"
             id="imageInput"
+            ref={imageInput}
             style={{ display: 'none' }}
             accept=".png,.jpeg,.jpg"
             onChange={handlePictureChange}
