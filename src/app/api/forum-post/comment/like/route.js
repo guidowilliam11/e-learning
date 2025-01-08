@@ -18,13 +18,18 @@ export async function POST(req) {
     const comment = await Comment.findById(commentId)
 
     if (!comment) {
-      return NextResponse.json({ message: 'Comment not found' }, { status: 400 })
+      return NextResponse.json(
+        { message: 'Comment not found' },
+        { status: 400 }
+      )
     }
 
     const hasLiked = comment.likedBy.includes(studentId)
 
     if (hasLiked) {
-      comment.likedBy = comment.likedBy.filter((id) => id.toString() !== studentId)
+      comment.likedBy = comment.likedBy.filter(
+        (id) => id.toString() !== studentId
+      )
     } else {
       comment.likedBy.push(studentId)
     }
@@ -36,6 +41,9 @@ export async function POST(req) {
       likes: comment.likes,
     })
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
   }
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import ForumPost from './ForumPost'
 import NewForum from './NewForum'
-import { fetchForumsAndTags } from '../action'
+import { fetchForums, fetchTags } from '../action'
 
 const Forum = ({ user }) => {
   const [open, setOpen] = useState(false)
@@ -14,14 +14,15 @@ const Forum = ({ user }) => {
 
   const fetchData = async () => {
     try {
-      const data = await fetchForumsAndTags()
+      const forumData = await fetchForums()
+      const tagData = await fetchTags()
 
-      if (data.forumPost) {
-        setForumPost(data.forumPost)
+      if (forumData) {
+        setForumPost(forumData)
       }
 
-      if (data.tags) {
-        setTags(data.tags)
+      if (tagData) {
+        setTags(tagData.tags)
       }
 
       setIsLoading(false)

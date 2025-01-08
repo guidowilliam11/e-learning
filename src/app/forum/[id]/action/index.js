@@ -145,3 +145,24 @@ export async function insertReplyToComment(commentId, studentId, content) {
     console.error('Error insert reply to comment: ', error)
   }
 }
+
+export async function deleteComment(commentId) {
+  try {
+    const response = await fetch(`${baseUrl}/api/forum-post/comment`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(commentId),
+    })
+
+    if (!response.ok) {
+      throw new Error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error deleting comment: ', error)
+  }
+}

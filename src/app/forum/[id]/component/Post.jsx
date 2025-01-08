@@ -18,6 +18,7 @@ import CommentSection from './CommentSection'
 import CommentField from './CommentField'
 import { redirect } from 'next/navigation'
 import { postFormattedDate } from '@/utils/time'
+import EditDeleteForum from './EditDeleteForum'
 
 const Post = ({ id, user }) => {
   const [currentPost, setCurrentPost] = useState(null)
@@ -124,13 +125,13 @@ const Post = ({ id, user }) => {
         pending: 'Processing...',
         success: {
           render() {
-            return 'Comment insert success!'
+            return 'Comment inserted successfully!'
           },
           autoClose: 2000,
         },
         error: {
           render() {
-            return 'Comment insert failed!'
+            return 'Failed to insert comment!'
           },
           autoClose: 2000,
         },
@@ -164,21 +165,29 @@ const Post = ({ id, user }) => {
         <div>Loading...</div>
       ) : (
         <>
-          <div className='flex items-start'>
-            <Image
-              alt='profile'
-              src='/images/default-profile-picture.webp'
-              width={40}
-              height={40}
-            />
-            <div className='flex flex-col ml-2'>
-              <p className='text-sm font-bold'>
-                {currentPost.studentId.fullName}
-              </p>
-              <p className='text-sm'>
-                Posted on {postFormattedDate(currentPost.createdAt)}
-              </p>
+          <div className='flex justify-between'>
+            <div className='flex'>
+              <Image
+                alt='profile'
+                src='/images/default-profile-picture.webp'
+                width={40}
+                height={40}
+              />
+              <div className='flex flex-col ml-2'>
+                <p className='text-sm font-bold'>
+                  {currentPost.studentId.fullName}
+                </p>
+                <p className='text-sm'>
+                  Posted on {postFormattedDate(currentPost.createdAt)}
+                </p>
+              </div>
             </div>
+
+            <EditDeleteForum
+              currentPost={currentPost}
+              fetchData={fetchCurrentPost}
+              user={user}
+            />
           </div>
 
           <h1 className='text-3xl font-medium'>{currentPost.title}</h1>

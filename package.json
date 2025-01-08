@@ -34,7 +34,6 @@
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "fs": "^0.0.1-security",
     "mongoose": "^8.9.2",
     "next": "^15.0.2",
     "next-auth": "^4.24.11",

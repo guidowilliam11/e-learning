@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { insertNewForumPost } from '../action'
+import { insertNewForumPost, updateForumPost } from '../action'
 import { toast } from 'react-toastify'
 
 const schema = z.object({
@@ -24,13 +24,27 @@ const schema = z.object({
   description: z.string().min(1, { message: 'Description is required' }),
   tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
   images: z.array(
-    z
-      .instanceof(File)
-      .refine((file) => file.type.startsWith('image/'), 'File must be an image')
+    z.union([
+      z
+        .instanceof(File)
+        .refine(
+          (file) => file.type.startsWith('image/'),
+          'File must be an image'
+        ),
+      z.string().url('Invalid image URL'), // Validate string as a URL
+    ])
   ),
 })
 
-const NewForum = ({ open, title, setOpen, tags, user, fetchData }) => {
+const NewForum = ({
+  open,
+  title,
+  setOpen,
+  tags,
+  user,
+  fetchData,
+  editData,
+}) => {
   const {
     control,
     handleSubmit,
@@ -52,8 +66,14 @@ const NewForum = ({ open, title, setOpen, tags, user, fetchData }) => {
   const getPreviewURLs = (files) => {
     if (!Array.isArray(files)) return []
     return files
-      .filter((file) => file instanceof File)
-      .map((file) => URL.createObjectURL(file))
+      .map((file) => {
+        if (typeof file === 'string') return file
+
+        if (file instanceof File) return URL.createObjectURL(file)
+
+        return null
+      })
+      .filter(Boolean)
   }
 
   const handleRemoveImage = (index) => {
@@ -62,16 +82,25 @@ const NewForum = ({ open, title, setOpen, tags, user, fetchData }) => {
   }
 
   useEffect(() => {
-    reset(
-      {
-        title: title || '',
-        description: '',
-        tags: [],
-        images: [],
-      },
-      { keepValues: false }
-    )
-  }, [reset, title])
+    if (editData) {
+      reset({
+        title: editData.title,
+        description: editData.description,
+        tags: editData.tags,
+        images: editData.images,
+      })
+    } else {
+      reset(
+        {
+          title: title || '',
+          description: '',
+          tags: [],
+          images: [],
+        },
+        { keepValues: false }
+      )
+    }
+  }, [open, editData, reset, title])
 
   const onSubmit = async (data) => {
     try {
@@ -83,10 +112,13 @@ const NewForum = ({ open, title, setOpen, tags, user, fetchData }) => {
       data.images.forEach((image) => {
         form.append('file', image)
       })
+      editData && form.append('forumId', editData._id)
 
       const promise = new Promise((resolve, reject) => {
         setTimeout(async () => {
-          const insert = await insertNewForumPost(form)
+          const insert = !editData
+            ? await insertNewForumPost(form)
+            : await updateForumPost(form)
 
           if (insert) {
             fetchData()
@@ -134,7 +166,9 @@ const NewForum = ({ open, title, setOpen, tags, user, fetchData }) => {
       maxWidth='sm'
       fullWidth
     >
-      <DialogTitle id='form-dialog-title'>Add New Forum Post</DialogTitle>
+      <DialogTitle id='form-dialog-title'>
+        {editData ? 'Edit Forum Post' : 'Add New Forum Post'}
+      </DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid2 container justifyContent='center' alignItems='center'>

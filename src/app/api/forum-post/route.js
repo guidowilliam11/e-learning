@@ -56,8 +56,8 @@ export async function GET(req) {
           ...populateReplies(commentDepth),
         ],
         options: {
-          sort: { createdAt: -1 } // Sort comments by createdAt field in descending order
-        }
+          sort: { createdAt: -1 }, // Sort comments by createdAt field in descending order
+        },
       })
 
     if (!forum) {
@@ -71,6 +71,9 @@ export async function GET(req) {
 
     return NextResponse.json(forumPopulated)
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
   }
 }

@@ -36,6 +36,42 @@ export async function POST(req) {
       forum: forum,
     })
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(req) {
+  try {
+    await connectToDatabase()
+
+    const commentId = await req.json()
+
+    if (!commentId) {
+      return NextResponse.json(
+        { message: 'Comment ID are required' },
+        { status: 400 }
+      )
+    }
+
+    const deleteCommentAndReplies = async (id) => {
+      const comment = await Comment.findById(id)
+      if (!comment) throw new Error(`Comment with ID ${id} not found`)
+      await Promise.all(comment.replies.map(deleteCommentAndReplies))
+      await Comment.findByIdAndDelete(id)
+    }
+
+    await deleteCommentAndReplies(commentId)
+    return NextResponse.json(
+      { message: 'Comment and its replies deleted successfully' },
+      { status: 200 }
+    )
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
   }
 }

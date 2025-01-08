@@ -1,8 +1,9 @@
-import { Button } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import React from 'react'
 import { FaRegComment } from 'react-icons/fa6'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { GrView } from 'react-icons/gr'
 
 const CommentLike = ({
@@ -12,6 +13,7 @@ const CommentLike = ({
   comments,
   handleLikeButton,
   handleCommentButton,
+  handleDeleteButton,
 }) => {
   return (
     <div className='flex items-center'>
@@ -36,6 +38,12 @@ const CommentLike = ({
       >
         {comments}
       </Button>
+
+      {handleDeleteButton && (
+        <IconButton onClick={handleDeleteButton}>
+          <DeleteIcon />
+        </IconButton>
+      )}
     </div>
   )
 }
