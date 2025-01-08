@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import CommentLike from './CommentLike'
-import { insertReplyToComment, updateLikeToComment } from '../action'
+import {
+  deleteComment,
+  insertReplyToComment,
+  updateLikeToComment,
+} from '../action'
 import CommentField from './CommentField'
 import { toast } from 'react-toastify'
 import { Button } from '@mui/material'
@@ -90,20 +94,51 @@ const CommentSection = ({
         pending: 'Processing...',
         success: {
           render() {
-            return 'Comment insert success!'
+            return 'Comment inserted successfully!'
           },
           autoClose: 2000,
         },
         error: {
           render() {
-            return 'Comment insert failed!'
+            return 'Failed to insert comment!'
           },
           autoClose: 2000,
         },
       })
     } catch (error) {
       console.error(error)
-      reject(error)
+    }
+  }
+
+  const handleDeleteComment = (commentId) => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(async () => {
+          const deleted = await deleteComment(commentId)
+          if (deleted) {
+            maxRepliesCount > 4 ? fetchPostMoreComment() : fetchPost()
+            resolve(deleted)
+          } else reject(deleted)
+        })
+      })
+
+      return toast.promise(promise, {
+        pending: 'Processing...',
+        success: {
+          render() {
+            return 'Comment deleted successfully!'
+          },
+          autoClose: 2000,
+        },
+        error: {
+          render() {
+            return 'Failed to delete comment!'
+          },
+          autoClose: 2000,
+        },
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -155,6 +190,7 @@ const CommentSection = ({
                 comments={comment.replies?.length}
                 handleLikeButton={() => handleLikeButton(comment._id)}
                 handleCommentButton={() => handleCommentButton(comment._id)}
+                handleDeleteButton={() => handleDeleteComment(comment._id)}
               />
               {commentFieldStates[comment._id] && (
                 <CommentField

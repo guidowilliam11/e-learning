@@ -28,6 +28,11 @@ const MUITheme = createTheme({
         },
       },
     },
+    MuiIconButton: {
+      defaultProps: {
+        color: 'secondary',
+      },
+    },
     MuiButton: {
       defaultProps: {
         color: 'secondary',
