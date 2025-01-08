@@ -4,7 +4,7 @@ import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext
 import { getSession, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FaArrowLeft } from 'react-icons/fa6'
 import './style.css'
 import { updatePreferences, updateProfile } from './actions'
@@ -21,6 +21,7 @@ const ProfileSection = ({ user, handleUpdateProfile }) => {
     }
     return URL.createObjectURL(newUserData.picture)
   }, [newUserData])
+  const imageInput = useRef(null)
   const isChanged = useMemo(() => {
     return (
       user.fullName !== newUserData.fullName ||
@@ -32,6 +33,11 @@ const ProfileSection = ({ user, handleUpdateProfile }) => {
 
   const handlePictureChange = (e) => {
     if (e.target.files.length > 0) {
+      if (e.target.files[0].size > 10000000) {
+        toast.error('File size cannot exceed 10 MB!')
+        imageInput.current.value = ''
+        return
+      }
       setNewUserData({ ...newUserData, picture: e.target.files[0] })
     }
   }
@@ -90,6 +96,7 @@ const ProfileSection = ({ user, handleUpdateProfile }) => {
             name="picture"
             type="file"
             id="imageInput"
+            ref={imageInput}
             hidden
             accept=".png,.jpeg,.jpg"
             onChange={handlePictureChange}

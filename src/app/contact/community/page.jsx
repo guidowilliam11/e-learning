@@ -12,7 +12,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { useConversationContext } from '@/contexts/conversationContext'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   editCommunity,
   getCommunity,
@@ -53,6 +53,7 @@ const CommunityPage = () => {
       prevCommunity?.picture != community?.picture
     )
   }, [prevCommunity, community])
+  const imageInput = useRef(null)
 
   const fallbackPicture =
     prevCommunity.picture || '/images/default-community-picture.png'
@@ -102,6 +103,11 @@ const CommunityPage = () => {
   }
   const handlePictureChange = (e) => {
     if (e.target.files.length > 0) {
+      if (e.target.files[0].size > 10000000) {
+        toast.error('File size cannot exceed 10 MB!')
+        imageInput.current.value = ''
+        return
+      }
       setCommunity({ ...community, picture: e.target.files[0] })
     }
   }
@@ -210,6 +216,7 @@ const CommunityPage = () => {
             name="picture"
             type="file"
             id="imageInput"
+            ref={imageInput}
             hidden
             accept=".png,.jpeg,.jpg"
             onChange={handlePictureChange}
