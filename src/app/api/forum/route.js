@@ -1,10 +1,10 @@
 import { connectToDatabase } from '@/libs/mongo/config'
 import Forum from '@/models/ForumModel'
 import Tag from '@/models/TagModel'
-import fs from 'fs/promises'
 import path from 'path'
 import { NextResponse } from 'next/server'
 import { Types } from 'mongoose'
+import { createClient } from '@/libs/supabase/config'
 
 export async function GET() {
   try {
@@ -50,11 +50,9 @@ export async function GET() {
 export async function POST(req) {
   try {
     await connectToDatabase()
+    const supabase = await createClient()
 
     const formData = await req.formData()
-
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads')
-    await fs.mkdir(uploadDir, { recursive: true })
 
     const studentId = formData.get('studentId')
     const title = formData.get('title')
@@ -75,13 +73,24 @@ export async function POST(req) {
     let count = 1
     for (const file of files) {
       const buffer = Buffer.from(await file.arrayBuffer())
-      const fileExtension = path.extname(file.name)
-      const fileName = `${newId}-${count}${fileExtension}`
-      const filePath = path.join(uploadDir, fileName)
+      const filePath = path.join(newId.toString(), file.name)
 
-      await fs.writeFile(filePath, buffer)
-      filePaths.push(`/uploads/${fileName}`)
-      count += 1
+      const { data, error } = await supabase.storage
+        .from('forum')
+        .upload(filePath, buffer, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: file.type,
+        })
+
+      if (data) {
+        filePaths.push(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`)
+        count += 1
+      }
+
+      if (error) {
+        throw error
+      }
     }
 
     count = 0
