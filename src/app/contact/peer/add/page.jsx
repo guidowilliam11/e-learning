@@ -56,34 +56,34 @@ const Result = ({ isLoading, result, setResult, errorMode }) => {
   switch (errorMode) {
     case errorModeEnum.notFound:
       return (
-        <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-          <FaPersonCircleQuestion className="mb-4" />
-          <div className="text-lg">
+        <div className='flex flex-col items-center justify-center text-7xl text-neutral-400'>
+          <FaPersonCircleQuestion className='mb-4' />
+          <div className='text-lg'>
             We searched high and low, but found no one...
           </div>
-          <div className="text-lg">Make sure the email is correct</div>
+          <div className='text-lg'>Make sure the email is correct</div>
         </div>
       )
     case errorModeEnum.yourself:
       return (
-        <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-          <FaPersonCircleQuestion className="mb-4" />
-          <div className="text-lg">You can&#39;t add yourself...</div>
+        <div className='flex flex-col items-center justify-center text-7xl text-neutral-400'>
+          <FaPersonCircleQuestion className='mb-4' />
+          <div className='text-lg'>You can&#39;t add yourself...</div>
         </div>
       )
     case errorModeEnum.serverError:
       return (
-        <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-          <FaTriangleExclamation className="mb-4" />
-          <div className="text-lg">Oops, something went wrong...</div>
-          <div className="text-lg">Please try that again</div>
+        <div className='flex flex-col items-center justify-center text-7xl text-neutral-400'>
+          <FaTriangleExclamation className='mb-4' />
+          <div className='text-lg'>Oops, something went wrong...</div>
+          <div className='text-lg'>Please try that again</div>
         </div>
       )
     case errorModeEnum.inviteNotAllowed:
       return (
-        <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-          <FaUserSecret className="mb-4" />
-          <div className="text-lg">They don't want to be invited...</div>
+        <div className='flex flex-col items-center justify-center text-7xl text-neutral-400'>
+          <FaUserSecret className='mb-4' />
+          <div className='text-lg'>They don&#39;t want to be invited...</div>
         </div>
       )
     default:
@@ -91,33 +91,33 @@ const Result = ({ isLoading, result, setResult, errorMode }) => {
   }
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-center items-center text-7xl text-neutral-400">
-        <FaHourglass className="mb-4" />
-        <div className="text-lg">Looking for the person...</div>
+      <div className='flex flex-col items-center justify-center text-7xl text-neutral-400'>
+        <FaHourglass className='mb-4' />
+        <div className='text-lg'>Looking for the person...</div>
       </div>
     )
   }
   if (result?._id) {
     return (
-      <div className="flex flex-col justify-center items-center">
+      <div className='flex flex-col items-center justify-center'>
         <Image
           src={result.picture || '/images/default-profile-picture.webp'}
-          className="rounded-full mb-2"
+          className='mb-2 rounded-full'
           height={80}
           width={80}
-          alt="profile-picture"
+          alt='profile-picture'
         />
-        <div className="text-lg font-semibold mb-3">{result.fullName}</div>
+        <div className='mb-3 text-lg font-semibold'>{result.fullName}</div>
         {result.alreadyPeers ? (
           <button
-            className="px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
+            className='px-3 py-2 transition duration-300 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark'
             onClick={handleClickViewProfile}
           >
             View Profile
           </button>
         ) : (
           <button
-            className="px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
+            className='px-3 py-2 transition duration-300 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark'
             onClick={handleClickAdd}
           >
             Add
@@ -156,32 +156,32 @@ const AddPeerPage = () => {
   }
 
   return (
-    <section className="p-6 flex flex-grow h-full flex-col">
-      <div className="flex gap-3 items-center text-primary font-bold text-xl mb-3">
-        <Link href="/contact">
+    <section className='flex flex-col flex-grow h-full p-6'>
+      <div className='flex items-center gap-3 mb-3 text-xl font-bold text-primary'>
+        <Link href='/contact'>
           <FaArrowLeft />
         </Link>
-        <span className="cursor-default">Add New Peer</span>
+        <span className='cursor-default'>Add New Peer</span>
       </div>
-      <span className="text-sm text-neutral-500">
+      <span className='text-sm text-neutral-500'>
         Email has to be an exact match
       </span>
-      <form className="flex gap-2 items-center mb-3" onSubmit={handleSearch}>
+      <form className='flex items-center gap-2 mb-3' onSubmit={handleSearch}>
         <input
           required
-          className="rounded drop-shadow-sm p-2 w-[40%] focus:outline-none focus:ring-primary focus:ring-2"
-          type="email"
-          placeholder="Input peer email"
+          className='rounded drop-shadow-sm p-2 w-[40%] focus:outline-none focus:ring-primary focus:ring-2'
+          type='email'
+          placeholder='Input peer email'
           onChange={(e) => setPeerEmail(e.target.value)}
         />
         <button
-          className="p-3 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
-          type="submit"
+          className='p-3 transition duration-300 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark'
+          type='submit'
         >
           <FaMagnifyingGlass />
         </button>
       </form>
-      <div className="flex h-full bg-neutral-50 rounded-md drop-shadow-md justify-center items-center">
+      <div className='flex items-center justify-center h-full rounded-md bg-neutral-50 drop-shadow-md'>
         <Result
           isLoading={isLoading}
           result={result}
