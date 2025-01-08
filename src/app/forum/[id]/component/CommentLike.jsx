@@ -40,7 +40,7 @@ const CommentLike = ({
       </Button>
 
       {handleDeleteButton && (
-        <IconButton variant='outlined' onClick={handleDeleteButton}>
+        <IconButton onClick={handleDeleteButton}>
           <DeleteIcon />
         </IconButton>
       )}

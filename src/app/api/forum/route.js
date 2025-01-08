@@ -35,13 +35,7 @@ export async function GET() {
       updatedAt: forum.updatedAt,
     }))
 
-    const tags = await Tag.find({})
-
-    if (!tags) {
-      return NextResponse.json({ message: 'No tags found' }, { status: 404 })
-    }
-
-    return NextResponse.json({ forumPost, tags })
+    return NextResponse.json(forumPost)
   } catch (error) {
     return NextResponse.json(
       { message: 'An error occurred', error: error.message },
@@ -73,7 +67,6 @@ export async function POST(req) {
     const newId = new Types.ObjectId()
 
     const filePaths = []
-    let count = 1
     for (const file of files) {
       const buffer = Buffer.from(await file.arrayBuffer())
       const filePath = path.join(newId.toString(), file.name)
@@ -87,16 +80,15 @@ export async function POST(req) {
         })
 
       if (data) {
-        filePaths.push(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`)
-        count += 1
+        filePaths.push(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
+        )
       }
 
       if (error) {
         throw error
       }
     }
-
-    count = 0
 
     const tagDocs = await Tag.find({ tag: { $in: tags } }).select('_id')
     const tagIds = tagDocs.map((tag) => tag._id)
@@ -127,3 +119,136 @@ export async function POST(req) {
     )
   }
 }
+
+export async function PATCH(req) {
+  try {
+    await connectToDatabase()
+    const supabase = await createClient()
+
+    const formData = await req.formData()
+
+    const forumId = formData.get('forumId')
+    const studentId = formData.get('studentId')
+    const title = formData.get('title')
+    const description = formData.get('description')
+    const tags = formData.getAll('tags')
+    const files = formData.getAll('file')
+
+    if (
+      !forumId ||
+      !studentId ||
+      !title ||
+      !description ||
+      !tags ||
+      !Array.isArray(tags)
+    ) {
+      return NextResponse.json(
+        { message: 'Missing or invalid fields' },
+        { status: 400 }
+      )
+    }
+
+    const folderPath = forumId.toString()
+
+    const { data: existingFiles, error: fetchError } = await supabase.storage
+      .from('forum')
+      .list(folderPath, { limit: 100 })
+
+    if (fetchError) {
+      throw new Error(
+        `Error fetching files from Supabase: ${fetchError.message}`
+      )
+    }
+
+    const existingFilePaths =
+      existingFiles?.map((file) => `${folderPath}/${file.name}`) || []
+
+    const currentFilePaths = files
+      .filter((file) => typeof file === 'string')
+      .map((url) => {
+        const parts = url.split('/')
+        return `${folderPath}/${parts[parts.length - 1]}`
+      })
+
+    const filesToDelete = existingFilePaths.filter(
+      (path) => !currentFilePaths.includes(path)
+    )
+
+    if (filesToDelete.length > 0) {
+      const { error: deleteError } = await supabase.storage
+        .from('forum')
+        .remove(filesToDelete)
+
+      if (deleteError) {
+        throw new Error(`Error deleting files: ${deleteError.message}`)
+      }
+    }
+
+    const filePaths = [...currentFilePaths]
+
+    for (const file of files) {
+      if (file instanceof File) {
+        const buffer = Buffer.from(await file.arrayBuffer())
+        const filePath = path.join(forumId.toString(), file.name)
+
+        const { data, error } = await supabase.storage
+          .from('forum')
+          .upload(filePath, buffer, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: file.type,
+          })
+
+        if (data) {
+          filePaths.push(
+            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
+          )
+        }
+
+        if (error) {
+          throw error
+        }
+      } else {
+        filePaths.push(file)
+      }
+    }
+
+    const tagDocs = await Tag.find({ tag: { $in: tags } }).select('_id')
+    const tagIds = tagDocs.map((tag) => tag._id)
+
+    const updatedForumPost = await Forum.findByIdAndUpdate(
+      forumId,
+      {
+        studentId,
+        title,
+        description,
+        tags: tagIds,
+        images: filePaths,
+      },
+      {
+        new: true,
+        upsert: false,
+      }
+    )
+
+    if (!updatedForumPost) {
+      throw new Error(`Forum post with ID ${newId} not found.`)
+    }
+
+    return NextResponse.json(
+      {
+        message: 'Forum post updated successfully',
+        forumPost: updatedForumPost,
+        files: filePaths,
+      },
+      { status: 201 }
+    )
+  } catch (error) {
+    console.log(error)
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
+  }
+}
+
