@@ -80,7 +80,7 @@ export async function PATCH(req) {
     const formData = await req.formData()
 
     const communityId = formData.get('communityId')
-    const community = await Communities.findById(communityId)
+    const community = await Communities.findById(communityId).populate('participants', 'fullName picture email')
 
     const newName = formData.get('name')
     const newDescription = formData.get('description')
