@@ -43,7 +43,10 @@ export async function GET() {
 
     return NextResponse.json({ forumPost, tags })
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
   }
 }
 
