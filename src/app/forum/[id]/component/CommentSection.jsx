@@ -147,7 +147,7 @@ const CommentSection = ({
                 </p>
               </div>
             </div>
-            <div className='ml-[3.25%]'>
+            <div className='ml-[4.25%]'>
               <p className='mb-2'>{comment.content}</p>
               <CommentLike
                 isLiked={likedComments.includes(comment._id)}

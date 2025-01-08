@@ -55,6 +55,9 @@ export async function GET(req) {
           },
           ...populateReplies(commentDepth),
         ],
+        options: {
+          sort: { createdAt: -1 } // Sort comments by createdAt field in descending order
+        }
       })
 
     if (!forum) {
