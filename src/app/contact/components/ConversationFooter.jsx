@@ -22,6 +22,11 @@ const ConversationFooter = ({ userId }) => {
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
+      if (e.target.files[0].size > 10000000) {
+        toast.error('File size cannot exceed 10 MB!')
+        fileInput.current.value = ''
+        return
+      }
       setFileInputState(e.target.files[0])
       return
     }

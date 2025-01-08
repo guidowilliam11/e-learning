@@ -1,7 +1,7 @@
 import Students from "@/models/StudentModel"
 import { NextResponse } from "next/server"
 import bcrypt from 'bcrypt'
-import { writeFile } from 'fs/promises'
+import { createClient } from "@/libs/supabase/config"
 
 export async function PATCH(req) {
   try {
@@ -12,12 +12,14 @@ export async function PATCH(req) {
     const picture = formData.get('picture')
     const newPassword = formData.get('newPassword')
     const oldPassword = formData.get('oldPassword')
-    console.log(picture)
     let newPicture = null
 
     let student = {}
+    let studentWithEmail = null
 
-    const studentWithEmail = await Students.findOne({ email: newEmail })
+    if (newEmail) {
+      studentWithEmail = await Students.findOne({ email: newEmail })
+    }
     if (!studentWithEmail) {
       student = await Students.findById(studentId)
     } else {
@@ -41,17 +43,28 @@ export async function PATCH(req) {
     }
 
     if (picture && typeof picture !== 'string') {
+      const supabase = await createClient()
       const bufferBytes = await picture.arrayBuffer()
       const buffer = Buffer.from(bufferBytes)
 
       const pictureExtension = picture.name.split('.').pop()
-      const newPictureName = `${crypto.randomUUID()}.${pictureExtension}`
+      const filePath = `${crypto.randomUUID()}.${pictureExtension}`
 
-      const path = `/student/profile-pictures/${newPictureName}`
-      const relativePath = `public${path}`
-      await writeFile(relativePath, buffer)
+      const { data, error } = await supabase.storage
+        .from('profile')
+        .upload(filePath, buffer, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: picture.type,
+        })
 
-      newPicture = path
+      if (data) {
+        newPicture = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
+      }
+      if (error) {
+        newPicture = ''
+        throw error
+      }
     }
 
     student.fullName = newName

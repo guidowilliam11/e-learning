@@ -2,11 +2,11 @@ import Messages from "@/models/MessageModel"
 import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 import { authOptions } from "../../auth/[...nextauth]/route"
-import { writeFile } from "fs/promises"
 import Communities from "@/models/CommunityModel"
 import Peers from "@/models/PeerModel"
 import { pusherServer } from "@/libs/pusher/pusherServer"
 import { pusherConfigs } from "@/configs/pusherConfigs"
+import { createClient } from "@/libs/supabase/config"
 
 const { channelName, event } = pusherConfigs
 
@@ -35,19 +35,30 @@ export async function POST(req) {
     }
 
     if (file && file !== 'null') {
+      const supabase = await createClient()
       const bufferBytes = await file.arrayBuffer()
       const buffer = Buffer.from(bufferBytes)
 
       const splittedFileName = file.name.split('.')
       const fileExtension = splittedFileName.pop()
       newMessage.fileName = `${splittedFileName.pop()}.${fileExtension}`
-      const newFileName = `${crypto.randomUUID()}.${fileExtension}`
+      const filePath = `${crypto.randomUUID()}.${fileExtension}`
 
-      const path = `/message/files/${newFileName}`
-      const relativePath = `public${path}`
-      await writeFile(relativePath, buffer)
+      const { data, error } = await supabase.storage
+        .from('message')
+        .upload(filePath, buffer, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: file.type,
+        })
 
-      newMessage.file = path
+      if (data) {
+        newMessage.file = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
+      }
+      if (error) {
+        newMessage.file = ''
+        throw error
+      }
     }
 
     const message = await Messages.create(newMessage)
