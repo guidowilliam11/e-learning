@@ -125,13 +125,13 @@ const Post = ({ id, user }) => {
         pending: 'Processing...',
         success: {
           render() {
-            return 'Comment insert success!'
+            return 'Comment inserted successfully!'
           },
           autoClose: 2000,
         },
         error: {
           render() {
-            return 'Comment insert failed!'
+            return 'Failed to insert comment!'
           },
           autoClose: 2000,
         },

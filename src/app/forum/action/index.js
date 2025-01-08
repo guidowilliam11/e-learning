@@ -67,3 +67,24 @@ export async function updateForumPost(formData) {
     console.error('Error updating forum post:', error)
   }
 }
+
+export async function deleteForumPost(forumId) {
+  try {
+    const response = await fetch(`${baseUrl}/api/forum`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(forumId),
+    })
+
+    if (!response.ok) {
+      throw new Error(`${response.status} - ${response.statusText}`)
+    } else {
+      const data = await response.json()
+      return data
+    }
+  } catch (error) {
+    console.error('Error deleting forum post: ', error)
+  }
+}

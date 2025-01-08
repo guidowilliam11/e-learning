@@ -5,6 +5,7 @@ import path from 'path'
 import { NextResponse } from 'next/server'
 import { Types } from 'mongoose'
 import { createClient } from '@/libs/supabase/config'
+import Comment from '@/models/CommentModel'
 
 export async function GET() {
   try {
@@ -244,7 +245,6 @@ export async function PATCH(req) {
       { status: 201 }
     )
   } catch (error) {
-    console.log(error)
     return NextResponse.json(
       { message: 'An error occurred', error: error.message },
       { status: 500 }
@@ -252,3 +252,79 @@ export async function PATCH(req) {
   }
 }
 
+export async function DELETE(req) {
+  try {
+    await connectToDatabase()
+    const supabase = await createClient()
+
+    const forumId = await req.json()
+
+    if (!forumId) {
+      return NextResponse.json(
+        { message: 'Forum ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const forum = await Forum.findById(forumId).populate('comments')
+
+    if (!forum) {
+      return NextResponse.json(
+        { message: `Forum post with ID ${forumId} not found` },
+        { status: 404 }
+      )
+    }
+
+    const folderPath = forumId.toString()
+    const { data: files, error: listError } = await supabase.storage
+      .from('forum')
+      .list(folderPath, { limit: 100 })
+
+    if (listError) {
+      throw new Error(
+        `Error fetching files from Supabase: ${listError.message}`
+      )
+    }
+
+    if (files && files.length > 0) {
+      const filePaths = files.map((file) => `${folderPath}/${file.name}`)
+      const { error: deleteError } = await supabase.storage
+        .from('forum')
+        .remove(filePaths)
+
+      if (deleteError) {
+        throw new Error(
+          `Error deleting files from Supabase: ${deleteError.message}`
+        )
+      }
+    }
+
+    const deleteCommentsAndReplies = async (commentIds) => {
+      for (const commentId of commentIds) {
+        const comment = await Comment.findById(commentId)
+
+        if (comment) {
+          await deleteCommentsAndReplies(comment.replies)
+          await Comment.findByIdAndDelete(commentId)
+        }
+      }
+    }
+
+    await deleteCommentsAndReplies(forum.comments)
+
+    await Forum.findByIdAndDelete(forumId)
+
+    return NextResponse.json(
+      {
+        message: `Forum post with ID ${forumId} and its related data deleted successfully`,
+      },
+      { status: 200 }
+    )
+  } catch (error) {
+    console.log(error)
+    return NextResponse.json(
+      { message: 'An error occurred', error: error.message },
+      { status: 500 }
+    )
+  }
+}

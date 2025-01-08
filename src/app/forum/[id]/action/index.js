@@ -163,6 +163,6 @@ export async function deleteComment(commentId) {
       return data
     }
   } catch (error) {
-    console.error('Error insert reply to comment: ', error)
+    console.error('Error deleting comment: ', error)
   }
 }
