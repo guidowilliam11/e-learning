@@ -1,13 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: [
-            'm.media-amazon.com',
-            'media.geeksforgeeks.org',
-            'encrypted-tbn0.gstatic.com',
-            'www.mcgill.ca',
-            'static.vecteezy.com',
-            'hbmxtfolbcpqmtcgtcdl.supabase.co'
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'm.media-amazon.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'media.geeksforgeeks.org',
+            },
+            {
+                protocol: 'https',
+                hostname: 'encrypted-tbn0.gstatic.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.mcgill.ca',
+            },
+            {
+                protocol: 'https',
+                hostname: 'static.vecteezy.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'hbmxtfolbcpqmtcgtcdl.supabase.co',
+            },
         ],
     },
 };
