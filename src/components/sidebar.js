@@ -321,13 +321,13 @@ export default function Sidebar() {
                     <div
                         className="h-34 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
                         <div className="flex items-center justify-between mb-2">
-                            <p className="text-lg font-semibold">{sessionData.fullName}</p>
+                            <p className="text-lg font-semibold">{sessionData.fullName || 'Loading...'}</p>
                             <button
                                 className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
                             </button>
                         </div>
                         <p className="font-bold">Student</p>
-                        <p className="text-sm">{sessionData.email}</p>
+                        <p className="text-sm">{sessionData.email || 'Loading...'}</p>
                     </div>
 
                     {/* Navigation Links */}
