@@ -9,7 +9,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import {HiOutlineDotsVertical} from "react-icons/hi";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
 const ITEM_HEIGHT = 48;
 
@@ -196,7 +196,7 @@ const App = ({ user }) => {
 
     return (
         <div className="w-full">
-            <h1 className="text-xl font-semibold mb-4">Notes by Folder</h1>
+            <h1 className="mb-4 text-xl font-semibold">Notes by Folder</h1>
             {notesData.length === 0 ? (
                 <div>No notes available.</div>
             ) : (
@@ -207,7 +207,7 @@ const App = ({ user }) => {
                             <IconButton
                                 aria-label="more"
                                 onClick={(event) => handleFolderMenuClick(event, folder)}
-                                className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                                className="ml-4 transition-opacity duration-300 opacity-0 cursor-pointer group-hover:opacity-100"
                             >
                                 <HiOutlineDotsVertical />
                             </IconButton>
@@ -230,25 +230,25 @@ const App = ({ user }) => {
                             {folder.notes.map((note) => (
                                 <div
                                     key={note._id}
-                                    className="flex-grow p-4 items-center gap-4 bg-white rounded-lg shadow-md overflow-hidden flex justify-between"
+                                    className="flex items-center justify-between flex-grow gap-4 p-4 overflow-hidden bg-white rounded-lg shadow-md"
                                 >
                                     <div className="flex items-center w-[90%] justify-between">
-                                        <div className="flex items-center gap-4 w-4/12">
+                                        <div className="flex items-center w-4/12 gap-4">
                                             <div
                                                 className="flex gap-4 items-center w-[60%] cursor-pointer"
                                                 onClick={() => window.location.href = `/notes/${note._id}`}
                                             >
-                                                <FaBook color={orange[500]}/>
+                                                <FaBook color={orange[500]} />
                                                 <div>{note.topic}</div>
                                             </div>
                                             <div>
                                                 {note.collaborators.length === 0 ? (
                                                     <Tag value="Private"
-                                                         color="bg-red-500 px-1 py-[1px] text-xs font-light w-[70px] text-center"/>
+                                                        color="bg-red-500 px-1 py-[1px] text-xs font-light w-[95px] text-center" />
                                                 ) : (
                                                     <Tag
                                                         value={`Shared ${note.collaborators.length > 5 ? '5+' : note.collaborators.length}`}
-                                                        color="bg-blue-500 px-1 py-[1px] text-xs font-light w-[70px] text-center"
+                                                        color="bg-blue-500 px-1 py-[1px] text-xs font-light w-[95px] text-center"
                                                     />
                                                 )}
                                             </div>
@@ -268,7 +268,7 @@ const App = ({ user }) => {
                                         aria-label="more"
                                         onClick={(event) => handleMenuClick(event, note)}
                                     >
-                                        <HiOutlineDotsVertical/>
+                                        <HiOutlineDotsVertical />
                                     </IconButton>
                                     <Menu
                                         anchorEl={anchorEl}
@@ -294,7 +294,7 @@ const App = ({ user }) => {
             {/* Edit Modal */}
             <Modal open={isEditModalOpen} onClose={closeEditModal}>
                 <Box
-                    className="bg-white p-4 rounded-lg"
+                    className="p-4 bg-white rounded-lg"
                     style={{
                         position: "absolute",
                         top: "50%",
@@ -303,23 +303,23 @@ const App = ({ user }) => {
                         width: 400,
                     }}
                 >
-                    <h2 className="text-lg font-semibold mb-4">Edit Note</h2>
+                    <h2 className="mb-4 text-lg font-semibold">Edit Note</h2>
                     <input
                         type="text"
                         value={newTopic}
                         onChange={(e) => setNewTopic(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded-lg"
                     />
-                    <div className="mt-4 flex justify-end">
+                    <div className="flex justify-end mt-4">
                         <button
                             onClick={handleEditSubmit}
-                            className="px-4 py-2 bg-primary text-white rounded-lg mr-2"
+                            className="px-4 py-2 mr-2 text-white rounded-lg bg-primary"
                         >
                             Save
                         </button>
                         <button
                             onClick={closeEditModal}
-                            className="px-4 py-2 bg-gray-300 text-black rounded-lg"
+                            className="px-4 py-2 text-black bg-gray-300 rounded-lg"
                         >
                             Cancel
                         </button>
@@ -330,7 +330,7 @@ const App = ({ user }) => {
             {/* Edit Folder Modal */}
             <Modal open={isEditFolderModalOpen} onClose={closeEditFolderModal}>
                 <Box
-                    className="bg-white p-4 rounded-lg"
+                    className="p-4 bg-white rounded-lg"
                     style={{
                         position: "absolute",
                         top: "50%",
@@ -339,23 +339,23 @@ const App = ({ user }) => {
                         width: 400,
                     }}
                 >
-                    <h2 className="text-lg font-semibold mb-4">Edit Folder</h2>
+                    <h2 className="mb-4 text-lg font-semibold">Edit Folder</h2>
                     <input
                         type="text"
                         value={newFolderName}
                         onChange={(e) => setNewFolderName(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded-lg"
                     />
-                    <div className="mt-4 flex justify-end">
+                    <div className="flex justify-end mt-4">
                         <button
                             onClick={handleEditFolderSubmit}
-                            className="px-4 py-2 bg-primary text-white rounded-lg mr-2"
+                            className="px-4 py-2 mr-2 text-white rounded-lg bg-primary"
                         >
                             Save
                         </button>
                         <button
                             onClick={closeEditFolderModal}
-                            className="px-4 py-2 bg-gray-300 text-black rounded-lg"
+                            className="px-4 py-2 text-black bg-gray-300 rounded-lg"
                         >
                             Cancel
                         </button>
