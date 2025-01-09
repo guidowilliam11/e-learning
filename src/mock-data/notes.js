@@ -1,6 +1,12 @@
 // Mock Data
 const {MongoClient, ObjectId} = require('mongodb');
 
+const generateRandomTimestamp = () => {
+    const start = new Date(2024, 12, 1); // Start date: January 1, 2020
+    const end = new Date(); // End date: current date
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+};
+
 const mockData = {
     folders: [
         // Folders for User 67663f44d703aed0356b5b63
@@ -18,18 +24,17 @@ const mockData = {
     ],
     notes: [
         // Notes for User 67663f44d703aed0356b5b63
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234580"), topic: "Math", creatorId: new ObjectId("67663f44d703aed0356b5b63"), collaborators: [new ObjectId("6767927ea3b1157d451cb820")] },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234581"), topic: "Science", creatorId: new ObjectId("67663f44d703aed0356b5b63"), collaborators: [] },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234582"), topic: "Project", creatorId: new ObjectId("67663f44d703aed0356b5b63"), collaborators: [new ObjectId("6767939e271a78f2fec485d1"), new ObjectId("6767927ea3b1157d451cb820")] },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234589"), topic: "Collaboration Note", creatorId: new ObjectId("67663f44d703aed0356b5b63"), collaborators: [new ObjectId("6767939e271a78f2fec485d1"), new ObjectId("6767927ea3b1157d451cb820")] },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234580"), topic: "Math", creatorId: new ObjectId("67663f44d703aed0356b5b63"), collaborators: [new ObjectId("6767927ea3b1157d451cb820")], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp()},
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234582"), topic: "Project", creatorId: new ObjectId("67663f44d703aed0356b5b63"), collaborators: [new ObjectId("6767939e271a78f2fec485d1"), new ObjectId("6767927ea3b1157d451cb820")], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234589"), topic: "Collaboration Note", creatorId: new ObjectId("67663f44d703aed0356b5b63"), collaborators: [new ObjectId("6767939e271a78f2fec485d1"), new ObjectId("6767927ea3b1157d451cb820")], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
         // Notes for User 6767927ea3b1157d451cb820
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234583"), topic: "Literature", creatorId: new ObjectId("6767927ea3b1157d451cb820"), collaborators: [new ObjectId("6767939e271a78f2fec485d1")] },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234584"), topic: "History", creatorId: new ObjectId("6767927ea3b1157d451cb820"), collaborators: [] },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234585"), topic: "Research", creatorId: new ObjectId("6767927ea3b1157d451cb820"), collaborators: [new ObjectId("67663f44d703aed0356b5b63")] },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234583"), topic: "Literature", creatorId: new ObjectId("6767927ea3b1157d451cb820"), collaborators: [new ObjectId("6767939e271a78f2fec485d1")], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234584"), topic: "History", creatorId: new ObjectId("6767927ea3b1157d451cb820"), collaborators: [], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234585"), topic: "Research", creatorId: new ObjectId("6767927ea3b1157d451cb820"), collaborators: [new ObjectId("67663f44d703aed0356b5b63")], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
         // Notes for User 6767939e271a78f2fec485d1
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234586"), topic: "Design", creatorId: new ObjectId("6767939e271a78f2fec485d1"), collaborators: [new ObjectId("67663f44d703aed0356b5b63")] },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234587"), topic: "Art", creatorId: new ObjectId("6767939e271a78f2fec485d1"), collaborators: [] },
-        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234588"), topic: "Draft", creatorId: new ObjectId("6767939e271a78f2fec485d1"), collaborators: [new ObjectId("6767927ea3b1157d451cb820")] },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234586"), topic: "Design", creatorId: new ObjectId("6767939e271a78f2fec485d1"), collaborators: [new ObjectId("67663f44d703aed0356b5b63")], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234587"), topic: "Art", creatorId: new ObjectId("6767939e271a78f2fec485d1"), collaborators: [], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
+        { _id: new ObjectId("64a7f5e8d8f1b1c0d1234588"), topic: "Draft", creatorId: new ObjectId("6767939e271a78f2fec485d1"), collaborators: [new ObjectId("6767927ea3b1157d451cb820")], createdAt: generateRandomTimestamp(), updatedAt: generateRandomTimestamp() },
     ],
 };
 const MONGO_URI = 'mongodb+srv://testerseizure:RN2nsmPjBjVnpm5N@thesis.ascm6.mongodb.net/e-learning?retryWrites=true&w=majority&appName=Thesis';

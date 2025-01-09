@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, {Schema, Types} from 'mongoose';
 
 const noteSchema = new Schema({
     topic: {
@@ -6,14 +6,14 @@ const noteSchema = new Schema({
         required: [true, 'Please provide a topic'],
     },
     creatorId: {
-        type: mongoose.Types.ObjectId,
+        type: Types.ObjectId,
         required: [true, 'Please provide the creator ID'],
-        ref: 'User',
+        ref: 'students',
     },
     collaborators: [
         {
-            type: mongoose.Types.ObjectId,
-            ref: 'User',
+            type: Types.ObjectId,
+            ref: 'students',
         },
     ],
 }, { timestamps: true });
