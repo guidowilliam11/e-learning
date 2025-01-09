@@ -20,8 +20,6 @@ import { useSession } from 'next-auth/react';
 // Dummy notes data for users
 
 export default function Sidebar() {
-    const { data: session } = useSession()
-
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [expandedTopics, setExpandedTopics] = useState({});
@@ -39,6 +37,8 @@ export default function Sidebar() {
         setNoteInputVisible(folderId);
         setNewNote('');
     };
+
+    const fullName = localStorage.getItem('fullName')
 
     async function addNote(folderId, newNote) {
         try {
@@ -155,7 +155,7 @@ export default function Sidebar() {
             className={`absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2 z-20 transition-all duration-300 rounded-full bg-[#F99B26] p-1 
         ${isSidebarCollapsed ? 'opacity-100' : 'opacity-0 pointer-events-none'} group-hover:opacity-100 group-hover:pointer-events-auto`}
         >
-            {isSidebarCollapsed ? <FaChevronRight className="text-white text-base" /> :
+            {isSidebarCollapsed ? <FaChevronRight className="text-base text-white" /> :
                 <FaChevronLeft className="text-white text-base2" />}
         </button>
         {/* Sidebar */}
@@ -168,7 +168,7 @@ export default function Sidebar() {
                 {/* Overlay */}
                 {showOverlay && (
                     <div
-                        className="absolute inset-0 bg-gray-100 flex flex-col z-10 p-5 items-start">
+                        className="absolute inset-0 z-10 flex flex-col items-start p-5 bg-gray-100">
                         <button
                             onClick={() => setShowOverlay(false)}
                             className="text-[#F99B26] font-semibold"
@@ -181,7 +181,7 @@ export default function Sidebar() {
                         {notesData.notes.map((folder) => (
                             <div
                                 key={folder._id}
-                                className="mb-4 w-full"
+                                className="w-full mb-4"
                                 onMouseEnter={() => setHoveredFolder(folder._id)}
                                 onMouseLeave={() => setHoveredFolder(null)}
                             >
@@ -225,20 +225,20 @@ export default function Sidebar() {
                                         ))}
                                         {noteInputVisible === folder._id && ( // Conditional rendering for the input field
                                             <li>
-                                                <div className="flex items-center space-x-3 p-2 rounded-lg transition-colors text-gray-700 hover:bg-gray-200">
+                                                <div className="flex items-center p-2 space-x-3 text-gray-700 transition-colors rounded-lg hover:bg-gray-200">
                                                     <span className="text-xl"><FaBook></FaBook></span>
                                                     <input
                                                         type="text"
                                                         value={newNote}
                                                         onChange={(e) => setNewNote(e.target.value)}
                                                         placeholder="Type new note..."
-                                                        className="bg-foreground flex-1 focus:outline-none"
+                                                        className="flex-1 bg-foreground focus:outline-none"
                                                         onKeyDown={(e) => {
                                                             if (e.key === 'Enter') saveNote(folder._id);
                                                         }}
                                                     />
                                                     <button
-                                                        className="p-1 text-gray-700 font-semibold rounded hover:bg-gray-300"
+                                                        className="p-1 font-semibold text-gray-700 rounded hover:bg-gray-300"
                                                         onClick={() => setNoteInputVisible(null)}
                                                     >
                                                         <FaX></FaX>
@@ -253,13 +253,13 @@ export default function Sidebar() {
 
                         <div className="w-full mt-2">
                             {isEditing ? (
-                                <div className="flex items-center border rounded-md p-2">
+                                <div className="flex items-center p-2 border rounded-md">
                                     <input
                                         type="text"
                                         value={folderName}
                                         onChange={(e) => setFolderName(e.target.value)}
                                         placeholder="Enter folder name"
-                                        className="bg-foreground flex-1 focus:outline-none"
+                                        className="flex-1 bg-foreground focus:outline-none"
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
                                                 handleAddFolder(); // Save the folder on Enter
@@ -267,7 +267,7 @@ export default function Sidebar() {
                                         }}
                                     />
                                     <button
-                                        className="p-1 text-gray-700 font-semibold rounded hover:bg-gray-300"
+                                        className="p-1 font-semibold text-gray-700 rounded hover:bg-gray-300"
                                         onClick={() => {
                                             setFolderName(''); // Clear input
                                             setIsEditing(false); // Exit edit mode
@@ -279,7 +279,7 @@ export default function Sidebar() {
 
                             ) : (
                                 <button
-                                    className="p-2 w-full border-2 text-gray-700 text-sm rounded hover:opacity-70 transition-opacity duration-200"
+                                    className="w-full p-2 text-sm text-gray-700 transition-opacity duration-200 border-2 rounded hover:opacity-70"
                                     onClick={() => setIsEditing(true)}
                                 >
                                     Add New Folder
@@ -297,8 +297,8 @@ export default function Sidebar() {
 
                     <div
                         className="h-36 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
-                        <div className="flex justify-between items-center mb-2">
-                            <p className="text-lg font-semibold">{session?.user?.fullName}</p>
+                        <div className="flex items-center justify-between mb-2">
+                            <p className="text-lg font-semibold">{fullName}</p>
                             <button
                                 className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
                             </button>

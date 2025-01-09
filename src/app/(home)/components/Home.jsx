@@ -8,6 +8,7 @@ import ProductivityLevel from './ProductivityLevel'
 import dayjs from 'dayjs'
 import { fetchDailySchedule } from '@/app/schedule/action'
 import { formatHour, generateTimeSlots } from '@/utils/time'
+import { useSession } from 'next-auth/react'
 
 const Home = ({ user }) => {
   // Timer state
@@ -21,6 +22,8 @@ const Home = ({ user }) => {
   const [averageHoursSpent, setAverageHoursSpent] = useState(0)
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [todaySchedules, setTodaySchedules] = useState([])
+
+  const { data: session } = useSession()
 
   const fetchSchedule = async (date) => {
     try {
@@ -79,6 +82,13 @@ const Home = ({ user }) => {
     setCurrentDate(dayjs())
     fetchSchedule(currentDate.toISOString())
   }, [])
+
+  useEffect(() => {
+    if (session) {
+      console.log(session.user.fullName)
+      localStorage.setItem('fullName', session.user.fullName)
+    }
+  }, [session])
 
   useEffect(() => {
     const fetchFocusedHours = async () => {
