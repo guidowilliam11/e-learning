@@ -132,13 +132,13 @@ const NewForum = ({
         pending: 'Processing...',
         success: {
           render() {
-            return 'Forum post insert success!'
+            return `Forum post ${editData ? 'update' : 'insert'} success!`
           },
           autoClose: 2000,
         },
         error: {
           render() {
-            return 'Forum post insert failed!'
+            return `Forum post ${editData ? 'update' : 'insert'} failed!`
           },
           autoClose: 2000,
         },

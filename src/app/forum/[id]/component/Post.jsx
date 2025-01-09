@@ -227,7 +227,7 @@ const Post = ({ id, user }) => {
                     alt=''
                     src={image}
                     priority
-                    width={900}
+                    width={700}
                     height={300}
                     className='w-auto h-auto rounded-md'
                   />
