@@ -6,7 +6,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 export default async function Page() {
   const session = await getServerSession(authOptions)
 
-  !session.user && redirect('/login')
+  !session && redirect('/login')
 
   return <Schedule user={session.user} />
 }
