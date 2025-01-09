@@ -37,7 +37,13 @@ export default function Sidebar() {
         setNewNote('');
     };
 
-    const fullName = localStorage.getItem('fullName')
+    const getFullName = () => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('fullName')
+        }
+        return null
+    }
+
 
     async function addNote(folderId, newNote) {
         try {
@@ -297,7 +303,7 @@ export default function Sidebar() {
                     <div
                         className="h-36 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
                         <div className="flex items-center justify-between mb-2">
-                            <p className="text-lg font-semibold">{fullName}</p>
+                            <p className="text-lg font-semibold">{getFullName()}</p>
                             <button
                                 className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
                             </button>
