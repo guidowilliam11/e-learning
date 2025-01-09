@@ -79,6 +79,11 @@ export async function PATCH(req) {
         note.collaborators.push(student._id);
         await note.save();
 
+        const sharedFolder = await Folder.findOneAndUpdate(
+            { ownerId: student._id, name: "Shared" }, // Query to find the folder
+            { $push: { notes: noteId } }, // Push the note ID into the notes array
+            { new: true, upsert: true } // Options: return the updated document and create one if it doesn't exist
+        );
         return NextResponse.json({ message: 'Collaborator added successfully', note }, { status: 200 });
     } catch (error) {
         console.error('Error adding collaborator:', error);
