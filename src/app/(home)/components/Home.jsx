@@ -85,7 +85,7 @@ const Home = ({ user }) => {
 
   useEffect(() => {
     if (session) {
-      localStorage.setItem('fullName', session.user.fullName)
+      localStorage.setItem('userDetails', JSON.stringify(session.user))
     }
   }, [session])
 

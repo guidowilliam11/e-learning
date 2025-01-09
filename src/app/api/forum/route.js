@@ -185,7 +185,7 @@ export async function PATCH(req) {
       }
     }
 
-    const filePaths = [...currentFilePaths]
+    const filePaths = []
 
     for (const file of files) {
       if (file instanceof File) {

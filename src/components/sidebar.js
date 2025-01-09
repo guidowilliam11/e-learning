@@ -15,6 +15,8 @@ import {
 } from 'react-icons/fa';
 import { IoLogOut, IoSettingsSharp, IoIosArrowBack } from "react-icons/io5";
 import { FaPlus, FaX } from "react-icons/fa6";
+import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
+import { redirect } from 'next/navigation';
 
 // Dummy notes data for users
 
@@ -31,16 +33,17 @@ export default function Sidebar() {
     const [reload, setReload] = useState(false);
     const [noteInputVisible, setNoteInputVisible] = useState(null);
     const [newNote, setNewNote] = useState('');
-    const [fullName, setFullName] = useState('Loading...');
+    const [sessionData, setSessionData] = useState('Loading...');
+    const [openLogoutDialog, setOpenLogoutDialog] = useState(false)
 
     const handleAddNote = (folderId) => {
         setNoteInputVisible(folderId);
         setNewNote('');
     };
 
-    const getFullName = () => {
+    const getSessionData = () => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('fullName');
+            return JSON.parse(localStorage.getItem('userDetails'));
         }
         return null;
     };
@@ -113,8 +116,8 @@ export default function Sidebar() {
     };
 
     useEffect(() => {
-        const name = getFullName()
-        setFullName(name)
+        const current = getSessionData()
+        setSessionData(current)
     }, [])
 
     // Fetch notes data
@@ -150,7 +153,17 @@ export default function Sidebar() {
             setShowOverlay(false);
             setSelectedSession(null); // Clear selected session when navigating away
         }
+
+        if (path === '') {
+            setOpenLogoutDialog(true)
+        }
     };
+
+    const handleCancelLogout = () => setOpenLogoutDialog(false)
+    const handleConfirmLogout = () => {
+        setOpenLogoutDialog(false)
+        redirect('/logout')
+    }
 
     // Toggle topic expansion
     const toggleTopic = (topic) => {
@@ -306,15 +319,15 @@ export default function Sidebar() {
                     <div className="text-3xl font-bold text-[#F99B26] mb-8 pt-4">~ ZEAL.</div>
 
                     <div
-                        className="h-36 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
+                        className="h-34 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
                         <div className="flex items-center justify-between mb-2">
-                            <p className="text-lg font-semibold">{fullName}</p>
+                            <p className="text-lg font-semibold">{sessionData.fullName}</p>
                             <button
                                 className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
                             </button>
                         </div>
                         <p className="font-bold">Student</p>
-                        <p className="text-sm">undergraduate<br />BINUS University</p>
+                        <p className="text-sm">{sessionData.email}</p>
                     </div>
 
                     {/* Navigation Links */}
@@ -338,9 +351,11 @@ export default function Sidebar() {
                     className={`space-y-4 ${showOverlay ? 'opacity-50' : 'opacity-100'} transition-opacity`}>
                     <NavItem href="/settings" icon={<IoSettingsSharp />}
                         label="Settings" onClick={handleNavClick} />
-                    <NavItem href="/logout" icon={<IoLogOut />} label="Logout"
+                    <NavItem href="" icon={<IoLogOut />} label="Logout"
                         onClick={handleNavClick} />
                 </div>
+
+                <LogoutConfirmationDialog open={openLogoutDialog} onCancel={handleCancelLogout} onConfirm={handleConfirmLogout} />
             </div>
         </aside>
     </div>);

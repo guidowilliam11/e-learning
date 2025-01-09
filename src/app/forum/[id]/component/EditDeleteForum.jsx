@@ -6,10 +6,12 @@ import NewForum from '../../component/NewForum'
 import { deleteForumPost, fetchTags } from '../../action'
 import { redirect } from 'next/navigation'
 import { toast } from 'react-toastify'
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog'
 
 const EditDeleteForum = ({ currentPost, fetchData, user }) => {
-  const [open, setOpen] = useState(false)
   const [tags, setTags] = useState([])
+  const [openEdit, setOpenEdit] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
 
   const fetchTagData = async () => {
     try {
@@ -23,13 +25,18 @@ const EditDeleteForum = ({ currentPost, fetchData, user }) => {
 
   const handleEditPost = () => setOpen(true)
 
-  const handleDeletePost = () => {
+  const handleOpenDeleteDialog = () => setOpenDelete(true)
+
+  const handleCancelDelete = () => setOpenDelete(false)
+
+  const handleDeletePost = (forumId) => {
     try {
       const promise = new Promise((resolve, reject) => {
         setTimeout(async () => {
-          const deletePost = await deleteForumPost(currentPost._id)
+          const deletePost = await deleteForumPost(forumId)
           if (deletePost) {
             resolve(deletePost)
+            setOpenDelete(false)
             redirect('/forum')
           } else reject(deletePost)
         }, 500)
@@ -70,13 +77,20 @@ const EditDeleteForum = ({ currentPost, fetchData, user }) => {
           <IconButton onClick={handleEditPost}>
             <EditIcon />
           </IconButton>
-          <IconButton onClick={handleDeletePost}>
+          <IconButton onClick={handleOpenDeleteDialog}>
             <DeleteIcon />
           </IconButton>
 
+          <DeleteConfirmationDialog
+            open={openDelete}
+            onCancel={handleCancelDelete}
+            onConfirm={() => handleDeletePost(currentPost._id)}
+            message='forum'
+          />
+
           <NewForum
-            open={open}
-            setOpen={setOpen}
+            open={openEdit}
+            setOpen={setOpenEdit}
             editData={currentPost}
             user={user}
             tags={tags}
