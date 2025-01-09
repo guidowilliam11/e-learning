@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import { Button } from '@mui/material'
 import Image from 'next/image'
 import { postFormattedDate } from '@/utils/time'
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog'
 
 const CommentSection = ({
   comments,
@@ -24,6 +25,7 @@ const CommentSection = ({
   const [newComments, setNewComments] = useState({})
   const [repliesVisibility, setRepliesVisibility] = useState({})
   const [maxRepliesCount, setMaxRepliesCount] = useState(maxReplies)
+  const [openDelete, setOpenDelete] = useState(false)
 
   const handleLikeButton = async (commentId) => {
     try {
@@ -72,6 +74,10 @@ const CommentSection = ({
     }))
   }
 
+  const handleCloseDeleteDialog = () => setOpenDelete(false)
+
+  const handleDeleteButton = () => setOpenDelete(true)
+
   const handleAddComment = (commentId, value) => {
     try {
       if (value === '') {
@@ -117,6 +123,7 @@ const CommentSection = ({
           const deleted = await deleteComment(commentId)
           if (deleted) {
             maxRepliesCount > 4 ? fetchPostMoreComment() : fetchPost()
+            setOpenDelete(false)
             resolve(deleted)
           } else reject(deleted)
         })
@@ -190,7 +197,13 @@ const CommentSection = ({
                 comments={comment.replies?.length}
                 handleLikeButton={() => handleLikeButton(comment._id)}
                 handleCommentButton={() => handleCommentButton(comment._id)}
-                handleDeleteButton={() => handleDeleteComment(comment._id)}
+                handleDeleteButton={handleDeleteButton}
+              />
+              <DeleteConfirmationDialog
+                open={openDelete}
+                message='comment'
+                onCancel={handleCloseDeleteDialog}
+                onConfirm={() => handleDeleteComment(comment._id)}
               />
               {commentFieldStates[comment._id] && (
                 <CommentField
