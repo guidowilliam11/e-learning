@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, {Schema, Types} from 'mongoose';
 
 const folderSchema = new Schema({
     name: {
@@ -6,13 +6,13 @@ const folderSchema = new Schema({
         required: [true, 'Please provide a folder name'],
     },
     ownerId: {
-        type: mongoose.Types.ObjectId,
+        type: Types.ObjectId,
         required: [true, 'Please provide the folder owner'],
-        ref: 'User',
+        ref: 'students',
     },
     notes: [
         {
-            type: mongoose.Types.ObjectId,
+            type: Types.ObjectId,
             ref: 'Note',
         },
     ],

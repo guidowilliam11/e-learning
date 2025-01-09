@@ -3,6 +3,7 @@
 // src/components/TopBar.js
 import { usePathname } from 'next/navigation';
 import { FaBell } from 'react-icons/fa';
+import Link from "next/link";
 
 export default function TopBar() {
   const path = usePathname();
@@ -23,12 +24,18 @@ export default function TopBar() {
     '/settings': 'Settings'
   };
 
-  const title = pageTitles[path] || 'Dashboard'; // Default to 'Dashboard' if path doesn't match
+  const basePath = path.split('/')[1] ? `/${path.split('/')[1]}` : '/';
+
+  const title = pageTitles[basePath] || 'Dashboard'; // Default to 'Dashboard' if path doesn't match
 
   return (
     <div className="flex items-center justify-between p-4 bg-gray-100 border-b border-gray-200 h-[10%]">
       {/* Dynamic Title */}
-      <h1 className="text-2xl font-semibold text-[#F99B26] min-w-40">{title}</h1>
+      <Link href={basePath} passHref>
+        <h1 className="text-2xl font-semibold text-[#F99B26] min-w-40 cursor-pointer hover:underline">
+          {title}
+        </h1>
+      </Link>
 
       {/* Search bar */}
       <div className="flex items-center space-x-2 flex-grow mx-5">

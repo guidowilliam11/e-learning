@@ -6,6 +6,7 @@ import { connectToDatabase } from '@/libs/mongo/config';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import Notes from "@/models/NotesModel";
 
 // POST: Create a new note
 export async function POST(req) {
@@ -82,6 +83,70 @@ export async function PATCH(req) {
     } catch (error) {
         console.error('Error adding collaborator:', error);
         return NextResponse.json({ message: 'Error adding collaborator' }, { status: 500 });
+    }
+}
+
+
+// DELETE: Delete a specific note
+export async function DELETE(req) {
+    try {
+        await connectToDatabase();
+        const session = await getServerSession(authOptions);
+        if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+
+        const { noteId } = await req.json();
+
+        if (!noteId) {
+            return NextResponse.json({ message: 'Note ID is required' }, { status: 400 });
+        }
+
+        // Find and delete the note
+        const deletedNote = await Notes.findByIdAndDelete(noteId);
+
+        if (!deletedNote) {
+            return NextResponse.json({ message: 'Note not found' }, { status: 404 });
+        }
+
+        // Remove the note from its associated folder
+        await Folder.updateMany(
+            { notes: noteId },
+            { $pull: { notes: noteId } }
+        );
+
+        return NextResponse.json({ message: 'Note deleted successfully' }, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ message: 'Error deleting note' }, { status: 500 });
+    }
+}
+
+// PUT: Update a specific note
+export async function PUT(req) {
+    try {
+        await connectToDatabase();
+        const session = await getServerSession(authOptions);
+        if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+
+        const { noteId, updatedTopic } = await req.json();
+
+        if (!noteId || !updatedTopic) {
+            return NextResponse.json({ message: 'Note ID and updated topic are required' }, { status: 400 });
+        }
+
+        const updatedNote = await Notes.findByIdAndUpdate(
+            noteId,
+            { topic: updatedTopic },
+            { new: true }
+        );
+
+        if (!updatedNote) {
+            return NextResponse.json({ message: 'Note not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({ note: updatedNote }, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ message: 'Error updating note' }, { status: 500 });
     }
 }
 
