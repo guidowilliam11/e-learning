@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 
-const DeleteConfirmationDialog = ({ open, onCancel, onConfirm, message }) => {
+const LogoutConfirmationDialog = ({ open, onCancel, onConfirm }) => {
   return (
     <Dialog
       open={open}
@@ -18,10 +18,8 @@ const DeleteConfirmationDialog = ({ open, onCancel, onConfirm, message }) => {
       maxWidth='xs'
       fullWidth
     >
-      <DialogTitle sx={{ p: 1.5 }}>Confirm Deletion</DialogTitle>
-      <DialogContent sx={{ p: 1.5 }}>
-        Are you sure you want to delete {message}?
-      </DialogContent>
+      <DialogTitle sx={{ p: 1.5 }}>Are you sure?</DialogTitle>
+      <DialogContent sx={{ p: 1.5 }}>Do you want to log out?</DialogContent>
       <DialogActions>
         <Button onClick={onCancel} variant='outlined' color='primary'>
           Cancel
@@ -33,11 +31,11 @@ const DeleteConfirmationDialog = ({ open, onCancel, onConfirm, message }) => {
           color='primary'
           onClick={onConfirm}
         >
-          Delete
+          Logout
         </Button>
       </DialogActions>
     </Dialog>
   )
 }
 
-export default DeleteConfirmationDialog
+export default LogoutConfirmationDialog
