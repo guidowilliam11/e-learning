@@ -31,6 +31,7 @@ export default function Sidebar() {
     const [reload, setReload] = useState(false);
     const [noteInputVisible, setNoteInputVisible] = useState(null);
     const [newNote, setNewNote] = useState('');
+    const [fullName, setFullName] = useState('Loading...');
 
     const handleAddNote = (folderId) => {
         setNoteInputVisible(folderId);
@@ -39,11 +40,10 @@ export default function Sidebar() {
 
     const getFullName = () => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('fullName')
+            return localStorage.getItem('fullName');
         }
-        return null
-    }
-
+        return null;
+    };
 
     async function addNote(folderId, newNote) {
         try {
@@ -111,6 +111,11 @@ export default function Sidebar() {
             alert('Failed to create folder. Please try again.');
         }
     };
+
+    useEffect(() => {
+        const name = getFullName()
+        setFullName(name)
+    }, [])
 
     // Fetch notes data
     useEffect(() => {
@@ -303,7 +308,7 @@ export default function Sidebar() {
                     <div
                         className="h-36 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
                         <div className="flex items-center justify-between mb-2">
-                            <p className="text-lg font-semibold">{getFullName()}</p>
+                            <p className="text-lg font-semibold">{fullName}</p>
                             <button
                                 className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
                             </button>
