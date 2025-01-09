@@ -68,7 +68,7 @@ const Editor = ({
   const [status, setStatus] = useState('connecting')
   const [currentUser, setCurrentUser] = useState(getInitialUser)
   const [modal, setModal] = useState(false)
-  const [uuid, setUuid] = useState('');
+  const [email, setEmail] = useState('');
   const [auth, setAuth] = useState(false);
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const Editor = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({noteId, collaboratorId}),
+        body: JSON.stringify({noteId, email}),
       });
 
       const result = await response.json();
@@ -113,14 +113,14 @@ const Editor = ({
   }
 
   const handleShare = () => {
-    if (uuid.trim() === '') {
-      alert('Please enter a valid UUID.');
+    if (email.trim() === '') {
+      alert('Please enter a valid Email.');
       return;
     }
 
     const noteId = room.split('-')[4];
 
-    addColaborator(noteId, uuid);
+    addColaborator(noteId, email);
 
     setModal(false);
   };
@@ -201,16 +201,16 @@ const Editor = ({
             <div className="bg-white p-6 rounded shadow-lg w-96">
               <h2 className="text-lg font-semibold mb-4">Share Your Notes</h2>
 
-              <label htmlFor="uuid" className="block text-sm font-medium text-gray-700 mb-2">
-                Enter Friend&#39;s UUID
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Friend&#39;s Email
               </label>
               <input
                   type="text"
-                  id="uuid"
-                  value={uuid}
-                  onChange={(e) => setUuid(e.target.value)}
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
-                  placeholder="Enter UUID here"
+                  placeholder="Enter Friend's Email here"
               />
 
               <div className="flex justify-end mt-4">

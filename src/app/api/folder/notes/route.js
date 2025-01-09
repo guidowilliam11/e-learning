@@ -52,9 +52,9 @@ export async function PATCH(req) {
         const session = await getServerSession(authOptions);
         if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
-        const { noteId, collaboratorId } = await req.json();
+        const { noteId, email } = await req.json();
 
-        const student = await Student.findById(collaboratorId)
+        const student = await Student.findOne({ email: email });
         if(!student){
             return NextResponse.json({message: 'Collaborator Not Found'}, {status: 400});
         }
@@ -63,8 +63,8 @@ export async function PATCH(req) {
             return NextResponse.json({ message: 'Note ID is required' }, { status: 400 });
         }
 
-        if (!collaboratorId) {
-            return NextResponse.json({ message: 'Collaborator ID is required' }, { status: 400 });
+        if (!email) {
+            return NextResponse.json({ message: 'Email is required' }, { status: 400 });
         }
 
         const note = await Note.findById(noteId);
@@ -72,7 +72,7 @@ export async function PATCH(req) {
             return NextResponse.json({ message: 'Note not found' }, { status: 404 });
         }
 
-        if (note.collaborators.includes(collaboratorId)) {
+        if (note.collaborators.includes(student._id)) {
             return NextResponse.json({ message: 'Collaborator already added' }, { status: 400 });
         }
 
