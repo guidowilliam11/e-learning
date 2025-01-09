@@ -15,7 +15,6 @@ import {
 } from 'react-icons/fa';
 import { IoLogOut, IoSettingsSharp, IoIosArrowBack } from "react-icons/io5";
 import { FaPlus, FaX } from "react-icons/fa6";
-import { useSession } from 'next-auth/react';
 
 // Dummy notes data for users
 

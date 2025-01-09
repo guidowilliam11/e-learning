@@ -7,6 +7,7 @@ export default function Logout() {
   useEffect(() => {
     const handleLogout = async () => {
       await signOut({ callbackUrl: '/login' })
+      localStorage.removeItem('fullName')
     }
 
     handleLogout()
