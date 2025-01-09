@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth'
-import Notes from './(notes)/page'
+import Notes from './(notes)/EditorPage'
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 
 export default async function page() {
