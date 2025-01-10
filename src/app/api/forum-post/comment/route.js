@@ -58,8 +58,24 @@ export async function DELETE(req) {
 
     const deleteCommentAndReplies = async (id) => {
       const comment = await Comment.findById(id)
-      if (!comment) throw new Error(`Comment with ID ${id} not found`)
-      await Promise.all(comment.replies.map(deleteCommentAndReplies))
+
+      if (!comment) {
+        throw new Error(`Comment with ID ${id} not found`)
+      }
+
+      for (const replyId of comment.replies) {
+        await deleteCommentAndReplies(replyId)
+      }
+
+      const parentComment = await Comment.findOne({ replies: id })
+      if (parentComment) {
+        await Comment.findByIdAndUpdate(
+          parentComment._id,
+          { $pull: { replies: id } },
+          { new: true }
+        )
+      }
+
       await Comment.findByIdAndDelete(id)
     }
 

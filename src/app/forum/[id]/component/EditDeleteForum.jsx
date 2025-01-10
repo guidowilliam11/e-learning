@@ -66,10 +66,6 @@ const EditDeleteForum = ({ currentPost, fetchData, user }) => {
     fetchTagData()
   }, [])
 
-  console.log(tags)
-
-  console.log(user, currentPost)
-
   return (
     <div>
       {user === currentPost.studentId.id && (
