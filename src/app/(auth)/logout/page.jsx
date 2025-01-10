@@ -5,9 +5,9 @@ import { signOut } from 'next-auth/react'
 
 export default function Logout() {
   useEffect(() => {
+    localStorage.removeItem('userDetails')
     const handleLogout = async () => {
       await signOut({ callbackUrl: '/login' })
-      localStorage.removeItem('fullName')
     }
 
     handleLogout()

@@ -114,10 +114,17 @@ export default function Sidebar() {
     };
 
     useEffect(() => {
-        setSessionData({})
-        const current = JSON.parse(localStorage.getItem('userDetails'))
-        setSessionData(current)
-    }, [sessionData])
+        if (Object.keys(sessionData).length === 0) {
+            const interval = setInterval(() => {
+                const currentData = JSON.parse(localStorage.getItem('userDetails')) || {};
+                if (JSON.stringify(currentData) !== JSON.stringify(sessionData)) {
+                    setSessionData(currentData);
+                }
+            }, 100);
+
+            return () => clearInterval(interval);
+        }
+    }, [sessionData]);
 
     // Fetch notes data
     useEffect(() => {
