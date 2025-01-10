@@ -16,8 +16,8 @@ import {
 import { IoLogOut, IoSettingsSharp, IoIosArrowBack } from "react-icons/io5";
 import { FaPlus, FaX } from "react-icons/fa6";
 import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
-import {redirect, usePathname, useRouter} from 'next/navigation';
-import {toast} from "react-toastify";
+import { redirect, usePathname } from 'next/navigation';
+import { toast } from "react-toastify";
 
 // Dummy notes data for users
 
@@ -36,19 +36,12 @@ export default function Sidebar() {
     const [reload, setReload] = useState(false);
     const [noteInputVisible, setNoteInputVisible] = useState(null);
     const [newNote, setNewNote] = useState('');
-    const [sessionData, setSessionData] = useState('Loading...');
-    const [openLogoutDialog, setOpenLogoutDialog] = useState(false)
+    const [sessionData, setSessionData] = useState({});
+    const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 
     const handleAddNote = (folderId) => {
         setNoteInputVisible(folderId);
         setNewNote('');
-    };
-
-    const getSessionData = () => {
-        if (typeof window !== 'undefined') {
-            return JSON.parse(localStorage.getItem('userDetails'));
-        }
-        return null;
     };
 
     async function addNote(folderId, newNote) {
@@ -121,9 +114,10 @@ export default function Sidebar() {
     };
 
     useEffect(() => {
-        const current = getSessionData()
+        setSessionData({})
+        const current = JSON.parse(localStorage.getItem('userDetails'))
         setSessionData(current)
-    }, [])
+    }, [sessionData])
 
     // Fetch notes data
     useEffect(() => {
@@ -331,13 +325,13 @@ export default function Sidebar() {
                     <div
                         className="h-34 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
                         <div className="flex items-center justify-between mb-2">
-                            <p className="text-lg font-semibold">{sessionData.fullName || 'Loading...'}</p>
+                            <p className="text-lg font-semibold">{sessionData?.fullName}</p>
                             <button
                                 className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
                             </button>
                         </div>
                         <p className="font-bold">Student</p>
-                        <p className="text-sm">{sessionData.email || 'Loading...'}</p>
+                        <p className="text-sm">{sessionData?.email}</p>
                     </div>
 
                     {/* Navigation Links */}
