@@ -29,7 +29,7 @@ const Schedule = ({ user }) => {
   const assignmentId = searchParams.get('assignmentId')
 
   const [currentDate, setCurrentDate] = useState(dayjs())
-  const [currentPage, setCurrentPage] = useState('Daily')
+  const [isLoading, setIsLoading] = useState(true)
   const [schedules, setSchedules] = useState([])
   const [todaySchedules, setTodaySchedules] = useState([])
   const [assignmentTitles, setAssignmentTitles] = useState({})
@@ -55,6 +55,7 @@ const Schedule = ({ user }) => {
         }
 
         setSchedules(updatedSchedules)
+        setIsLoading(false)
       }
     } catch (error) {
       console.log(error)
@@ -256,7 +257,10 @@ const Schedule = ({ user }) => {
             </div>
 
             <div className='max-h-[75vh] overflow-y-auto pr-2'>
-              {currentDate.toDate().getDate() === dayjs().toDate().getDate() ? (
+              {isLoading ? (
+                <div className='text-[#050505a8] text-lg mt-3'>Loading...</div>
+              ) : currentDate.toDate().getDate() ===
+                dayjs().toDate().getDate() ? (
                 <>
                   <PastSchedules
                     currentDate={currentDate}
