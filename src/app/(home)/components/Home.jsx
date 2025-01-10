@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import { fetchDailySchedule } from '@/app/schedule/action'
 import { formatHour, generateTimeSlots } from '@/utils/time'
 import { useSession } from 'next-auth/react'
+import {toast} from "react-toastify";
 
 const Home = ({ user }) => {
   // Timer state
@@ -142,13 +143,17 @@ const Home = ({ user }) => {
 
       const data = await response.json()
       console.log('Productivity hour added successfully:', data)
+      toast.success("Performance Increased");
     } catch (error) {
       console.error('Failed to add productivity hour:', error.message)
     }
   }
 
   const resetTimer = () => {
-    addProductivityHour()
+    console.log(timeLeft)
+    if(timeLeft === 0){
+      addProductivityHour()
+    }
     setTimeLeft(initialTime)
     setIsPaused(false)
   }

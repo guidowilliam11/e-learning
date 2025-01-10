@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import {toast} from "react-toastify";
 
 const ITEM_HEIGHT = 48;
 
@@ -71,10 +72,10 @@ const App = ({ user }) => {
             });
 
             if (!response.ok) throw new Error("Failed to delete note");
-            alert("Note deleted successfully");
+            toast.success("Note deleted successfully")
             fetchNotes();
         } catch (error) {
-            alert("Error deleting note");
+            toast.error("Error deleting note")
         }
     };
 
@@ -87,12 +88,14 @@ const App = ({ user }) => {
             });
 
             if (!response.ok) throw new Error("Failed to update note");
-            alert("Note updated successfully");
+            toast.success("Note updated successfully")
             setEditModalOpen(false);
             setSelectedNote(null);
             fetchNotes();
         } catch (error) {
             alert("Error updating note");
+            toast.error("Error updating note")
+
         }
     };
 
@@ -108,10 +111,11 @@ const App = ({ user }) => {
             });
 
             if (!response.ok) throw new Error("Failed to delete folder");
-            alert("Folder deleted successfully");
+            toast.success("Folder deleted successfully")
             fetchNotes();
         } catch (error) {
-            alert("Error deleting folder");
+            toast.error("Error deleting folder")
+
         }
     };
 
@@ -125,11 +129,12 @@ const App = ({ user }) => {
 
             if (!response.ok) throw new Error("Failed to update folder");
             alert("Folder updated successfully");
+            toast.success("Folder updated successfully")
             setEditFolderModalOpen(false);
             setSelectedFolder(null);
             fetchNotes();
         } catch (error) {
-            alert("Error updating folder");
+            toast.error("Error updating folder")
         }
     };
 

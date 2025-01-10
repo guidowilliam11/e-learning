@@ -7,7 +7,7 @@ export default async function page({params}) {
 
     !session && redirect('/login')
 
-    const { id } = params;
+    const { id } = await params;
 
     return <Sessions user={session.user} courseId={id}/>
 }

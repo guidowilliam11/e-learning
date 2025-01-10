@@ -69,8 +69,9 @@ export async function POST(req) {
 
             subscriber = newSubscriber;
         }
-
-        subscriber.progress.push(sessionId);
+        if(!subscriber.progress.includes(sessionId)){
+            subscriber.progress.push(sessionId);
+        }
 
         await subscriber.save();
 

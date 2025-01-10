@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Tag from "@/components/Tag";
 import {FaFile, FaX} from "react-icons/fa6";
 import {FaRegFileAlt} from "react-icons/fa";
+import {toast} from "react-toastify";
 
 const SessionCard = ({ user, courseId }) => {
     const [sessions, setSessions] = useState([]);
@@ -58,12 +59,15 @@ const SessionCard = ({ user, courseId }) => {
 
             if (!res.ok) {
                 console.error("Failed to update progress");
+                toast.error("Failed to update progress")
                 return;
             }
 
             setReload((prev) => !prev);
+            toast.success("Successfuly updated progress")
         } catch (error) {
             console.error("Error updating progress:", error);
+            toast.error("Error updating progress");
         }
     };
 

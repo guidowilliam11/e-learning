@@ -16,11 +16,14 @@ import {
 import { IoLogOut, IoSettingsSharp, IoIosArrowBack } from "react-icons/io5";
 import { FaPlus, FaX } from "react-icons/fa6";
 import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
-import { redirect } from 'next/navigation';
+import {redirect, usePathname, useRouter} from 'next/navigation';
+import {toast} from "react-toastify";
 
 // Dummy notes data for users
 
 export default function Sidebar() {
+    const pathname = usePathname() // returns "/ dashboard" on / dashboard?foo=bar
+
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [expandedTopics, setExpandedTopics] = useState({});
@@ -60,19 +63,20 @@ export default function Sidebar() {
 
             if (response.ok) {
                 setReload((prev) => !prev);
+                toast.success("Successfully created note")
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.message}`);
             }
         } catch (error) {
             console.error('Error creating note:', error);
-            alert('Failed to create folder. Please try again.');
+            toast.error("Error creating note")
         }
     }
 
     const saveNote = (folderId) => {
         if (!newNote.trim()) {
-            alert("Note can't be empty!");
+            toast.error("Note can't be empty")
             return;
         }
         addNote(folderId, newNote);
@@ -87,7 +91,7 @@ export default function Sidebar() {
 
     const handleAddFolder = async () => {
         if (!folderName.trim()) {
-            alert("Folder name can't be empty!");
+            toast.error("Folder name can't be empty")
             return;
         }
         try {
@@ -105,13 +109,14 @@ export default function Sidebar() {
                 setIsEditing(false);
 
                 setReload((prev) => !prev);
+                toast.success("Successfully created folder")
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.message}`);
             }
         } catch (error) {
             console.error('Error creating folder:', error);
-            alert('Failed to create folder. Please try again.');
+            toast.error("Error creating folder")
         }
     };
 
@@ -130,7 +135,11 @@ export default function Sidebar() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setNotesData(data); // Assuming the API returns an array of folders with notes
+                setNotesData(data);
+                if (pathname.startsWith('/notes/')) {
+                    console.log(pathname);
+                    setShowOverlay(true);
+                }
             } catch (error) {
                 console.error("Failed to fetch notes:", error);
             } finally {
@@ -144,7 +153,8 @@ export default function Sidebar() {
     // Toggle overlay when navigating to notes
     const handleNavClick = (path) => {
         if (path.startsWith('/notes')) {
-            setShowOverlay(true);
+            console.log(pathname);
+            // setShowOverlay(true);
 
             // Extract the session ID from the path if needed
             const sessionId = path.split('/').pop(); // Get the last part of the path
