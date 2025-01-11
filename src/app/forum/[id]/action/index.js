@@ -146,14 +146,16 @@ export async function insertReplyToComment(commentId, studentId, content) {
   }
 }
 
-export async function deleteComment(commentId) {
+export async function deleteComment(forumId, commentId) {
+  const toDelete = { forumId, commentId }
+
   try {
     const response = await fetch(`${baseUrl}/api/forum-post/comment`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(commentId),
+      body: JSON.stringify(toDelete),
     })
 
     if (!response.ok) {

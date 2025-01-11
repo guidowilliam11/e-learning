@@ -25,7 +25,7 @@ const LogoutConfirmationDialog = ({ open, onCancel, onConfirm }) => {
           Cancel
         </Button>
         <Button
-          className='text-white '
+          className='text-white'
           type='submit'
           variant='contained'
           color='primary'

@@ -47,11 +47,11 @@ export async function DELETE(req) {
   try {
     await connectToDatabase()
 
-    const commentId = await req.json()
+    const { forumId, commentId } = await req.json()
 
-    if (!commentId) {
+    if (!commentId || !forumId) {
       return NextResponse.json(
-        { message: 'Comment ID are required' },
+        { message: 'Comment ID and Forum ID are required' },
         { status: 400 }
       )
     }
@@ -80,6 +80,13 @@ export async function DELETE(req) {
     }
 
     await deleteCommentAndReplies(commentId)
+
+    await Forum.findByIdAndUpdate(
+      forumId,
+      { $pull: { comments: commentId } },
+      { new: true }
+    )
+
     return NextResponse.json(
       { message: 'Comment and its replies deleted successfully' },
       { status: 200 }

@@ -52,9 +52,7 @@ const Login = () => {
       })
 
       if (!res.ok) {
-        const errorData = await res.json()
-        alert(errorData.message)
-        throw new Error(errorData.message || 'Sign-in failed')
+        alert(res.error)
       } else {
         alert('Sign-in success!')
         setTimeout(() => {
