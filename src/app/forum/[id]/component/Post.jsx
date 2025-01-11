@@ -256,6 +256,7 @@ const Post = ({ id, user }) => {
           <CommentSection
             comments={currentPost.comments}
             user={user}
+            forumId={currentPost._id}
             fetchPost={fetchCurrentPostNoView}
             fetchPostMoreComment={fetchCurrentPostMoreComments}
           />

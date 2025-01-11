@@ -13,6 +13,7 @@ import { postFormattedDate } from '@/utils/time'
 import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog'
 
 const CommentSection = ({
+  forumId,
   comments,
   user,
   fetchPost,
@@ -120,7 +121,7 @@ const CommentSection = ({
     try {
       const promise = new Promise((resolve, reject) => {
         setTimeout(async () => {
-          const deleted = await deleteComment(commentId)
+          const deleted = await deleteComment(forumId, commentId)
           if (deleted) {
             maxRepliesCount > 4 ? fetchPostMoreComment() : fetchPost()
             setOpenDelete(false)
@@ -198,6 +199,8 @@ const CommentSection = ({
                 handleLikeButton={() => handleLikeButton(comment._id)}
                 handleCommentButton={() => handleCommentButton(comment._id)}
                 handleDeleteButton={handleDeleteButton}
+                currentUser={user}
+                commentAuthor={comment.studentId.id}
               />
               <DeleteConfirmationDialog
                 open={openDelete}

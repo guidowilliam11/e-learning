@@ -14,6 +14,8 @@ const CommentLike = ({
   handleLikeButton,
   handleCommentButton,
   handleDeleteButton,
+  currentUser,
+  commentAuthor,
 }) => {
   return (
     <div className='flex items-center'>
@@ -39,7 +41,7 @@ const CommentLike = ({
         {comments}
       </Button>
 
-      {handleDeleteButton && (
+      {currentUser === commentAuthor && handleDeleteButton && (
         <IconButton onClick={handleDeleteButton}>
           <DeleteIcon />
         </IconButton>
