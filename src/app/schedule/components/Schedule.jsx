@@ -38,6 +38,7 @@ const Schedule = ({ user }) => {
 
   const fetchSchedule = async (date) => {
     try {
+      setIsLoading(true)
       const isToday = dayjs(date).isSame(dayjs(), 'day')
       const schedules = await fetchDailySchedule(user, date)
       if (schedules) {
@@ -259,85 +260,91 @@ const Schedule = ({ user }) => {
             <div className='max-h-[75vh] overflow-y-auto pr-2'>
               {isLoading ? (
                 <div className='text-[#050505a8] text-lg mt-3'>Loading...</div>
-              ) : currentDate.toDate().getDate() ===
-                dayjs().toDate().getDate() ? (
-                <>
-                  <PastSchedules
-                    currentDate={currentDate}
-                    schedules={todaySchedules}
-                    timeSlots={timeSlots}
-                    handleCheck={handleCheck}
-                    handleViewAssignment={handleViewAssignment}
-                  />
-
-                  <FutureSchedules
-                    currentDate={currentDate}
-                    schedules={todaySchedules}
-                    futureTimeSlots={futureTimeSlots}
-                    assignmentTitles={assignmentTitles}
-                    isAddingBySlot={isAddingBySlot}
-                    handleCheck={handleCheck}
-                    handleCancelAdd={handleCancelAdd}
-                    handleViewAssignment={handleViewAssignment}
-                    handleAddNewClick={handleAddNewClick}
-                    handleTitleChange={handleTitleChange}
-                    handleSaveNewAssignment={handleSaveNewAssignment}
-                  />
-                </>
               ) : (
                 <>
-                  {filteredTimeSlots.length === 0 && isPastDate ? (
-                    <div className='text-[#050505a8] text-lg mt-3'>
-                      You have no schedules for this day.
-                    </div>
+                  {currentDate.toDate().getDate() ===
+                  dayjs().toDate().getDate() ? (
+                    <>
+                      <PastSchedules
+                        currentDate={currentDate}
+                        schedules={todaySchedules}
+                        timeSlots={timeSlots}
+                        handleCheck={handleCheck}
+                        handleViewAssignment={handleViewAssignment}
+                      />
+
+                      <FutureSchedules
+                        currentDate={currentDate}
+                        schedules={todaySchedules}
+                        futureTimeSlots={futureTimeSlots}
+                        assignmentTitles={assignmentTitles}
+                        isAddingBySlot={isAddingBySlot}
+                        handleCheck={handleCheck}
+                        handleCancelAdd={handleCancelAdd}
+                        handleViewAssignment={handleViewAssignment}
+                        handleAddNewClick={handleAddNewClick}
+                        handleTitleChange={handleTitleChange}
+                        handleSaveNewAssignment={handleSaveNewAssignment}
+                      />
+                    </>
                   ) : (
-                    filteredTimeSlots.map((slot, index) => (
-                      <div key={`time-slot-${index}`}>
-                        <p className='mt-3 text-[#050505a8] text-lg'>{slot}</p>
+                    <>
+                      {filteredTimeSlots.length === 0 && isPastDate ? (
+                        <div className='text-[#050505a8] text-lg mt-3'>
+                          You have no schedules for this day.
+                        </div>
+                      ) : (
+                        filteredTimeSlots.map((slot, index) => (
+                          <div key={`time-slot-${index}`}>
+                            <p className='mt-3 text-[#050505a8] text-lg'>
+                              {slot}
+                            </p>
 
-                        {schedules
-                          .filter((schedule) => schedule.timeSlot === slot)
-                          .map((assignment) => (
-                            <AssignmentList
-                              key={`assignment-${assignment._id}`}
-                              curr={assignment._id}
-                              assignmentId={assignment.assignmentId}
-                              title={assignment.title}
-                              checked={assignment.checked}
-                              handleCheck={handleCheck}
-                              handleViewAssignment={handleViewAssignment}
-                            />
-                          ))}
+                            {schedules
+                              .filter((schedule) => schedule.timeSlot === slot)
+                              .map((assignment) => (
+                                <AssignmentList
+                                  key={`assignment-${assignment._id}`}
+                                  curr={assignment._id}
+                                  assignmentId={assignment.assignmentId}
+                                  title={assignment.title}
+                                  checked={assignment.checked}
+                                  handleCheck={handleCheck}
+                                  handleViewAssignment={handleViewAssignment}
+                                />
+                              ))}
 
-                        {isFutureDate &&
-                          (isAddingBySlot[slot] ? (
-                            <AssignmentList
-                              title={assignmentTitles[slot] || ''}
-                              isEditing={true}
-                              onLabelChange={(e) =>
-                                handleTitleChange(slot, e.target.value)
-                              }
-                              onSave={() => handleSaveNewAssignment(slot)}
-                              cancelAdd={() => handleCancelAdd(slot)}
-                            />
-                          ) : (
-                            <Button
-                              variant='text'
-                              startIcon={
-                                <AddIcon size={14} color='#050505a8' />
-                              }
-                              sx={{
-                                color: '#050505a8',
-                                fontSize: '16px',
-                                ml: 0.75,
-                              }}
-                              onClick={() => handleAddNewClick(slot)}
-                            >
-                              Add new
-                            </Button>
-                          ))}
-                      </div>
-                    ))
+                            {isFutureDate &&
+                              (isAddingBySlot[slot] ? (
+                                <AssignmentList
+                                  title={assignmentTitles[slot] || ''}
+                                  isEditing={true}
+                                  onLabelChange={(e) =>
+                                    handleTitleChange(slot, e.target.value)
+                                  }
+                                  onSave={() => handleSaveNewAssignment(slot)}
+                                  cancelAdd={() => handleCancelAdd(slot)}
+                                />
+                              ) : (
+                                <Button
+                                  variant='text'
+                                  startIcon={
+                                    <AddIcon size={14} color='#050505a8' />
+                                  }
+                                  sx={{
+                                    color: '#050505a8',
+                                    fontSize: '16px',
+                                    ml: 0.75,
+                                  }}
+                                  onClick={() => handleAddNewClick(slot)}
+                                >
+                                  Add new
+                                </Button>
+                              ))}
+                          </div>
+                        ))
+                      )}
+                    </>
                   )}
                 </>
               )}
