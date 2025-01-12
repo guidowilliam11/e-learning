@@ -1,18 +1,23 @@
 import { useEffect, useState } from 'react'
 
 const VideoStream = ({
+  conversationId,
   participant,
   mediaStream,
   mediaStreamState,
   isUserStream,
 }) => {
   const [usedMediaStreamState, setUsedMediaStreamState] = useState(
-    isUserStream ? mediaStreamState : mediaStreamState.get(participant._id)
+    isUserStream
+      ? mediaStreamState
+      : mediaStreamState.get(`${conversationId}_${participant._id}`)
   )
 
   useEffect(() => {
     setUsedMediaStreamState(
-      isUserStream ? mediaStreamState : mediaStreamState.get(participant._id)
+      isUserStream
+        ? mediaStreamState
+        : mediaStreamState.get(`${conversationId}_${participant._id}`)
     )
   }, [isUserStream, mediaStreamState, participant])
 
@@ -20,7 +25,7 @@ const VideoStream = ({
     if (isUserStream) {
       mediaStream.current = node
     } else {
-      mediaStream.current.set(participant._id, node)
+      mediaStream.current.set(`${conversationId}_${participant._id}`, node)
     }
   }
 
