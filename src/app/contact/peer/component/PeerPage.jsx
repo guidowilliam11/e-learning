@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext'
 import { addPeer } from '../add/actions'
 
-const PeerPage = ({ peerEmail }) => {
+const PeerPage = ({ email }) => {
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
 
   const router = useRouter()
@@ -17,15 +17,15 @@ const PeerPage = ({ peerEmail }) => {
 
   useEffect(() => {
     setIsFullscreenLoading(true)
-    if (!peerEmail) {
+    if (!email) {
       router.push(`/contact`)
     }
 
-    getPeerData(peerEmail)
+    getPeerData(email)
       .then(handlePeerData)
       .catch(handleFailGetPeerData)
       .finally(() => setIsFullscreenLoading(false))
-  }, [peerEmail])
+  }, [email])
 
   const handlePeerData = (res) => {
     setPeerData(res.body)
@@ -70,15 +70,15 @@ const PeerPage = ({ peerEmail }) => {
   }
 
   return (
-    <section className='flex flex-col flex-grow h-full p-6 overflow-y-auto'>
-      <div className='flex items-center justify-between p-4 mb-4 text-lg font-bold rounded-md bg-neutral-50 drop-shadow-md text-primary'>
-        <div className='flex items-center gap-4'>
+    <section className="flex flex-col flex-grow h-full p-6 overflow-y-auto">
+      <div className="flex items-center justify-between p-4 mb-4 text-lg font-bold rounded-md bg-neutral-50 drop-shadow-md text-primary">
+        <div className="flex items-center gap-4">
           <button onClick={handleClickBack}>
             <FaArrowLeft />
           </button>
-          <span className='cursor-default'>Peer</span>
+          <span className="cursor-default">Peer</span>
         </div>
-        <div className='flex items-center gap-5'>
+        <div className="flex items-center gap-5">
           {/*TODO: Block*/}
           {/*<button*/}
           {/*  className="text-primaryDark"*/}
@@ -88,27 +88,27 @@ const PeerPage = ({ peerEmail }) => {
           {/*</button>*/}
         </div>
       </div>
-      <div className='flex flex-col justify-center p-4 rounded-md bg-neutral-50 drop-shadow-md'>
-        <div className='flex flex-col items-center'>
+      <div className="flex flex-col justify-center p-4 rounded-md bg-neutral-50 drop-shadow-md">
+        <div className="flex flex-col items-center">
           <Image
             src={peer.picture || '/images/default-profile-picture.webp'}
             width={175}
             height={175}
             alt={peer.fullName || 'Peer'}
-            className='mb-3 rounded-full drop-shadow-lg'
+            className="mb-3 rounded-full drop-shadow-lg"
           />
-          <div className='mb-1 text-3xl font-bold text-primary'>
+          <div className="mb-1 text-3xl font-bold text-primary">
             {peer.fullName}
           </div>
-          <div className='text-md font-semibold text-neutral-600 max-w-[50%] break-all text-center mb-2'>
+          <div className="text-md font-semibold text-neutral-600 max-w-[50%] break-all text-center mb-2">
             {peer.email}
           </div>
-          <div className='text-lg font-semibold text-neutral-700 max-w-[50%] break-all text-center'>
+          <div className="text-lg font-semibold text-neutral-700 max-w-[50%] break-all text-center">
             {peer.description}
           </div>
           {!peer.alreadyPeers ? (
             <button
-              className='px-3 py-2 transition duration-300 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark'
+              className="px-3 py-2 transition duration-300 rounded-lg drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark"
               onClick={handleClickAdd}
             >
               Add
