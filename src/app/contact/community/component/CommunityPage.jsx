@@ -37,7 +37,8 @@ const CommunityPage = ({ communityId }) => {
     () =>
       community?.participants?.filter(
         (participant) => participant._id !== userId
-      ) || []
+      ) || [],
+    [community]
   )
   const picturePreview = useMemo(() => {
     if (!community?.picture || typeof community?.picture === 'string') {

@@ -44,7 +44,7 @@ const Conversation = ({ conversation }) => {
   const lastMessageTime = lastMessage?.createdAt
   const formattedLastMessageTime = useMemo(
     () => formatMessageTime(lastMessageTime),
-    [conversation]
+    [lastMessageTime]
   )
 
   const handleClick = () => {
