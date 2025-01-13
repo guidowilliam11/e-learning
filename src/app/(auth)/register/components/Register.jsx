@@ -22,6 +22,7 @@ const schema = object({
   }),
 }).refine((value) => value.password === value.confirmPassword, {
   message: 'Passwords must match',
+  path: ['confirmPassword'],
 })
 
 const Register = () => {
@@ -62,7 +63,7 @@ const Register = () => {
     try {
       const register = await registerNewUser(userData)
 
-      if (register) {
+      if (register.message !== 'User already exists') {
         setTimeout(() => {
           redirect('/login')
         }, 500)
