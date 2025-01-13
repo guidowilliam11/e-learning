@@ -21,7 +21,8 @@ export default function TopBar() {
     '/contact/community/edit': 'Contact',
     '/contact/peer': 'Contact',
     '/contact/peer/add': 'Contact',
-    '/settings': 'Settings'
+    '/settings': 'Settings',
+    '/logout': 'Logout'
   };
 
   const basePath = path.split('/')[1] ? `/${path.split('/')[1]}` : '/';

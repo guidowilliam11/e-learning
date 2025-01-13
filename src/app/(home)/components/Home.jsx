@@ -9,10 +9,14 @@ import dayjs from 'dayjs'
 import { fetchDailySchedule } from '@/app/schedule/action'
 import { formatHour, generateTimeSlots } from '@/utils/time'
 import { useSession } from 'next-auth/react'
-import {toast} from "react-toastify";
+import {
+  addProductivityHour,
+  fetchDailyQuote,
+  fetchFocusedHours,
+} from '../action'
+import { toast } from 'react-toastify'
 
 const Home = ({ user }) => {
-  // Timer state
   const initialTime = 30 * 60
   const [timeLeft, setTimeLeft] = useState(initialTime)
   const [isPaused, setIsPaused] = useState(false)
@@ -23,6 +27,8 @@ const Home = ({ user }) => {
   const [averageHoursSpent, setAverageHoursSpent] = useState(0)
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [todaySchedules, setTodaySchedules] = useState([])
+
+  console.log(averageHoursSpent)
 
   const { data: session } = useSession()
 
@@ -49,6 +55,33 @@ const Home = ({ user }) => {
     }
   }
 
+  const fetchFocusedHoursData = async () => {
+    try {
+      const data = await fetchFocusedHours()
+
+      if (data) {
+        setFocusedHours(data.focusedHours)
+        setMonthlyFocusedHours(data.monthlyFocusedHours)
+        setAverageHoursSpent(data.averageHoursSpent)
+      }
+    } catch (err) {
+      console.error(`Error: ${err}`)
+    }
+  }
+
+  const fetchQuote = async () => {
+    try {
+      const quote = await fetchDailyQuote()
+      if (quote) {
+        console.log(quote)
+        setQuote(quote.quote)
+        setAuthor(quote.author)
+      }
+    } catch (err) {
+      console.error(`Error: ${err}`)
+    }
+  }
+
   const timeSlots = generateTimeSlots()
 
   const futureTimeSlots = timeSlots.filter(
@@ -58,28 +91,8 @@ const Home = ({ user }) => {
   )
 
   useEffect(() => {
-    const fetchQuote = async () => {
-      try {
-        const response = await fetch('https://api.api-ninjas.com/v1/quotes', {
-          headers: {
-            'X-Api-Key': 'xWs/pH9MclhuL0xsgCPPQw==fLz9tiV7Uh3ec1Ln',
-          },
-        })
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`)
-        }
-
-        const data = await response.json()
-        const fetchedQuote = data[0]
-        console.log(fetchedQuote)
-        setQuote(fetchedQuote.quote)
-        setAuthor(fetchedQuote.author)
-      } catch (err) {
-        console.log('error')
-      }
-    }
     fetchQuote()
+    fetchFocusedHoursData()
     setCurrentDate(dayjs())
     fetchSchedule(currentDate.toISOString())
   }, [])
@@ -91,31 +104,12 @@ const Home = ({ user }) => {
   }, [session])
 
   useEffect(() => {
-    const fetchFocusedHours = async () => {
-      try {
-        const response = await fetch('/api/productivity') // Replace with the correct API endpoint
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`)
-        }
-        const data = await response.json()
-        setFocusedHours(data.focusedHours)
-        setMonthlyFocusedHours(data.monthlyFocusedHours)
-        setAverageHoursSpent(data.averageHoursSpent)
-      } catch (err) {
-        throw new Error(`Error: ${err}`)
-      }
-    }
-
-    fetchFocusedHours()
-  }, [])
-
-  useEffect(() => {
     if (!isPaused && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1)
       }, 1000)
 
-      return () => clearInterval(timer) // Clear timer on component unmount
+      return () => clearInterval(timer)
     }
   }, [timeLeft, isPaused])
 
@@ -131,28 +125,14 @@ const Home = ({ user }) => {
     setIsPaused((prev) => !prev)
   }
 
-  async function addProductivityHour() {
-    try {
-      const response = await fetch('/api/productivity', {
-        method: 'PUT',
-      })
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`)
-      }
-
-      const data = await response.json()
-      console.log('Productivity hour added successfully:', data)
-      toast.success("Performance Increased");
-    } catch (error) {
-      console.error('Failed to add productivity hour:', error.message)
-    }
-  }
-
-  const resetTimer = () => {
+  const resetTimer = async () => {
     console.log(timeLeft)
-    if(timeLeft === 0){
-      addProductivityHour()
+    if (timeLeft === 0) {
+      const data = await addProductivityHour()
+      if (data) {
+        console.log('Productivity hour added successfully:', data)
+        toast.success('Performance Increased')
+      }
     }
     setTimeLeft(initialTime)
     setIsPaused(false)
