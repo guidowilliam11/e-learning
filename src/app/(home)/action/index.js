@@ -26,7 +26,7 @@ export async function fetchDailyQuote() {
     }
 
     const data = await response.json()
-    const fetchedQuote = data[0]
+    return data[0]
   } catch (error) {
     console.error('Error fetching daily quote:', err)
   }

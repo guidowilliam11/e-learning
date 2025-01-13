@@ -8,6 +8,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'intermediate-gradient': 'linear-gradient(75.75deg, #F6CD5E -36.5%, #FF8E00 102.64%)',
+        'pro-gradient': 'linear-gradient(80.76deg, #FFFFFF 15.21%, #7191BE 90.97%, #4B6E9E 113.06%)',
+        'scholarly-gradient': 'linear-gradient(82.33deg, #7F86E8 -36.62%, #545EE1 53.04%, #2E337B 127.08%)'
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',

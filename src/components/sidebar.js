@@ -18,6 +18,7 @@ import { FaPlus, FaX } from "react-icons/fa6";
 import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
 import { redirect } from 'next/navigation';
 import { toast } from "react-toastify";
+import { fetchFocusedHours } from '@/app/(home)/action';
 
 // Dummy notes data for users
 
@@ -36,6 +37,22 @@ export default function Sidebar() {
     const [newNote, setNewNote] = useState('');
     const [sessionData, setSessionData] = useState({});
     const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
+    const [badge, setBadge] = useState('Intermediate')
+
+    const fetchFocusedHoursData = async () => {
+        try {
+            const data = await fetchFocusedHours()
+            if (data.averageHoursSpent >= 0 && data.averageHoursSpent <= 15) {
+                setBadge('Intermediate')
+            } else if (data.averageHoursSpent > 15 && data.averageHoursSpent <= 35) {
+                setBadge('Pro')
+            } else if (data.averageHoursSpent > 35) {
+                setBadge('Scholarly')
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     const handleAddNote = (folderId) => {
         setNoteInputVisible(folderId);
@@ -110,6 +127,10 @@ export default function Sidebar() {
             toast.error("Error creating folder")
         }
     };
+
+    useEffect(() => {
+        fetchFocusedHoursData()
+    }, [])
 
     useEffect(() => {
         if (Object.keys(sessionData).length === 0) {
@@ -328,7 +349,12 @@ export default function Sidebar() {
                         <div className="flex items-center justify-between mb-2">
                             <p className="text-lg font-semibold">{sessionData?.fullName}</p>
                             <button
-                                className="bg-[#F99B26] px-3 py-1 text-sm rounded-md">Badge
+                                className={`${badge === 'Pro'
+                                    ? 'bg-pro-gradient text-[#2F3577]'
+                                    : badge === 'Scholarly'
+                                        ? 'bg-scholarly-gradient text-[#E5E7FB]'
+                                        : 'bg-intermediate-gradient'
+                                    } font-bold px-3 py-1 text-sm rounded-md`}>{badge}
                             </button>
                         </div>
                         <p className="font-bold">Student</p>
