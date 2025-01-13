@@ -50,13 +50,13 @@ const ToDoList = ({
         pending: 'Processing...',
         success: {
           render() {
-            return 'Schedule check update success!'
+            return 'Assignment check update success!'
           },
           autoClose: 2000,
         },
         error: {
           render() {
-            return 'Schedule check update failed!'
+            return 'Assignment check update failed!'
           },
           autoClose: 2000,
         },
