@@ -84,6 +84,17 @@ const ToDoList = ({
     }))
   }
 
+  const handleCancelAdd = (slot) => {
+    setIsAddingBySlot((prev) => ({
+      ...prev,
+      [slot]: false,
+    }))
+    setAssignmentTitles((prev) => ({
+      ...prev,
+      [slot]: '',
+    }))
+  }
+
   const handleSaveNewAssignment = async (slot) => {
     try {
       const promise = new Promise((resolve, reject) => {
@@ -170,6 +181,7 @@ const ToDoList = ({
           handleTitleChange={handleTitleChange}
           handleSaveNewAssignment={handleSaveNewAssignment}
           handleViewAssignment={handleViewAssignment}
+          handleCancelAdd={handleCancelAdd}
         />
       </div>
     </div>
