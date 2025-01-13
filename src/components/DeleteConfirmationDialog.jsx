@@ -27,7 +27,7 @@ const DeleteConfirmationDialog = ({ open, onCancel, onConfirm, message }) => {
           Cancel
         </Button>
         <Button
-          className='text-white '
+          sx={{ color: 'white' }}
           type='submit'
           variant='contained'
           color='primary'
