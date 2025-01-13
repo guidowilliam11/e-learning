@@ -23,6 +23,8 @@ import {
 import { getSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext'
+import LeaveCommunityConfirmationModal from './LeaveCommunityConfirmationModal'
+import RemoveMemberConfirmationDialog from './RemoveMemberConfirmationModal'
 
 const CommunityPage = ({ communityId }) => {
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
@@ -33,6 +35,9 @@ const CommunityPage = ({ communityId }) => {
   const [community, setCommunity] = useState({})
   const [userId, setUserId] = useState('')
   const [peersToInvite, setPeersToInvite] = useState(null)
+  const [openLeaveCommnityDialog, setOpenLeaveCommnityDialog] = useState(false)
+  const [memberToRemove, setMemberToRemove] = useState({})
+  const [openRemoveMemberDialog, setOpenRemoveMemberDialog] = useState(false)
   const members = useMemo(
     () =>
       community?.participants?.filter(
@@ -75,7 +80,11 @@ const CommunityPage = ({ communityId }) => {
     router.back()
   }
   const handleLeaveCommunity = async () => {
+    setOpenLeaveCommnityDialog(true)
+  }
+  const confirmLeaveCommunity = async () => {
     setIsFullscreenLoading(true)
+    setOpenLeaveCommnityDialog(false)
     const { user } = await getSession()
     removeMember(communityId, user.id)
       .then(handleSuccessLeaveCommunity)
@@ -118,14 +127,19 @@ const CommunityPage = ({ communityId }) => {
     router.push(`/contact/peer?email=${member.email}`)
   }
 
-  const handleClickRemoveMember = (studentId) => {
+  const handleClickRemoveMember = (student) => {
+    setMemberToRemove(student)
+    setOpenRemoveMemberDialog(true)
+  }
+  const confirmRemoveMember = () => {
     setIsFullscreenLoading(true)
-    removeMember(communityId, studentId)
+    setOpenRemoveMemberDialog(false)
+    removeMember(communityId, memberToRemove._id)
       .then(handleSuccessRemoveMember)
       .finally(() => setIsFullscreenLoading(false))
   }
   const handleSuccessRemoveMember = (res) => {
-    setCommunity(res.body.data)
+    setCommunity(res.body)
   }
 
   const handleInitiateAddPeers = () => {
@@ -171,6 +185,20 @@ const CommunityPage = ({ communityId }) => {
 
   return (
     <section className="flex flex-col flex-grow h-full p-6 overflow-y-auto">
+      <LeaveCommunityConfirmationModal
+        open={openLeaveCommnityDialog}
+        onConfirm={confirmLeaveCommunity}
+        onCancel={() => setOpenLeaveCommnityDialog(false)}
+      />
+      <RemoveMemberConfirmationDialog
+        open={openRemoveMemberDialog}
+        onConfirm={confirmRemoveMember}
+        onCancel={() => {
+          setOpenRemoveMemberDialog(false)
+          setMemberToRemove({})
+        }}
+        fullName={memberToRemove?.fullName || ''}
+      />
       <div className="flex items-center justify-between p-4 mb-4 text-lg font-bold rounded-md bg-neutral-50 drop-shadow-md text-primary">
         <div className="flex items-center gap-4">
           <button onClick={handleClickBack}>
@@ -226,7 +254,7 @@ const CommunityPage = ({ communityId }) => {
           <input
             className="mb-2 text-3xl font-bold text-center text-primary bg-neutral-50 focus:outline-none border-primary focus:border-b-2"
             name="name"
-            value={community.name || 'Name'}
+            value={community?.name || 'Name'}
             onChange={(e) =>
               setCommunity({ ...community, name: e.target.value })
             }
@@ -235,7 +263,7 @@ const CommunityPage = ({ communityId }) => {
           <textarea
             className="text-lg font-semibold text-neutral-600 w-[75%] break-all text-center resize-none bg-neutral-50 focus:outline-none border-neutral-600 focus:border-b-2"
             name="description"
-            value={community.description || 'Description'}
+            value={community?.description || 'Description'}
             onChange={(e) =>
               setCommunity({ ...community, description: e.target.value })
             }
@@ -299,7 +327,7 @@ const CommunityPage = ({ communityId }) => {
             </div>
             <div
               className="flex items-center transition text-neutral-500 hover:scale-125"
-              onClick={() => handleClickRemoveMember(member._id)}
+              onClick={() => handleClickRemoveMember(member)}
             >
               <FaUserMinus />
             </div>

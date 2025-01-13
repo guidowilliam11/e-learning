@@ -116,7 +116,7 @@ const ContactPage = () => {
                 href="/contact/peer/add"
               >
                 <FaUser />
-                <span className="">New Contact</span>
+                <span>Add Peer</span>
               </Link>
               {peers.map((peer) => (
                 <Conversation
@@ -149,7 +149,12 @@ const ContactPage = () => {
             </>
           )}
         </div>
-        <ConversationPage userId={userId} />
+        <ConversationPage
+          activeContactTab={activeContactTab}
+          peers={peers}
+          communities={communities}
+          userId={userId}
+        />
       </div>
     </div>
   )

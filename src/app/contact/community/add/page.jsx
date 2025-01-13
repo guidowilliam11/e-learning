@@ -9,7 +9,6 @@ import {
   FaUserMinus,
 } from 'react-icons/fa6'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { HiOutlinePaperAirplane } from 'react-icons/hi2'
 import Image from 'next/image'
 import './style.css'
 import { createCommunity, getPeers } from '@/app/contact/community/add/actions'
@@ -151,7 +150,7 @@ const AddCommunityPage = () => {
             className="p-3 rounded-lg font-bold drop-shadow-sm text-neutral-50 bg-primary hover:bg-primaryDark transition duration-300"
             type="submit"
           >
-            <HiOutlinePaperAirplane />
+            Create
           </button>
         </form>
         <div className="text-start text-neutral-500 text-sm">
