@@ -1,0 +1,57 @@
+name: Update Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get the last commit message
+        run: |
+          echo "COMMIT_MESSAGE=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+
+      - name: Read and update version
+        run: |
+          # Read the current version from version.txt
+          CURRENT_VERSION=$(cat version.txt)
+
+          # Parse the current version into major, minor, and patch
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+          # Determine the type of increment based on the commit message
+          if [[ "$COMMIT_MESSAGE" =~ ^(chore|fix) ]]; then
+            PATCH=$((PATCH + 1))
+          elif [[ "$COMMIT_MESSAGE" =~ ^(Feature|feat|Merge) ]]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0  # Reset patch when minor version increments
+          else
+            echo "No version update needed for commit message: $COMMIT_MESSAGE"
+            exit 0
+          fi
+
+          # Form the new version
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+          # Write the new version to version.txt
+          echo "$NEW_VERSION" > version.txt
+
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+          echo "Updated version to $NEW_VERSION"
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "Seizuree"
+          git config --global user.email "101007008+Seizuree@users.noreply.github.com."
+          git add version.txt
+          git commit -m "ci: Update version to $NEW_VERSION"
+          git push origin main
