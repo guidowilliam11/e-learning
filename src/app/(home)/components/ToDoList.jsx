@@ -50,13 +50,13 @@ const ToDoList = ({
         pending: 'Processing...',
         success: {
           render() {
-            return 'Assignment check update success!'
+            return 'To-Do List check update success!'
           },
           autoClose: 2000,
         },
         error: {
           render() {
-            return 'Assignment check update failed!'
+            return 'To-Do List check update failed!'
           },
           autoClose: 2000,
         },
@@ -145,13 +145,13 @@ const ToDoList = ({
         pending: 'Processing...',
         success: {
           render() {
-            return 'Insert new assignment success!'
+            return 'Insert new To-Do List success!'
           },
           autoClose: 2000,
         },
         error: {
           render() {
-            return 'Insert new assignment failed!'
+            return 'Insert new To-Do List failed!'
           },
           autoClose: 2000,
         },
