@@ -13,17 +13,15 @@ import {
     FaAddressBook,
     FaChevronLeft
 } from 'react-icons/fa';
-import { IoLogOut, IoSettingsSharp, IoIosArrowBack } from "react-icons/io5";
+import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
 import { FaPlus, FaX } from "react-icons/fa6";
 import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
-import { redirect, usePathname } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { toast } from "react-toastify";
 
 // Dummy notes data for users
 
 export default function Sidebar() {
-    const pathname = usePathname() // returns "/ dashboard" on / dashboard?foo=bar
-
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [expandedTopics, setExpandedTopics] = useState({});
@@ -137,14 +135,9 @@ export default function Sidebar() {
                 }
                 const data = await response.json();
                 setNotesData(data);
-                if (pathname.startsWith('/notes/')) {
-                    console.log(pathname);
-                    setShowOverlay(true);
-                }
+                setLoading(false)
             } catch (error) {
                 console.error("Failed to fetch notes:", error);
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -153,9 +146,8 @@ export default function Sidebar() {
 
     // Toggle overlay when navigating to notes
     const handleNavClick = (path) => {
-        if (path.startsWith('/notes')) {
-            console.log(pathname);
-            // setShowOverlay(true);
+        if (path.includes('/notes')) {
+            setShowOverlay(true);
 
             // Extract the session ID from the path if needed
             const sessionId = path.split('/').pop(); // Get the last part of the path
@@ -212,7 +204,9 @@ export default function Sidebar() {
                                 {<FaChevronLeft />} Notes
                             </span>
                         </button>
-                        {notesData.notes.map((folder) => (
+                        {loading ? (
+                            <div>Loading...</div>
+                        ) : (notesData.notes.map((folder) => (
                             <div
                                 key={folder._id}
                                 className="w-full mb-4"
@@ -283,7 +277,7 @@ export default function Sidebar() {
                                     </ul>
                                 )}
                             </div>
-                        ))}
+                        )))}
 
                         <div className="w-full mt-2">
                             {isEditing ? (
