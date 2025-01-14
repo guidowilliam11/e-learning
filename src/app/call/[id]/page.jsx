@@ -1,21 +1,22 @@
-'use client'
+"use client"
 
-import { useMemo, useRef, useState, useEffect } from 'react'
-import VideoStream from '@/app/call/[id]/components/VideoStream'
-import Peer from 'peerjs'
-import { FaVideo, FaMicrophone, FaPhoneSlash } from 'react-icons/fa6'
-import { getSession } from 'next-auth/react'
-import { validateRoomData } from './actions'
-import { redirect, usePathname, useSearchParams } from 'next/navigation'
-import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext'
+import { useMemo, useRef, useState, useEffect } from "react"
+import VideoStream from "@/app/call/[id]/components/VideoStream"
+import Peer from "peerjs"
+import { FaVideo, FaMicrophone, FaPhoneSlash } from "react-icons/fa6"
+import { getSession } from "next-auth/react"
+import { validateRoomData } from "./actions"
+import { redirect, usePathname, useSearchParams } from "next/navigation"
+import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext"
+import { toast } from "react-toastify"
 
 const CallPage = () => {
   const { setIsFullscreenLoading } = useFullscreenLoadingContext()
-  const conversationId = usePathname().split('/')[2]
-  const roomType = useSearchParams().get('type')
+  const conversationId = usePathname().split("/")[2]
+  const roomType = useSearchParams().get("type")
 
   const peerInstance = useRef(null)
-  const [peerId, setPeerId] = useState('')
+  const [peerId, setPeerId] = useState("")
 
   const [roomData, setRoomData] = useState({})
   const roomParticipants = useMemo(
@@ -34,7 +35,7 @@ const CallPage = () => {
     if (targetParticipants?.[0]?.fullName) {
       return targetParticipants[0].fullName
     }
-    return 'Initiating call...'
+    return "Initiating call..."
   }, [roomData, targetParticipants])
 
   const userStream = useRef(null)
@@ -59,20 +60,20 @@ const CallPage = () => {
 
   const setupPeerInstance = () => {
     const peer = new Peer(`${conversationId}_${peerId}`)
-    peer.on('open', (id) => {
-      console.log(id, 'setup')
+    peer.on("open", (id) => {
+      console.log(id, "setup")
       setPeerOpened(true)
     })
 
-    peer.on('call', async (call) => {
+    peer.on("call", async (call) => {
       call.answer(userStream.current.srcObject)
-      call.on('stream', (incomingStream) => {
-        console.log(call.peer, 'call')
+      call.on("stream", (incomingStream) => {
+        console.log(call.peer, "call")
         remoteStreams.current.get(call.peer).srcObject = incomingStream
         remoteStreams.current.get(call.peer).play()
         setRemoteStreamsState(new Map(remoteStreams.current))
       })
-      call.on('close', (incomingStream) => {
+      call.on("close", (incomingStream) => {
         remoteStreams.current.get(call.peer).srcObject = null
         setRemoteStreamsState(new Map(remoteStreams.current))
       })
@@ -90,13 +91,13 @@ const CallPage = () => {
         userStream.current.srcObject
       )
 
-      call.on('stream', (incomingStream) => {
-        console.log(call.peer, 'call')
+      call.on("stream", (incomingStream) => {
+        console.log(call.peer, "call")
         remoteStreams.current.get(call.peer).srcObject = incomingStream
         remoteStreams.current.get(call.peer).play()
         setRemoteStreamsState(new Map(remoteStreams.current))
       })
-      call.on('close', (incomingStream) => {
+      call.on("close", (incomingStream) => {
         remoteStreams.current.get(call.peer).srcObject = null
         setRemoteStreamsState(new Map(remoteStreams.current))
       })
@@ -145,11 +146,18 @@ const CallPage = () => {
         toggleMic()
         toggleVideo()
         getSession().then((session) => {
-          !session && redirect('/login')
+          !session && redirect("/login")
           const { user } = session
           setPeerId(user.id)
           setupRoomData()
         })
+      })
+      .catch((error) => {
+        if (error?.name === "NotAllowedError") {
+          toast.error(
+            "Please allow permission to access camera and microphone, then reopen the page."
+          )
+        }
       })
   }, [])
 
@@ -192,23 +200,23 @@ const CallPage = () => {
         <button
           onClick={toggleVideo}
           className={
-            'text-neutral-50 rounded-full p-5 ' +
-            (videoStatus ? 'bg-secondary' : 'bg-red-600')
+            "text-neutral-50 rounded-full p-5 " +
+            (videoStatus ? "bg-secondary" : "bg-red-600")
           }
         >
           <FaVideo />
         </button>
         <button
           className={
-            'text-neutral-50 rounded-full p-5 ' +
-            (audioStatus ? 'bg-secondary' : 'bg-red-600')
+            "text-neutral-50 rounded-full p-5 " +
+            (audioStatus ? "bg-secondary" : "bg-red-600")
           }
           onClick={toggleMic}
         >
           <FaMicrophone />
         </button>
         <button
-          className={'text-neutral-50 rounded-full p-5 bg-red-600'}
+          className={"text-neutral-50 rounded-full p-5 bg-red-600"}
           onClick={hangupCall}
         >
           <FaPhoneSlash />

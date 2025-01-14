@@ -1,20 +1,20 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
+import Link from "next/link"
 import {
   FaArrowLeft,
   FaUserGroup,
   FaUser,
   FaUserPlus,
   FaUserMinus,
-} from 'react-icons/fa6'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import Image from 'next/image'
-import './style.css'
-import { createCommunity, getPeers } from '@/app/contact/community/add/actions'
-import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
-import { useFullscreenLoadingContext } from '@/contexts/fullscreenLoadingContext'
+} from "react-icons/fa6"
+import { useEffect, useMemo, useRef, useState } from "react"
+import Image from "next/image"
+import "./style.css"
+import { createCommunity, getPeers } from "@/app/contact/community/add/actions"
+import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
+import { useFullscreenLoadingContext } from "@/contexts/fullscreenLoadingContext"
 
 const AddCommunityPage = () => {
   const router = useRouter()
@@ -26,11 +26,11 @@ const AddCommunityPage = () => {
     () => peers.filter((peer) => peer.selected),
     [peers]
   )
-  const [communityName, setCommunityName] = useState('')
+  const [communityName, setCommunityName] = useState("")
   const [picture, setPicture] = useState(null)
   const picturePreview = useMemo(() => {
     if (!picture) {
-      return ''
+      return ""
     }
     return URL.createObjectURL(picture)
   }, [picture])
@@ -59,8 +59,8 @@ const AddCommunityPage = () => {
   const handlePictureChange = (e) => {
     if (e.target.files.length > 0) {
       if (e.target.files[0].size > 10000000) {
-        toast.error('File size cannot exceed 10 MB!')
-        imageInput.current.value = ''
+        toast.error("File size cannot exceed 10 MB!")
+        imageInput.current.value = ""
         return
       }
       setPicture(e.target.files[0])
@@ -74,23 +74,24 @@ const AddCommunityPage = () => {
 
     const formData = new FormData(createCommunityForm)
 
-    formData.set('name', communityName)
+    formData.set("name", communityName)
     formData.set(
-      'participants',
+      "participants",
       selectedPeers.map((peer) => peer._id)
     )
-    formData.set('picture', picture)
+    formData.set("picture", picture)
 
     setIsFullscreenLoading(true)
-    createCommunity(formData)
-      .then(handleCreateCommunityResult)
-      .finally(() => setIsFullscreenLoading(false))
+    createCommunity(formData).then(handleCreateCommunityResult)
   }
 
   const handleCreateCommunityResult = (res) => {
     if (res.body?._id) {
-      setTimeout(() => router.push('/contact'), 1000)
-      toast.success('Community has been created!')
+      setTimeout(() => {
+        setIsFullscreenLoading(true)
+        router.push("/contact")
+      }, 1000)
+      toast.success("Community has been created!")
     }
   }
 
@@ -117,10 +118,10 @@ const AddCommunityPage = () => {
         >
           <div className="rounded-full mr-4 image-upload-wrapper h-[100px] w-[100px] relative cursor-pointer">
             <Image
-              src={picturePreview || '/images/default-community-picture.png'}
+              src={picturePreview || "/images/default-community-picture.png"}
               height={100}
               width={100}
-              className="rounded-full"
+              className="rounded-full max-h-[100px] max-w-[100px]"
               alt="profile-picture"
             />
             <label
@@ -134,7 +135,7 @@ const AddCommunityPage = () => {
             type="file"
             id="imageInput"
             ref={imageInput}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             accept=".png,.jpeg,.jpg"
             onChange={handlePictureChange}
           />
@@ -161,12 +162,12 @@ const AddCommunityPage = () => {
         <div className="flex flex-col w-1/3 overflow-auto">
           <div className="flex justify-center items-center gap-1.5 border-b-[1px] border-neutral-300 bg-neutral-50 p-3 font-semibold text-neutral-600 sticky top-0">
             <FaUserGroup />
-            <span className="">Group Members</span>
+            <span className="">Members</span>
           </div>
           <div className="p-5 border-b-[1px] border-neutral-300 flex gap-4 bg-neutral-50 transition duration-300">
             <div>
               <Image
-                src={'/images/default-profile-picture.webp'}
+                src={"/images/default-profile-picture.webp"}
                 className="rounded-full"
                 height={48}
                 width={48}
@@ -184,7 +185,7 @@ const AddCommunityPage = () => {
             >
               <div onClick={() => handleClickPeerProfile(peer)}>
                 <Image
-                  src={peer.picture || '/images/default-profile-picture.webp'}
+                  src={peer.picture || "/images/default-profile-picture.webp"}
                   className="rounded-full"
                   height={48}
                   width={48}
@@ -217,11 +218,11 @@ const AddCommunityPage = () => {
             <div
               className="p-5 border-b-[1px] border-neutral-300 flex gap-4 cursor-pointer hover:bg-neutral-200 bg-neutral-50 transition duration-300"
               key={peer._id}
-              style={peer.selected ? { display: 'none' } : { display: 'flex' }}
+              style={peer.selected ? { display: "none" } : { display: "flex" }}
             >
               <div onClick={() => handleClickPeerProfile(peer)}>
                 <Image
-                  src={peer.picture || '/images/default-profile-picture.webp'}
+                  src={peer.picture || "/images/default-profile-picture.webp"}
                   className="rounded-full"
                   height={48}
                   width={48}

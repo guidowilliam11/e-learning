@@ -70,7 +70,7 @@ const ConversationHeader = ({ userId }) => {
           height={48}
           width={48}
           alt="Profile picture"
-          className="rounded-full mx-3 cursor-pointer"
+          className="rounded-full mx-3 cursor-pointer max-h-[48px] max-w-[48px]"
           onClick={handleProfileClick}
         />
         <div

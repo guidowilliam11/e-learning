@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 
 const VideoStream = ({
   conversationId,
@@ -35,8 +35,8 @@ const VideoStream = ({
       style={
         (!usedMediaStreamState?.srcObject && isUserStream) ||
         usedMediaStreamState?.srcObject
-          ? { display: 'flex' }
-          : { display: 'none' }
+          ? { display: "flex" }
+          : { display: "none" }
       }
     >
       <video
@@ -44,8 +44,8 @@ const VideoStream = ({
         style={
           usedMediaStreamState?.srcObject &&
           usedMediaStreamState?.srcObject?.getVideoTracks()[0]?.enabled
-            ? { display: 'block' }
-            : { display: 'none' }
+            ? { display: "block" }
+            : { display: "none" }
         }
         ref={handleMountMediaStream}
         muted={isUserStream}
@@ -63,8 +63,8 @@ const VideoStream = ({
 					participant.fullName ?? 'You'
 				}
 			</span> */}
-      <div className="text-neutral-50 text-sm absolute bottom-3 left-3">
-        {isUserStream ? 'You' : participant.fullName}
+      <div className="text-neutral-50 text-sm absolute bottom-3 left-3 bg-neutral-900/50 px-2 rounded-lg">
+        {isUserStream ? "You" : participant.fullName}
       </div>
     </div>
   )
