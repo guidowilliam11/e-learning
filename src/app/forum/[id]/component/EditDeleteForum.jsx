@@ -23,7 +23,7 @@ const EditDeleteForum = ({ currentPost, fetchData, user }) => {
     }
   }
 
-  const handleEditPost = () => setOpen(true)
+  const handleEditPost = () => setOpenEdit(true)
 
   const handleOpenDeleteDialog = () => setOpenDelete(true)
 

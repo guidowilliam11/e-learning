@@ -294,7 +294,7 @@ const NewForum = ({
                     src={url}
                     alt={`Preview ${index + 1}`}
                     variant='rounded'
-                    sx={{ width: 150, height: 150, mr: 3 }}
+                    sx={{ width: 150, height: 150, mr: 3, mb: 3 }}
                   />
                   <IconButton
                     sx={{
