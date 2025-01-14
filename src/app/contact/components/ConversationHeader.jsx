@@ -1,4 +1,3 @@
-
 import Image from "next/image"
 import { FaArrowLeft, FaPhone } from "react-icons/fa6"
 import { useConversationContext } from "@/contexts/conversationContext"
@@ -44,11 +43,11 @@ const ConversationHeader = ({ userId }) => {
         "_blank",
         "menubar=no,status=no,width=1280"
       )
-      popup.onbeforeunload = () => {
-        validateRoomData(type, activeConversation._id)
-        setIsCallOngoing(false)
-      }
-      popup.onclose = () => {
+      popup.onpagehide = (e) => {
+        console.log(e)
+        if (e?.timeStamp < 1000) {
+          return
+        }
         validateRoomData(type, activeConversation._id)
         setIsCallOngoing(false)
       }
