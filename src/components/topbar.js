@@ -2,7 +2,6 @@
 
 // src/components/TopBar.js
 import { usePathname } from 'next/navigation';
-import { FaBell } from 'react-icons/fa';
 import Link from "next/link";
 
 export default function TopBar() {
@@ -37,11 +36,6 @@ export default function TopBar() {
           {title}
         </h1>
       </Link>
-
-      {/* Notification Icon */}
-      <div className="text-[#F99B26] hover:text-orange-600">
-        <FaBell size={24} />
-      </div>
     </div>
   );
 }
