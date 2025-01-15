@@ -122,7 +122,7 @@ const Schedule = ({ user }) => {
                 [slot]: '',
               }))
             } else reject(inserted)
-          }
+          } else reject(slot)
         }, 500)
       })
 

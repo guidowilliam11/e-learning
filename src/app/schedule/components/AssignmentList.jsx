@@ -16,7 +16,7 @@ const AssignmentList = ({
   handleViewAssignment,
 }) => {
   const handleClick = () => {
-    handleCheck(curr)
+    !isEditing && handleCheck(curr)
   }
 
   const handleClickAssignment = () => {
