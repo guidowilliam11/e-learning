@@ -1,6 +1,7 @@
 const TaskPastDue = ({ schedules, futureTimeSlots }) => {
   const totalTaskPast = schedules.filter(
-    (schedule) => !futureTimeSlots.includes(schedule.timeSlot)
+    (schedule) =>
+      !futureTimeSlots.includes(schedule.timeSlot) && !schedule.checked
   ).length
 
   return (
