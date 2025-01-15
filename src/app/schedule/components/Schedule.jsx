@@ -87,6 +87,14 @@ const Schedule = ({ user }) => {
 
   const handleSaveNewAssignment = async (slot) => {
     try {
+      if (assignmentTitles[slot] === '') {
+        return toast.error({
+          render() {
+            return 'Assignment title cannot be empty!'
+          },
+          autoClose: 2000,
+        })
+      }
       const promise = new Promise((resolve, reject) => {
         setTimeout(async () => {
           if (assignmentTitles[slot].trim() !== '') {
@@ -122,7 +130,7 @@ const Schedule = ({ user }) => {
                 [slot]: '',
               }))
             } else reject(inserted)
-          } else reject(slot)
+          }
         }, 500)
       })
 

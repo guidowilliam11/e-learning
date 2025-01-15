@@ -82,7 +82,12 @@ const CommentSection = ({
   const handleAddComment = (commentId, value) => {
     try {
       if (value === '') {
-        return toast.error('Comment fields cannot be empty!')
+        return toast.error({
+          render() {
+            return 'Comment fields cannot be empty!'
+          },
+          autoClose: 2000,
+        })
       }
 
       const promise = new Promise((resolve, reject) => {
