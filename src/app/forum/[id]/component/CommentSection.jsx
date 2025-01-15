@@ -117,6 +117,8 @@ const CommentSection = ({
     }
   }
 
+  console.log(forumId)
+
   const handleDeleteComment = (commentId) => {
     try {
       const promise = new Promise((resolve, reject) => {
@@ -248,6 +250,7 @@ const CommentSection = ({
                 {repliesVisibility[comment._id] && (
                   <div className='pl-2 ml-5 border-l-2 border-gray-300'>
                     <CommentSection
+                      forumId={forumId}
                       comments={comment.replies}
                       user={user}
                       fetchPost={fetchPost}
