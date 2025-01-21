@@ -11,6 +11,8 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import {toast} from "react-toastify";
+import {deleteFolder, deleteNote, editFolder, editNote, fetchNotes} from "@/app/notes/action";
+import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog";
 
 const ITEM_HEIGHT = 48;
 
@@ -29,6 +31,10 @@ const App = ({ user }) => {
     const [isEditFolderModalOpen, setEditFolderModalOpen] = useState(false);
     const [newFolderName, setNewFolderName] = useState("");
 
+    const [deleteNoteModal, setDeleteNoteModal] = useState(false);
+    const [deleteFolderModal, setDeleteFolderModal] = useState(false);
+
+
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);
         return date.toLocaleDateString("en-US", {
@@ -38,101 +44,88 @@ const App = ({ user }) => {
         });
     };
 
-    const fetchNotes = async () => {
+    useEffect(() => {
+        showNotes();
+    }, []);
+
+    const showNotes = async () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch("/api/folder");
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            const response = await fetchNotes()
+            if (!response) {
+                throw Error(response);
             }
-            const data = await response.json();
-            setNotesData(data);
+            setNotesData(response);
         } catch (error) {
-            console.error("Failed to fetch notes:", error);
             setError("Failed to fetch notes. Please try again later.");
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchNotes();
-    }, []);
-
     const handleDeleteNote = async (noteId) => {
-        const confirmDelete = confirm("Are you sure you want to delete this note?");
-        if (!confirmDelete) return;
-
         try {
-            const response = await fetch("/api/folder/notes", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ noteId }),
-            });
-
-            if (!response.ok) throw new Error("Failed to delete note");
+            const response = await deleteNote(noteId);
+            if(!response) {
+                toast.error("Failed to delete note.");
+            }
             toast.success("Note deleted successfully")
-            fetchNotes();
+            showNotes();
         } catch (error) {
             toast.error("Error deleting note")
         }
+        setDeleteNoteModal(false);
+        setEditModalOpen(false);
+    };
+
+    const hanldeDeleteNoteModal = (noteId) => {
+        setSelectedNote(noteId);
+        setDeleteNoteModal(true);
     };
 
     const handleEditNote = async (noteId) => {
         try {
-            const response = await fetch("/api/folder/notes", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ noteId, updatedTopic: newTopic }),
-            });
-
-            if (!response.ok) throw new Error("Failed to update note");
+            const response = await editNote(noteId, newTopic);
+            if (!response) throw new Error("Failed to update note");
             toast.success("Note updated successfully")
             setEditModalOpen(false);
             setSelectedNote(null);
-            fetchNotes();
+            showNotes();
         } catch (error) {
-            alert("Error updating note");
             toast.error("Error updating note")
 
         }
     };
 
     const handleDeleteFolder = async (folderId) => {
-        const confirmDelete = confirm("Are you sure you want to delete this folder and its notes?");
-        if (!confirmDelete) return;
-
         try {
-            const response = await fetch("/api/folder", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ folderId }),
-            });
-
-            if (!response.ok) throw new Error("Failed to delete folder");
+            const response = await deleteFolder(folderId);
+            if (!response) throw new Error("Failed to delete folder");
             toast.success("Folder deleted successfully")
-            fetchNotes();
+            setEditFolderModalOpen(false);
+            setSelectedFolder(null);
+            showNotes();
         } catch (error) {
             toast.error("Error deleting folder")
-
         }
+        setDeleteFolderModal(false);
+    };
+
+    const hanldeDeleteFolderModal = (folderId) => {
+        setSelectedFolder(folderId);
+        setDeleteFolderModal(true);
     };
 
     const handleEditFolder = async (folderId) => {
         try {
-            const response = await fetch("/api/folder", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ folderId, updatedName: newFolderName }),
-            });
+            const response = await editFolder(folderId, newFolderName);
 
-            if (!response.ok) throw new Error("Failed to update folder");
-            alert("Folder updated successfully");
+            if (!response) throw new Error("Failed to update folder");
             toast.success("Folder updated successfully")
             setEditFolderModalOpen(false);
             setSelectedFolder(null);
-            fetchNotes();
+            showNotes();
         } catch (error) {
             toast.error("Error updating folder")
         }
@@ -201,6 +194,19 @@ const App = ({ user }) => {
 
     return (
         <div className="w-full">
+            <DeleteConfirmationDialog
+                open={deleteNoteModal}
+                onCancel={() => setDeleteNoteModal(false)}
+                onConfirm={() => handleDeleteNote(selectedNote)}
+                message='note'
+            />
+
+            <DeleteConfirmationDialog
+                open={deleteFolderModal}
+                onCancel={() => setDeleteFolderModal(false)}
+                onConfirm={() => handleDeleteFolder(selectedFolder)}
+                message='folder'
+            />
             <h1 className="mb-4 text-xl font-semibold">Notes by Folder</h1>
             {notesData.length === 0 ? (
                 <div>No notes available.</div>
@@ -228,7 +234,7 @@ const App = ({ user }) => {
                                 }}
                             >
                                 <MenuItem onClick={openEditFolderModal}>Edit</MenuItem>
-                                <MenuItem onClick={() => handleDeleteFolder(selectedFolder._id)}>Delete</MenuItem>
+                                <MenuItem onClick={() => hanldeDeleteFolderModal(selectedFolder._id)}>Delete</MenuItem>
                             </Menu>
                         </div>
                         <div className="flex flex-col gap-2">
@@ -287,7 +293,7 @@ const App = ({ user }) => {
                                         }}
                                     >
                                         <MenuItem onClick={openEditModal}>Edit</MenuItem>
-                                        <MenuItem onClick={() => handleDeleteNote(selectedNote._id)}>Delete</MenuItem>
+                                        <MenuItem onClick={() => hanldeDeleteNoteModal(selectedNote._id)}>Delete</MenuItem>
                                     </Menu>
                                 </div>
                             ))}
