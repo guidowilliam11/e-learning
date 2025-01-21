@@ -2,26 +2,25 @@
 
 import CourseCard from "../../components/courseCard";
 import { useEffect, useState } from "react";
+import {fetchCourses} from "@/app/courses/action";
 
 export default function Courses({ user }) {
     const [coursesData, setCoursesData] = useState([]);
 
     // Fetch courses data
     useEffect(() => {
-        const fetchCourses = async () => {
+        const showCourses = async () => {
             try {
-                const response = await fetch('/api/courses');
-                if (!response.ok) {
+                const response = await fetchCourses();
+                if (!response) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const data = await response.json();
-                setCoursesData(data.courses || []);
+                setCoursesData(response.courses || []);
             } catch (error) {
                 console.error("Failed to fetch courses:", error);
             }
         };
-
-        fetchCourses();
+        showCourses();
     }, []);
 
     return (

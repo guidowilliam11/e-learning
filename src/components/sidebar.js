@@ -16,13 +16,15 @@ import {
 import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
 import { FaPlus, FaX } from "react-icons/fa6";
 import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
-import { redirect } from 'next/navigation';
+import {redirect, usePathname} from 'next/navigation';
 import { toast } from "react-toastify";
 import { fetchFocusedHours } from '@/app/(home)/action';
 
 // Dummy notes data for users
 
 export default function Sidebar() {
+    const pathname = usePathname()
+
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [expandedTopics, setExpandedTopics] = useState({});
@@ -147,6 +149,10 @@ export default function Sidebar() {
 
     // Fetch notes data
     useEffect(() => {
+
+        if (pathname.includes('/notes')) {
+            setShowOverlay(true);
+        }
         const fetchNotes = async () => {
             setLoading(true);
             try {

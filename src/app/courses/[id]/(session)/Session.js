@@ -5,6 +5,7 @@ import Tag from "@/components/Tag";
 import {FaFile, FaX} from "react-icons/fa6";
 import {FaRegFileAlt} from "react-icons/fa";
 import {toast} from "react-toastify";
+import {addProgress, fetchSessions} from "@/app/courses/action";
 
 const SessionCard = ({ user, courseId }) => {
     const [sessions, setSessions] = useState([]);
@@ -17,17 +18,17 @@ const SessionCard = ({ user, courseId }) => {
     const [summaryChosen, setSummaryChosen] = useState();
 
     useEffect(() => {
-        const fetchSessions = async () => {
+        const showSessions = async () => {
             try {
-                const res = await fetch(`/api/courses/${courseId}`);
-                const data = await res.json(); // Parse the JSON response
+                const response = await fetchSessions(courseId);
+                if (!response) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                if (response.course && response.course.sessions) {
+                    setSessions(response.course.sessions);
+                    setCourse(response.course);
 
-                if (data.course && data.course.sessions) {
-                    setSessions(data.course.sessions);
-                    setCourse(data.course);
-
-                    // Get current user's progress in percentage
-                    const currentUserProgress = data.course.subscribers.find(
+                    const currentUserProgress = response.course.subscribers.find(
                         (subscriber) => subscriber.studentId === user.id
                     )?.progress;
 
@@ -40,7 +41,7 @@ const SessionCard = ({ user, courseId }) => {
             }
         };
 
-        fetchSessions();
+        showSessions();
     }, [courseId, reload]); // Include courseId in the dependency array
 
     const updateProgress = async (sessionId) => {
@@ -49,22 +50,13 @@ const SessionCard = ({ user, courseId }) => {
                 return;
             }
 
-            const res = await fetch(`/api/courses/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ courseId, sessionId }),
-            });
-
-            if (!res.ok) {
-                console.error("Failed to update progress");
-                toast.error("Failed to update progress")
-                return;
+            const response = await addProgress(courseId, sessionId);
+            if(!response) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } else {
+                setReload((prev) => !prev);
+                toast.success("Successfuly updated progress")
             }
-
-            setReload((prev) => !prev);
-            toast.success("Successfuly updated progress")
         } catch (error) {
             console.error("Error updating progress:", error);
             toast.error("Error updating progress");
