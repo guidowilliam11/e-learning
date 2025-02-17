@@ -9,6 +9,7 @@ import { ConversationContextProvider } from "@/contexts/conversationContext"
 import { FullscreenLoadingContextProvider } from "@/contexts/fullscreenLoadingContext"
 import { SessionProvider } from "next-auth/react"
 import MUITheme from "@/libs/MUITheme"
+import { NotesContextProvider } from "@/contexts/notesContext"
 
 export default function ConditionalLayout({ children }) {
   const pathname = usePathname()
@@ -31,23 +32,25 @@ export default function ConditionalLayout({ children }) {
       <ThemeProvider theme={MUITheme}>
         <FullscreenLoadingContextProvider>
           <ConversationContextProvider>
-            {isCurrentRouteExcluded() ? (
-              <>
-                {children}
-                <ToastWrapper />
-              </>
-            ) : (
-              <div className="flex font-inter">
-                <Sidebar />
-                <div className="flex flex-col flex-grow h-screen">
-                  <TopBar />
-                  <main className="flex-grow overflow-y-auto p-4 bg-gray-100 h-[90%] font-inter">
-                    {children}
-                    <ToastWrapper />
-                  </main>
+            <NotesContextProvider>
+              {isCurrentRouteExcluded() ? (
+                <>
+                  {children}
+                  <ToastWrapper />
+                </>
+              ) : (
+                <div className="flex font-inter">
+                  <Sidebar />
+                  <div className="flex flex-col flex-grow h-screen">
+                    <TopBar />
+                    <main className="flex-grow overflow-y-auto p-4 bg-gray-100 h-[90%] font-inter">
+                      {children}
+                      <ToastWrapper />
+                    </main>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </NotesContextProvider>
           </ConversationContextProvider>
         </FullscreenLoadingContextProvider>
       </ThemeProvider>

@@ -16,20 +16,22 @@ import {
 import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
 import { FaPlus, FaX } from "react-icons/fa6";
 import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
-import {redirect, usePathname} from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
 import { toast } from "react-toastify";
 import { fetchFocusedHours } from '@/app/(home)/action';
+import { useNotesContext } from '@/contexts/notesContext';
 
 // Dummy notes data for users
 
 export default function Sidebar() {
     const pathname = usePathname()
 
+    const { notesData, setNotesData } = useNotesContext()
+
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [expandedTopics, setExpandedTopics] = useState({});
     const [selectedSession, setSelectedSession] = useState(null);
-    const [notesData, setNotesData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hoveredFolder, setHoveredFolder] = useState(null);
     const [isEditing, setIsEditing] = useState(false);

@@ -10,14 +10,16 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import {toast} from "react-toastify";
-import {deleteFolder, deleteNote, editFolder, editNote, fetchNotes} from "@/app/notes/action";
+import { toast } from "react-toastify";
+import { deleteFolder, deleteNote, editFolder, editNote, fetchNotes } from "@/app/notes/action";
 import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog";
+import { useNotesContext } from "@/contexts/notesContext";
 
 const ITEM_HEIGHT = 48;
 
 const App = ({ user }) => {
-    const [notesData, setNotesData] = useState([]);
+    const { notesData, setNotesData } = useNotesContext();
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -67,7 +69,7 @@ const App = ({ user }) => {
     const handleDeleteNote = async (noteId) => {
         try {
             const response = await deleteNote(noteId);
-            if(!response) {
+            if (!response) {
                 toast.error("Failed to delete note.");
             }
             toast.success("Note deleted successfully")
