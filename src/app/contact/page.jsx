@@ -69,7 +69,7 @@ const ContactPage = () => {
   const handlePusherContactUpdate = (data) => {
     let isMessageForStudent = false
     for (const participant of data.participants) {
-      if (participant._id !== userId) {
+      if (participant._id === userId) {
         isMessageForStudent = true
       }
     }
