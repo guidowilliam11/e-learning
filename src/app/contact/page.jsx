@@ -2,7 +2,7 @@
 
 import ContentNavigationBar from '@/components/ContentNavigationBar'
 import ConversationPage from '@/app/contact/components/ConversationPage'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Conversation from '@/app/contact/components/Conversation'
 import { FaUser, FaUserGroup } from 'react-icons/fa6'
 import { getContacts } from './actions'
@@ -38,6 +38,7 @@ const ContactPage = () => {
   } = useConversationContext()
 
   const [userId, setUserId] = useState('')
+  const refUserId = useRef('')
 
   const peers = useMemo(() => {
     return classifyConversationsData(conversationsData, 'peer')
@@ -69,7 +70,7 @@ const ContactPage = () => {
   const handlePusherContactUpdate = (data) => {
     let isMessageForStudent = false
     for (const participant of data.participants) {
-      if (participant._id === userId) {
+      if (participant._id === refUserId.current) {
         isMessageForStudent = true
       }
     }
@@ -89,6 +90,7 @@ const ContactPage = () => {
       !session && redirect('/login')
       const { user } = session
       setUserId(user.id)
+      refUserId.current = user.id
       pusherClient.subscribe(channelName.contact)
       pusherClient.bind(event.contactUpdate, handlePusherContactUpdate)
       getContacts()
