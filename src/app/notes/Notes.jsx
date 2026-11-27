@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FaBook } from "react-icons/fa";
-import { orange } from "@mui/material/colors";
-import Tag from "@/components/Tag";
+import { FaFolder, FaLock, FaUserGroup, FaRegFileLines } from "react-icons/fa6";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -187,7 +185,7 @@ const App = ({ user }) => {
     };
 
     if (loading) {
-        return <div>Loading notes...</div>;
+        return <div className="max-w-[1200px] h-64 bg-white border rounded-card border-line animate-pulse" />;
     }
 
     if (error) {
@@ -195,7 +193,7 @@ const App = ({ user }) => {
     }
 
     return (
-        <div className="w-full">
+        <div className="max-w-[1200px]">
             <DeleteConfirmationDialog
                 open={deleteNoteModal}
                 onCancel={() => setDeleteNoteModal(false)}
@@ -209,98 +207,79 @@ const App = ({ user }) => {
                 onConfirm={() => handleDeleteFolder(selectedFolder)}
                 message='folder'
             />
-            <h1 className="mb-4 text-xl font-semibold">Notes by Folder</h1>
-            {notesData.length === 0 ? (
-                <div>No notes available.</div>
+            <div className="flex items-end justify-between">
+                <div>
+                    <h2 className="text-2xl font-semibold tracking-tight">Notes</h2>
+                    <p className="mt-1 text-sm text-ink-2">
+                        {(notesData.notes || []).reduce((a, f) => a + f.notes.length, 0)} notes in {(notesData.notes || []).length} folders. Shared notes are edited live with your peers.
+                    </p>
+                </div>
+            </div>
+            {!notesData.notes?.length ? (
+                <p className="py-16 text-sm text-center text-ink-2">No notes yet. Create a folder from the sidebar.</p>
             ) : (
                 notesData.notes.map((folder) => (
-                    <div key={folder._id} className="w-full mb-4">
-                        <div className="flex items-center mb-4 group">
-                            <h2 className="text-lg">{folder.name}&#39;s Folder</h2>
+                    <section key={folder._id} className="mt-8">
+                        <div className="flex items-center gap-2 mb-3 group">
+                            <FaFolder className="text-ink-3" aria-hidden />
+                            <h3 className="font-semibold">{folder.name}</h3>
+                            <span className="text-sm text-ink-3 tnum">{folder.notes.length}</span>
                             <IconButton
-                                aria-label="more"
+                                aria-label={`${folder.name} folder options`}
+                                size="small"
                                 onClick={(event) => handleFolderMenuClick(event, folder)}
-                                className="ml-4 transition-opacity duration-300 opacity-0 cursor-pointer group-hover:opacity-100"
+                                className="opacity-0 group-hover:opacity-100 focus:opacity-100"
                             >
-                                <HiOutlineDotsVertical />
+                                <HiOutlineDotsVertical size={16} />
                             </IconButton>
                             <Menu
                                 anchorEl={anchorElFolder}
                                 open={Boolean(anchorElFolder)}
                                 onClose={handleFolderMenuClose}
-                                PaperProps={{
-                                    style: {
-                                        maxHeight: ITEM_HEIGHT * 4.5,
-                                        width: "20ch",
-                                    },
-                                }}
+                                PaperProps={{ style: { maxHeight: ITEM_HEIGHT * 4.5, width: "20ch" } }}
                             >
-                                <MenuItem onClick={openEditFolderModal}>Edit</MenuItem>
+                                <MenuItem onClick={openEditFolderModal}>Rename</MenuItem>
                                 <MenuItem onClick={() => hanldeDeleteFolderModal(selectedFolder._id)}>Delete</MenuItem>
                             </Menu>
                         </div>
-                        <div className="flex flex-col gap-2">
+                        <div className="overflow-hidden bg-white border rounded-card border-line">
+                            <div className="grid grid-cols-[minmax(0,1fr)_160px_180px_140px_44px] gap-4 px-5 py-2.5 text-xs font-medium text-ink-3 border-b border-line bg-page/60">
+                                <span>Title</span><span>Access</span><span>Created by</span><span>Updated</span><span />
+                            </div>
+                            {folder.notes.length === 0 && <p className="px-5 py-4 text-sm text-ink-3">Empty folder.</p>}
                             {folder.notes.map((note) => (
-                                <div
-                                    key={note._id}
-                                    className="flex items-center justify-between flex-grow gap-4 p-4 overflow-hidden bg-white rounded-lg shadow-md"
-                                >
-                                    <div className="flex items-center w-[90%] justify-between">
-                                        <div className="flex items-center w-4/12 gap-4">
-                                            <div
-                                                className="flex gap-4 items-center w-[60%] cursor-pointer"
-                                                onClick={() => window.location.href = `/notes/${note._id}`}
-                                            >
-                                                <FaBook color={orange[500]} />
-                                                <div>{note.topic}</div>
-                                            </div>
-                                            <div>
-                                                {note.collaborators.length === 0 ? (
-                                                    <Tag value="Private"
-                                                        color="bg-red-500 px-1 py-[1px] text-xs font-light w-[95px] text-center" />
-                                                ) : (
-                                                    <Tag
-                                                        value={`Shared ${note.collaborators.length > 5 ? '5+' : note.collaborators.length}`}
-                                                        color="bg-blue-500 px-1 py-[1px] text-xs font-light w-[95px] text-center"
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div className="text-xs ">created by:</div>
-                                            <div>{note.creatorId.fullName}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-xs ">updated at:</div>
-                                            <div>{formatDate(note.updatedAt)}</div>
-                                        </div>
-                                    </div>
-
-                                    {/* Menu Component */}
-                                    <IconButton
-                                        aria-label="more"
-                                        onClick={(event) => handleMenuClick(event, note)}
-                                    >
-                                        <HiOutlineDotsVertical />
+                                <div key={note._id} className="grid grid-cols-[minmax(0,1fr)_160px_180px_140px_44px] gap-4 items-center px-5 py-3 text-sm border-b last:border-b-0 border-line hover:bg-page/60">
+                                    <a href={`/notes/${note._id}`} className="flex items-center min-w-0 gap-3 font-medium hover:text-accent">
+                                        <FaRegFileLines className="shrink-0 text-ink-3" aria-hidden />
+                                        <span className="truncate">{note.topic}</span>
+                                    </a>
+                                    <span>
+                                        {note.collaborators.length === 0 ? (
+                                            <span className="inline-flex items-center gap-1.5 text-ink-2"><FaLock size={11} aria-hidden /> Private</span>
+                                        ) : (
+                                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded bg-accent-wash text-accent">
+                                                <FaUserGroup size={11} aria-hidden /> Shared with {note.collaborators.length > 5 ? '5+' : note.collaborators.length}
+                                            </span>
+                                        )}
+                                    </span>
+                                    <span className="truncate text-ink-2">{note.creatorId.fullName}</span>
+                                    <span className="text-ink-2 tnum">{formatDate(note.updatedAt)}</span>
+                                    <IconButton aria-label={`${note.topic} options`} size="small" onClick={(event) => handleMenuClick(event, note)}>
+                                        <HiOutlineDotsVertical size={16} />
                                     </IconButton>
                                     <Menu
                                         anchorEl={anchorEl}
                                         open={Boolean(anchorEl)}
                                         onClose={handleMenuClose}
-                                        PaperProps={{
-                                            style: {
-                                                maxHeight: ITEM_HEIGHT * 4.5,
-                                                width: "20ch",
-                                            },
-                                        }}
+                                        PaperProps={{ style: { maxHeight: ITEM_HEIGHT * 4.5, width: "20ch" } }}
                                     >
-                                        <MenuItem onClick={openEditModal}>Edit</MenuItem>
+                                        <MenuItem onClick={openEditModal}>Rename</MenuItem>
                                         <MenuItem onClick={() => hanldeDeleteNoteModal(selectedNote._id)}>Delete</MenuItem>
                                     </Menu>
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </section>
                 ))
             )}
 
@@ -326,13 +305,13 @@ const App = ({ user }) => {
                     <div className="flex justify-end mt-4">
                         <button
                             onClick={handleEditSubmit}
-                            className="px-4 py-2 mr-2 text-white rounded-lg bg-primary"
+                            className="h-9 px-4 mr-2 text-sm font-medium text-white rounded-md bg-accent hover:bg-accent-hover"
                         >
                             Save
                         </button>
                         <button
                             onClick={closeEditModal}
-                            className="px-4 py-2 text-black bg-gray-300 rounded-lg"
+                            className="h-9 px-4 text-sm font-medium border rounded-md border-line hover:bg-page"
                         >
                             Cancel
                         </button>
@@ -362,13 +341,13 @@ const App = ({ user }) => {
                     <div className="flex justify-end mt-4">
                         <button
                             onClick={handleEditFolderSubmit}
-                            className="px-4 py-2 mr-2 text-white rounded-lg bg-primary"
+                            className="h-9 px-4 mr-2 text-sm font-medium text-white rounded-md bg-accent hover:bg-accent-hover"
                         >
                             Save
                         </button>
                         <button
                             onClick={closeEditFolderModal}
-                            className="px-4 py-2 text-black bg-gray-300 rounded-lg"
+                            className="h-9 px-4 text-sm font-medium border rounded-md border-line hover:bg-page"
                         >
                             Cancel
                         </button>

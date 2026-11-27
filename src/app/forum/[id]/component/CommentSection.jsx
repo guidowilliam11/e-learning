@@ -8,7 +8,7 @@ import {
 import CommentField from './CommentField'
 import { toast } from 'react-toastify'
 import { Button } from '@mui/material'
-import Image from 'next/image'
+import Avatar from '@/components/Avatar'
 import { postFormattedDate } from '@/utils/time'
 import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog'
 
@@ -174,31 +174,22 @@ const CommentSection = ({
   }, [comments, user])
 
   return (
-    <div>
+    <div className={currentReplies === 0 ? '-mt-2' : ''}>
       {comments &&
         comments.map((comment, index) => (
           <div
             key={index}
-            className='w-full p-4 mt-2 text-black bg-gray-200 rounded-lg'
+            className='w-full py-4 border-b last:border-b-0 border-line'
           >
-            <div className='flex items-start mb-1'>
-              <Image
-                alt='profile'
-                src='/images/default-profile-picture.webp'
-                width={40}
-                height={40}
-              />
-              <div className='flex flex-col ml-2'>
-                <p className='text-sm font-bold'>
-                  {comment.studentId.fullName}
-                </p>
-                <p className='text-sm'>
-                  Posted on {postFormattedDate(comment.createdAt)}
-                </p>
-              </div>
+            <div className='flex items-center gap-3'>
+              <Avatar name={comment.studentId.fullName} size={32} />
+              <p className='text-sm'>
+                <span className='font-semibold'>{comment.studentId.fullName}</span>
+                <span className='text-ink-3'> · {postFormattedDate(comment.createdAt)}</span>
+              </p>
             </div>
-            <div className='ml-12'>
-              <p className='mb-2'>{comment.content}</p>
+            <div className='mt-1 ml-11'>
+              <p className='mb-3 text-[15px] leading-relaxed'>{comment.content}</p>
               <CommentLike
                 isLiked={likedComments.includes(comment._id)}
                 likes={comment.likedBy?.length}
@@ -234,7 +225,7 @@ const CommentSection = ({
             {comment.replies.length > 0 && (
               <>
                 {currentReplies + 1 <= maxRepliesCount ? (
-                  <Button onClick={() => toggleRepliesVisibility(comment._id)}>
+                  <Button size='small' sx={{ ml: 5, mt: 1 }} onClick={() => toggleRepliesVisibility(comment._id)}>
                     {repliesVisibility[comment._id]
                       ? 'Hide Replies'
                       : `View Replies (${comment.replies.length})`}
@@ -253,7 +244,7 @@ const CommentSection = ({
                   </Button>
                 )}
                 {repliesVisibility[comment._id] && (
-                  <div className='pl-2 ml-5 border-l-2 border-gray-300'>
+                  <div className='pl-4 mt-2 border-l-2 ml-11 border-line'>
                     <CommentSection
                       forumId={forumId}
                       comments={comment.replies}

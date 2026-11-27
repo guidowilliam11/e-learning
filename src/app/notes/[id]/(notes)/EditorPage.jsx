@@ -32,7 +32,7 @@ const App = ({user}) => {
   }, [window.location.pathname]); // Runs every time the URL changes
 
   if (!ydocA || !providerA) {
-    return <div>Loading...</div>; // Show loading state while ydocA and providerA are being set up
+    return <div className="h-64 bg-white border rounded-card border-line animate-pulse" />;
   }
 
   return (

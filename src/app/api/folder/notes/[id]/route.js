@@ -27,7 +27,7 @@ export async function GET(req, { params }) {
         const isAuthorized = note.creatorId == userId || note.collaborators.includes(userId);
 
         if (!isAuthorized) {
-            return NextResponse.json({ message: 'User is not authorized to edit this note ' + student._id + ' ' + note.creatorId}, { status: 403 });
+            return NextResponse.json({ message: 'User is not authorized to edit this note' }, { status: 403 });
         }
 
         return NextResponse.json({ message: 'User is authorized', note }, { status: 200 });

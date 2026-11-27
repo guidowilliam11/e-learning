@@ -9,7 +9,7 @@ export async function fetchFocusedHours() {
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching focused hours:', err)
+    console.error('Error fetching focused hours:', error)
   }
 }
 
@@ -28,7 +28,7 @@ export async function fetchDailyQuote() {
     const data = await response.json()
     return data[0]
   } catch (error) {
-    console.error('Error fetching daily quote:', err)
+    console.error('Error fetching daily quote:', error)
   }
 }
 

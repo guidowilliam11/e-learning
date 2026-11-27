@@ -39,11 +39,11 @@ export default function ConditionalLayout({ children }) {
                   <ToastWrapper />
                 </>
               ) : (
-                <div className="flex font-inter">
+                <div className="flex font-inter bg-page text-ink">
                   <Sidebar />
-                  <div className="flex flex-col flex-grow h-screen">
+                  <div className="flex flex-col flex-grow min-w-0 h-screen">
                     <TopBar />
-                    <main className="flex-grow overflow-y-auto p-4 bg-gray-100 h-[90%] font-inter">
+                    <main className="flex-1 min-h-0 p-8 overflow-y-auto bg-page font-inter">
                       {children}
                       <ToastWrapper />
                     </main>

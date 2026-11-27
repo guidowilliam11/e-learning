@@ -75,13 +75,13 @@ const ConversationFooter = ({ userId }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center justify-between px-7 flex-[1] rounded-md drop-shadow-md bg-neutral-50 gap-4 relative"
+      className="relative flex items-end gap-2 p-3 border-t border-line shrink-0"
       id="messageInputForm"
     >
       {fileInputState && (
-        <div className="flex absolute bottom-[70%] bg-neutral-50 p-2 rounded-md gap-2">
+        <div className="absolute flex items-center gap-2 px-3 py-1.5 text-sm bg-white border rounded-md shadow-sm bottom-full left-3 mb-2 border-line">
           <div className="truncate max-w-full">{fileInputState.name}</div>
-          <button onClick={handleClearFileInput}>X</button>
+          <button type="button" aria-label="Remove attachment" onClick={handleClearFileInput} className="text-ink-3 hover:text-ink">×</button>
         </div>
       )}
       <input
@@ -110,15 +110,16 @@ const ConversationFooter = ({ userId }) => {
         hidden
       />
       <textarea
-        placeholder="Type your message"
-        className="flex flex-grow focus:outline-none p-3 resize-none bg-neutral-50"
+        placeholder="Write a message"
+        aria-label="Message"
+        className="flex flex-grow px-3 py-2.5 text-sm border rounded-lg resize-none border-line focus:outline-none focus:border-accent"
         rows="1"
         name="text"
         ref={messageInput}
         disabled={isSendingMessage}
       />
-      <div className="flex items-center gap-4 text-secondary font-semibold text-lg">
-        <label className="cursor-pointer" htmlFor="fileInput">
+      <div className="flex items-center gap-1">
+        <label className="grid rounded-lg cursor-pointer size-10 place-items-center text-ink-2 hover:bg-page" htmlFor="fileInput" aria-label="Attach a file">
           <FaPlus />
         </label>
         {isSendingMessage ? (
@@ -126,7 +127,8 @@ const ConversationFooter = ({ userId }) => {
         ) : (
           <button
             type="submit"
-            className="cursor-pointer"
+            aria-label="Send"
+            className="grid text-white rounded-lg size-10 place-items-center bg-accent hover:bg-accent-hover"
             disabled={isSendingMessage}
           >
             <HiOutlinePaperAirplane />

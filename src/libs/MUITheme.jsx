@@ -7,7 +7,7 @@ const MUITheme = createTheme({
       dark: '#943500',
     },
     secondary: {
-      main: '#545EE1',
+      main: '#4F55DA',
       dark: '#383e95',
       light: '#E5E7FB',
     },
@@ -52,15 +52,15 @@ const MUITheme = createTheme({
           '& .MuiOutlinedInput-root': {
             borderRadius: '8px',
             '&:hover fieldset': {
-              borderColor: '#F2994A',
+              borderColor: '#A1A1AA',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#F2994A',
+              borderColor: '#4F55DA',
               borderWidth: '2px',
             },
           },
           '& .MuiInputLabel-root.Mui-focused': {
-            color: '#F2994A',
+            color: '#4F55DA',
           },
           '& .MuiInputBase-root': {
             fontSize: '0.925rem',

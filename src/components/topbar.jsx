@@ -1,41 +1,46 @@
 "use client";
 
-// src/components/TopBar.js
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+
+const pageTitles = {
+  '/': 'Dashboard',
+  '/courses': 'My learning',
+  '/notes': 'Notes',
+  '/forum': 'Forum',
+  '/schedule': 'Schedule',
+  '/contact': 'Messages',
+  '/settings': 'Settings',
+  '/logout': 'Log out',
+};
+
+const DETAIL = { '/courses': 'Course player', '/forum': 'Thread', '/notes': 'Note' };
 
 export default function TopBar() {
   const path = usePathname();
-
-  // Determine title based on path
-  const pageTitles = {
-    '/dashboard': 'Dashboard',
-    '/courses': 'Courses',
-    '/notes': 'Notes',
-    '/forum': 'Forum',
-    '/schedule': 'Schedule',
-    '/contact': 'Contact',
-    '/contact/community': 'Contact',
-    '/contact/community/add': 'Contact',
-    '/contact/community/edit': 'Contact',
-    '/contact/peer': 'Contact',
-    '/contact/peer/add': 'Contact',
-    '/settings': 'Settings',
-    '/logout': 'Logout'
-  };
-
   const basePath = path.split('/')[1] ? `/${path.split('/')[1]}` : '/';
-
-  const title = pageTitles[basePath] || 'Dashboard'; // Default to 'Dashboard' if path doesn't match
+  const title = pageTitles[basePath] || 'Dashboard';
+  const isNested = path !== basePath;
+  // The date comes from the browser's clock, after hydration.
+  const [today, setToday] = useState('');
+  useEffect(() => setToday(dayjs().format('dddd, D MMMM YYYY')), []);
 
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-100 border-b border-gray-200 h-[10%]">
-      {/* Dynamic Title */}
-      <Link href={basePath} passHref>
-        <h1 className="text-2xl font-semibold text-[#F99B26] min-w-40 cursor-pointer hover:underline">
-          {title}
-        </h1>
-      </Link>
-    </div>
+    <header className="flex items-center justify-between h-16 px-8 bg-white border-b border-line shrink-0">
+      <div className="flex items-center gap-2 text-sm">
+        {isNested ? (
+          <>
+            <Link href={basePath} className="font-medium text-ink-3 hover:text-ink">{title}</Link>
+            <span className="text-ink-3">/</span>
+            <span className="font-medium text-ink">{DETAIL[basePath] || 'Details'}</span>
+          </>
+        ) : (
+          <h1 className="text-base font-semibold text-ink">{title}</h1>
+        )}
+      </div>
+      <p className="text-sm text-ink-3">{today}</p>
+    </header>
   );
 }

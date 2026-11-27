@@ -3,23 +3,29 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
-    FaChevronDown,
-    FaChevronRight,
-    FaHome,
-    FaBook,
-    FaStickyNote,
-    FaUsers,
-    FaCalendar,
-    FaAddressBook,
-    FaChevronLeft
-} from 'react-icons/fa';
-import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
-import { FaPlus, FaX } from "react-icons/fa6";
+    LuLayoutDashboard,
+    LuGraduationCap,
+    LuBookOpen,
+    LuCalendarDays,
+    LuMessagesSquare,
+    LuMessageCircle,
+    LuSettings,
+    LuLogOut,
+    LuChevronDown,
+    LuChevronRight,
+    LuChevronLeft,
+    LuPlus,
+    LuX,
+    LuFileText,
+    LuPanelLeftClose,
+    LuPanelLeftOpen,
+} from 'react-icons/lu';
 import LogoutConfirmationDialog from '@/app/(auth)/logout/component/LogoutConfirmationDialog';
 import { redirect, usePathname } from 'next/navigation';
 import { toast } from "react-toastify";
 import { fetchFocusedHours } from '@/app/(home)/action';
 import { useNotesContext } from '@/contexts/notesContext';
+import { useSession } from 'next-auth/react';
 
 // Dummy notes data for users
 
@@ -136,18 +142,11 @@ export default function Sidebar() {
         fetchFocusedHoursData()
     }, [])
 
+    // The profile comes from the session itself; it used to wait for the dashboard to copy it into localStorage.
+    const { data: session } = useSession();
     useEffect(() => {
-        if (Object.keys(sessionData).length === 0) {
-            const interval = setInterval(() => {
-                const currentData = JSON.parse(localStorage.getItem('userDetails')) || {};
-                if (JSON.stringify(currentData) !== JSON.stringify(sessionData)) {
-                    setSessionData(currentData);
-                }
-            }, 100);
-
-            return () => clearInterval(interval);
-        }
-    }, [sessionData]);
+        if (session?.user) setSessionData(session.user);
+    }, [session]);
 
     // Fetch notes data
     useEffect(() => {
@@ -202,214 +201,154 @@ export default function Sidebar() {
         setExpandedTopics(prev => ({ ...prev, [topic]: !prev[topic] }));
     };
 
-    return (<div
-        className={`relative flex h-screen drop-shadow-xl transition-all duration-300 ${isSidebarCollapsed ? 'w-10' : 'w-80'} group`}>
-        {/* Arrow Button */}
-        <button
-            onClick={toggleSidebar}
-            className={`absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2 z-20 transition-all duration-300 rounded-full bg-[#F99B26] p-1 
-        ${isSidebarCollapsed ? 'opacity-100' : 'opacity-0 pointer-events-none'} group-hover:opacity-100 group-hover:pointer-events-auto`}
-        >
-            {isSidebarCollapsed ? <FaChevronRight className="text-base text-white" /> :
-                <FaChevronLeft className="text-white text-base2" />}
-        </button>
-        {/* Sidebar */}
-        <aside
-            className={`relative bg-gray-100 h-full p-5 flex flex-col justify-between transition-all duration-300 ${isSidebarCollapsed ? 'w-10' : 'w-80'}`}>
+    const initials = (sessionData?.fullName || '?').split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+    const levelTone = badge === 'Scholarly' ? 'bg-ink text-white' : badge === 'Pro' ? 'bg-accent-wash text-accent' : 'bg-focus-wash text-focus-ink'
 
-            {/* Sidebar Content */}
-            <div
-                className={`transition-all ${isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto duration-500'} h-full flex flex-col justify-between transition-all `}>
-                {/* Overlay */}
-                {showOverlay && (
-                    <div
-                        className="absolute inset-0 z-10 flex flex-col items-start p-5 bg-gray-100">
-                        <button
-                            onClick={() => setShowOverlay(false)}
-                            className="text-[#F99B26] font-semibold"
-                        >
-                            <span
-                                className="flex justify-center gap-2 items-center text-3xl font-bold text-[#F99B26] mb-8 pt-4">
-                                {<FaChevronLeft />} Notes
-                            </span>
-                        </button>
+    if (isSidebarCollapsed) {
+        return (
+            <aside className="flex flex-col items-center w-16 h-screen gap-2 py-4 bg-white border-r border-line shrink-0">
+                <button onClick={toggleSidebar} aria-label="Expand sidebar" className="grid mb-4 rounded-md size-9 place-items-center text-ink-2 hover:bg-page">
+                    <LuPanelLeftOpen size={18} />
+                </button>
+                {NAV.map((item) => (
+                    <Link key={item.href} href={item.href} aria-label={item.label} title={item.label}
+                        className={`grid size-10 place-items-center rounded-md ${isActive(pathname, item.href) ? 'bg-accent-wash text-accent' : 'text-ink-2 hover:bg-page'}`}>
+                        <item.icon size={19} />
+                    </Link>
+                ))}
+            </aside>
+        )
+    }
+
+    return (
+        <aside className="relative flex flex-col h-screen bg-white border-r w-64 shrink-0 border-line">
+            <div className="flex items-center justify-between px-5 h-16">
+                <Link href="/" className="text-xl font-bold tracking-tight text-ink">zeal<span className="text-focus">.</span></Link>
+                <button onClick={toggleSidebar} aria-label="Collapse sidebar" className="grid rounded-md size-8 place-items-center text-ink-3 hover:bg-page hover:text-ink">
+                    <LuPanelLeftClose size={17} />
+                </button>
+            </div>
+
+            {showOverlay ? (
+                <div className="flex flex-col flex-1 min-h-0 px-3">
+                    <button onClick={() => setShowOverlay(false)} className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-ink-2 hover:text-ink">
+                        <LuChevronLeft size={16} /> Back to menu
+                    </button>
+                    <p className="px-2 pt-3 pb-2 text-xs font-medium tracking-wide uppercase text-ink-3">Notes</p>
+                    <div className="flex-1 min-h-0 overflow-y-auto">
                         {loading ? (
-                            <div>Loading...</div>
+                            <p className="px-2 text-sm text-ink-3">Loading…</p>
                         ) : (notesData.notes.map((folder) => (
-                            <div
-                                key={folder._id}
-                                className="w-full mb-4"
+                            <div key={folder._id} className="mb-1"
                                 onMouseEnter={() => setHoveredFolder(folder._id)}
-                                onMouseLeave={() => setHoveredFolder(null)}
-                            >
-                                <div
-                                    className="flex items-center justify-between cursor-pointer"
-                                    onClick={() => toggleTopic(folder._id)}
-                                >
-                                    <span className="font-medium">{folder.name}</span>
-                                    <div className="flex items-center">
-                                        <button
-                                            id={folder._id}
-                                            className={` mr-2 transition-opacity duration-200 ${hoveredFolder === folder._id ? 'opacity-100' : 'opacity-0'
-                                                }`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAddNote(folder._id);
-                                            }}
-                                        >
-                                            <FaPlus />
-                                        </button>
-                                        {expandedTopics[folder._id] ? <FaChevronDown /> : <FaChevronRight />}
-                                    </div>
+                                onMouseLeave={() => setHoveredFolder(null)}>
+                                <div className="flex items-center justify-between px-2 py-1.5 text-sm rounded-md cursor-pointer text-ink hover:bg-page" onClick={() => toggleTopic(folder._id)}>
+                                    <span className="flex items-center gap-1.5 font-medium truncate">
+                                        {expandedTopics[folder._id] ? <LuChevronDown size={14} /> : <LuChevronRight size={14} />}
+                                        {folder.name}
+                                    </span>
+                                    <button aria-label={`New note in ${folder.name}`}
+                                        className={`grid size-6 place-items-center rounded text-ink-3 hover:bg-white hover:text-ink ${hoveredFolder === folder._id ? 'opacity-100' : 'opacity-0'} focus:opacity-100`}
+                                        onClick={(e) => { e.stopPropagation(); handleAddNote(folder._id) }}>
+                                        <LuPlus size={14} />
+                                    </button>
                                 </div>
-
                                 {expandedTopics[folder._id] && (
-                                    <ul className="mt-2 ml-4 space-y-1">
-                                        {folder.notes.map((notes) => (
-                                            <li
-                                                key={notes._id}
-                                                className={`cursor-pointer ${selectedSession === notes._id ? 'font-medium text-[#F99B26]' : 'text-gray-700'
-                                                    }`}
-                                                onClick={() => setSelectedSession(notes._id)}
-                                            >
-                                                <NavItem
-                                                    href={"/notes/" + notes._id}
-                                                    icon={<FaBook />}
-                                                    label={notes.topic}
-                                                    onClick={handleNavClick}
-                                                />
+                                    <ul className="ml-5 list-none border-l border-line">
+                                        {folder.notes.map((note) => (
+                                            <li key={note._id}>
+                                                <Link href={'/notes/' + note._id} onClick={() => setSelectedSession(note._id)}
+                                                    className={`flex items-center gap-2 py-1.5 pl-3 pr-2 text-sm truncate ${pathname === '/notes/' + note._id ? 'text-accent font-medium' : 'text-ink-2 hover:text-ink'}`}>
+                                                    <LuFileText size={14} className="shrink-0" />{note.topic}
+                                                </Link>
                                             </li>
                                         ))}
-                                        {noteInputVisible === folder._id && ( // Conditional rendering for the input field
-                                            <li>
-                                                <div className="flex items-center p-2 space-x-3 text-gray-700 transition-colors rounded-lg hover:bg-gray-200">
-                                                    <span className="text-xl"><FaBook></FaBook></span>
-                                                    <input
-                                                        type="text"
-                                                        value={newNote}
-                                                        onChange={(e) => setNewNote(e.target.value)}
-                                                        placeholder="Type new note..."
-                                                        className="flex-1 bg-foreground focus:outline-none"
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter') saveNote(folder._id);
-                                                        }}
-                                                    />
-                                                    <button
-                                                        className="p-1 font-semibold text-gray-700 rounded hover:bg-gray-300"
-                                                        onClick={() => setNoteInputVisible(null)}
-                                                    >
-                                                        <FaX></FaX>
-                                                    </button>
-                                                </div>
+                                        {noteInputVisible === folder._id && (
+                                            <li className="flex items-center gap-1 py-1 pl-3">
+                                                <input autoFocus type="text" value={newNote} onChange={(e) => setNewNote(e.target.value)}
+                                                    placeholder="Note title" aria-label="New note title"
+                                                    className="flex-1 min-w-0 px-2 py-1 text-sm border rounded border-line focus:outline-none focus:border-accent"
+                                                    onKeyDown={(e) => { if (e.key === 'Enter') saveNote(folder._id) }} />
+                                                <button aria-label="Cancel" className="grid rounded size-6 place-items-center text-ink-3 hover:bg-page" onClick={() => setNoteInputVisible(null)}><LuX size={14} /></button>
                                             </li>
                                         )}
                                     </ul>
                                 )}
                             </div>
                         )))}
-
-                        <div className="w-full mt-2">
-                            {isEditing ? (
-                                <div className="flex items-center p-2 border rounded-md">
-                                    <input
-                                        type="text"
-                                        value={folderName}
-                                        onChange={(e) => setFolderName(e.target.value)}
-                                        placeholder="Enter folder name"
-                                        className="flex-1 bg-foreground focus:outline-none"
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                handleAddFolder(); // Save the folder on Enter
-                                            }
-                                        }}
-                                    />
-                                    <button
-                                        className="p-1 font-semibold text-gray-700 rounded hover:bg-gray-300"
-                                        onClick={() => {
-                                            setFolderName(''); // Clear input
-                                            setIsEditing(false); // Exit edit mode
-                                        }}
-                                    >
-                                        <FaX></FaX>
-                                    </button>
-                                </div>
-
-                            ) : (
-                                <button
-                                    className="w-full p-2 text-sm text-gray-700 transition-opacity duration-200 border-2 rounded hover:opacity-70"
-                                    onClick={() => setIsEditing(true)}
-                                >
-                                    Add New Folder
-                                </button>
-                            )}
-                        </div>
                     </div>
-
-                )}
-
-                <div
-                    className={`${showOverlay ? 'opacity-50' : 'opacity-100'} transition-opacity`}>
-                    {/* Logo */}
-                    <div className="text-3xl font-bold text-[#F99B26] mb-8 pt-4">~ ZEAL.</div>
-
-                    <div
-                        className="h-34 bg-gradient-to-br from-[#F99B26] to-[#943500] text-white p-4 rounded-lg mb-8">
-                        <div className="flex items-center justify-between mb-2">
-                            <p className="text-lg font-semibold">{sessionData?.fullName}</p>
-                            <button
-                                className={`${badge === 'Pro'
-                                    ? 'bg-pro-gradient text-[#2F3577]'
-                                    : badge === 'Scholarly'
-                                        ? 'bg-scholarly-gradient text-[#E5E7FB]'
-                                        : 'bg-intermediate-gradient'
-                                    } font-bold px-3 py-1 text-sm rounded-md`}>{badge}
+                    <div className="py-3">
+                        {isEditing ? (
+                            <div className="flex items-center gap-1">
+                                <input autoFocus type="text" value={folderName} onChange={(e) => setFolderName(e.target.value)}
+                                    placeholder="Folder name" aria-label="Folder name"
+                                    className="flex-1 min-w-0 px-2 py-1.5 text-sm border rounded-md border-line focus:outline-none focus:border-accent"
+                                    onKeyDown={(e) => { if (e.key === 'Enter') handleAddFolder() }} />
+                                <button aria-label="Cancel" className="grid rounded-md size-8 place-items-center text-ink-3 hover:bg-page" onClick={() => { setFolderName(''); setIsEditing(false) }}><LuX size={15} /></button>
+                            </div>
+                        ) : (
+                            <button className="flex items-center justify-center w-full gap-1.5 py-2 text-sm font-medium border rounded-md border-line text-ink-2 hover:bg-page" onClick={() => setIsEditing(true)}>
+                                <LuPlus size={15} /> New folder
                             </button>
-                        </div>
-                        <p className="font-bold">Student</p>
-                        <p className="text-sm">{sessionData?.email}</p>
+                        )}
                     </div>
-
-                    {/* Navigation Links */}
-                    <nav className="space-y-4">
-                        <NavItem href="/" icon={<FaHome />} label="Dashboard"
-                            onClick={handleNavClick} />
-                        <NavItem href="/courses" icon={<FaBook />} label="Courses"
-                            onClick={handleNavClick} />
-                        <NavItem href="/notes" icon={<FaStickyNote />} label="Notes"
-                            onClick={handleNavClick} />
-                        <NavItem href="/forum" icon={<FaUsers />} label="Forum"
-                            onClick={handleNavClick} />
-                        <NavItem href="/schedule" icon={<FaCalendar />} label="Schedule"
-                            onClick={handleNavClick} />
-                        <NavItem href="/contact" icon={<FaAddressBook />} label="Contact"
-                            onClick={handleNavClick} />
-                    </nav>
                 </div>
+            ) : (
+                <nav className="flex-1 px-3 pt-2 space-y-6">
+                    {SECTIONS.map((section) => (
+                        <div key={section.title}>
+                            <p className="px-2 pb-1.5 text-xs font-medium tracking-wide uppercase text-ink-3">{section.title}</p>
+                            {section.items.map((item) => (
+                                <NavItem key={item.href} {...item} active={isActive(pathname, item.href)} onClick={handleNavClick} />
+                            ))}
+                        </div>
+                    ))}
+                </nav>
+            )}
 
-                <div
-                    className={`space-y-4 ${showOverlay ? 'opacity-50' : 'opacity-100'} transition-opacity`}>
-                    <NavItem href="/settings" icon={<IoSettingsSharp />}
-                        label="Settings" onClick={handleNavClick} />
-                    <NavItem href="" icon={<IoLogOut />} label="Logout"
-                        onClick={handleNavClick} />
+            <div className="p-3 border-t border-line">
+                <div className="flex items-center gap-3 px-2 py-2">
+                    <div className="grid text-sm font-semibold text-white rounded-full size-9 place-items-center bg-ink shrink-0" aria-hidden>{initials}</div>
+                    <div className="flex-1 min-w-0" title={sessionData?.email}>
+                        <p className="text-sm font-medium truncate text-ink">{sessionData?.fullName}</p>
+                        <span className={`inline-block mt-0.5 px-1.5 py-px text-[11px] font-semibold rounded ${levelTone}`} title="Level from your average focused hours">{badge}</span>
+                    </div>
                 </div>
-
-                <LogoutConfirmationDialog open={openLogoutDialog} onCancel={handleCancelLogout} onConfirm={handleConfirmLogout} />
+                <NavItem href="/settings" icon={LuSettings} label="Settings" active={pathname.startsWith('/settings')} onClick={handleNavClick} />
+                <button onClick={() => setOpenLogoutDialog(true)} className="flex items-center w-full gap-3 px-2 py-2 text-sm font-medium rounded-md text-ink-2 hover:bg-red-50 hover:text-red-700">
+                    <LuLogOut size={18} /> Log out
+                </button>
             </div>
+
+            <LogoutConfirmationDialog open={openLogoutDialog} onCancel={handleCancelLogout} onConfirm={handleConfirmLogout} />
         </aside>
-    </div>);
+    );
 }
 
-function NavItem({ href, icon, label, onClick }) {
-    const isLogout = label === "Logout";
+const SECTIONS = [
+    { title: 'Learn', items: [
+        { href: '/', icon: LuLayoutDashboard, label: 'Dashboard' },
+        { href: '/courses', icon: LuGraduationCap, label: 'My learning' },
+        { href: '/notes', icon: LuBookOpen, label: 'Notes' },
+        { href: '/schedule', icon: LuCalendarDays, label: 'Schedule' },
+    ] },
+    { title: 'Community', items: [
+        { href: '/forum', icon: LuMessagesSquare, label: 'Forum' },
+        { href: '/contact', icon: LuMessageCircle, label: 'Messages' },
+    ] },
+]
+const NAV = SECTIONS.flatMap((s) => s.items)
 
-    return (<div onClick={() => onClick(href)} className="w-full">
-        <Link
-            href={href}
-            className={`flex items-center space-x-3 p-2 rounded-lg transition-colors ${isLogout ? 'text-red-500 hover:bg-red-100' : 'text-gray-700 hover:bg-gray-200'}`}
-        >
-            <span className="text-xl">{icon}</span>
-            <span className={`font-medium ${isLogout ? 'text-red-500' : ''}`}>{label}</span>
+function isActive(pathname, href) {
+    return href === '/' ? pathname === '/' : pathname.startsWith(href)
+}
+
+function NavItem({ href, icon: Icon, label, active, onClick }) {
+    return (
+        <Link href={href} onClick={() => onClick(href)} aria-current={active ? 'page' : undefined}
+            className={`flex items-center gap-3 px-2 py-2 text-sm font-medium rounded-md transition-colors ${active ? 'bg-accent-wash text-accent' : 'text-ink-2 hover:bg-page hover:text-ink'}`}>
+            <Icon size={18} />
+            <span>{label}</span>
         </Link>
-    </div>);
+    );
 }

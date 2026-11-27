@@ -11,16 +11,28 @@ body {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-secondary to-secondaryDark rounded-full;
+  background: #d4d4d8;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-neutral-400 bg-opacity-30;
+  background: transparent;
+}
+
+body {
+  color: #18181b;
+  background: #f7f7f8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numbers that change in place (timer, counts) keep their width. */
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
 
 @layer base {

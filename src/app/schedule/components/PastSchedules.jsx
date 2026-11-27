@@ -1,6 +1,6 @@
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import AssignmentList from './AssignmentList'
+import { HourRow } from './FutureSchedules'
+import { LuChevronRight } from 'react-icons/lu'
 
 const PastSchedules = ({
   currentDate,
@@ -22,74 +22,32 @@ const PastSchedules = ({
       schedules.some(({ timeSlot }) => timeSlot === slot)
   )
 
-  return (
-    <>
-      {pastSchedules.length > 0 && (
-        <Accordion
-          disableGutters
-          sx={{
-            boxShadow: 'none',
-            border: 'none',
-            '&:before': { display: 'none' },
-          }}
-        >
-          <AccordionSummary
-            expandIcon={
-              <ArrowForwardIosSharpIcon
-                sx={{
-                  fontSize: '0.9rem',
-                  transition: 'transform 0.3s ease',
-                }}
-              />
-            }
-            aria-controls='panel1-content'
-            id='panel1-header'
-            sx={{
-              p: 0,
-              flexDirection: 'row-reverse',
-              '& .MuiAccordionSummary-expandIconWrapper': {
-                transition: 'transform 0.3s ease',
-              },
-              '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-                transform: 'rotate(90deg)',
-              },
-              '& .MuiAccordionSummary-content': {
-                my: 0,
-                marginLeft: 1,
-                p: 0,
-              },
-            }}
-          >
-            <h3 className='text-[#050505a8] text-lg'>Past Schedules</h3>
-          </AccordionSummary>
-          <AccordionDetails sx={{ p: 0 }}>
-            {pastTimeSlots.length > 0 && (
-              <div>
-                {pastTimeSlots.map((slot, index) => (
-                  <div key={`time-slot-${index}`}>
-                    <p className='text-[#050505a8] text-lg'>{slot}</p>
+  if (pastSchedules.length === 0) return null
 
-                    {pastSchedules
-                      .filter((schedule) => schedule.timeSlot === slot)
-                      .map((assignment) => (
-                        <AssignmentList
-                          key={`assignment-${assignment._id}`}
-                          curr={assignment._id}
-                          assignmentId={assignment.assignmentId}
-                          title={assignment.title.toString()}
-                          checked={assignment.checked}
-                          handleCheck={handleCheck}
-                          handleViewAssignment={handleViewAssignment}
-                        />
-                      ))}
-                  </div>
-                ))}
-              </div>
-            )}
-          </AccordionDetails>
-        </Accordion>
-      )}
-    </>
+  return (
+    <details className='mb-2 group/past'>
+      <summary className='flex items-center gap-1.5 py-2 text-sm font-medium list-none cursor-pointer text-ink-2 hover:text-ink [&::-webkit-details-marker]:hidden'>
+        <LuChevronRight size={16} className='transition-transform group-open/past:rotate-90' />
+        Earlier today <span className='text-ink-3 tnum'>· {pastSchedules.filter((s) => s.checked).length}/{pastSchedules.length} done</span>
+      </summary>
+      {pastTimeSlots.map((slot, index) => (
+        <HourRow key={`time-slot-${index}`} slot={slot}>
+          {pastSchedules
+            .filter((schedule) => schedule.timeSlot === slot)
+            .map((assignment) => (
+              <AssignmentList
+                key={`assignment-${assignment._id}`}
+                curr={assignment._id}
+                assignmentId={assignment.assignmentId}
+                title={assignment.title.toString()}
+                checked={assignment.checked}
+                handleCheck={handleCheck}
+                handleViewAssignment={handleViewAssignment}
+              />
+            ))}
+        </HourRow>
+      ))}
+    </details>
   )
 }
 

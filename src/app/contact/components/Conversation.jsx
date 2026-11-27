@@ -3,7 +3,7 @@
 import { useMemo } from "react"
 import { formatMessageTime } from "@/utils/time"
 import { useConversationContext } from "@/contexts/conversationContext"
-import Image from "next/image"
+import Avatar from "@/components/Avatar"
 import {
   profileConstructor,
   validateIsUnread,
@@ -18,8 +18,7 @@ const UnreadCount = ({ userId, lastMessage, unreadCount }) => {
       {isUnread && (
         <div
           className={
-            "rounded-full bg-secondary w-fit px-2 text-neutral-50 text-xs font-semibold " +
-            (unreadCount ? "py-1 " : "py-2")
+            "rounded-full bg-accent min-w-5 h-5 px-1.5 grid place-items-center text-white text-[11px] font-semibold tnum"
           }
         >
           {unreadCount ? unreadCount : " "}
@@ -30,7 +29,7 @@ const UnreadCount = ({ userId, lastMessage, unreadCount }) => {
 }
 
 const Conversation = ({ conversation }) => {
-  const { setActiveConversationId } = useConversationContext()
+  const { activeConversationId, setActiveConversationId } = useConversationContext()
 
   const { userId, unreadCount, lastMessage, onCall } = conversation
 
@@ -51,44 +50,30 @@ const Conversation = ({ conversation }) => {
     setActiveConversationId(conversation._id)
   }
 
+  const isActive = activeConversationId === conversation._id
+  const unread = validateIsUnread(userId, lastMessage)
+  const fromMe = lastMessage?.sender?._id === userId
+
   return (
-    <div
-      className="p-5 border-b-[1px] border-neutral-300 flex gap-4 cursor-pointer hover:bg-neutral-200 transition duration-300"
+    <button
+      className={`w-full text-left px-4 py-3 flex gap-3 border-l-2 ${isActive ? "bg-accent-wash border-accent" : "border-transparent hover:bg-page"}`}
       onClick={handleClick}
+      aria-current={isActive ? "true" : undefined}
     >
-      <div className="flex-shrink-0">
-        <Image
-          src={displayedPicture}
-          className="rounded-full max-h-[48px] max-w-[48px]"
-          height={48}
-          width={48}
-          alt="profile-picture"
-        />
-      </div>
-      <div className="flex flex-grow">
-        <div className="flex flex-col w-4/5 justify-center">
-          <div className="font-semibold text-md flex items-center gap-2">
-            <span className="line-clamp-2 max-w-full break-all">
-              {displayedName}
-            </span>
-            {onCall.length > 0 && (
-              <FaPhone className="flex-shrink-0 text-primary animate-bounce" />
-            )}
-          </div>
-          <div className="text-neutral-600 line-clamp-2 text-pretty break-all">
-            {displayedLastMessage}
-          </div>
+      <Avatar name={displayedName} src={displayedPicture} size={44} group={conversation.type === "community"} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-baseline justify-between gap-2">
+          <span className={`truncate text-sm ${unread ? "font-semibold" : "font-medium"}`}>{displayedName}</span>
+          <span className={`text-xs shrink-0 tnum ${unread ? "text-accent font-medium" : "text-ink-3"}`}>{formattedLastMessageTime}</span>
         </div>
-        <div className="flex flex-col w-1/5 gap-3 justify-start items-center">
-          <div className="text-xs">{formattedLastMessageTime}</div>
-          <UnreadCount
-            userId={userId}
-            lastMessage={lastMessage}
-            unreadCount={unreadCount}
-          />
+        <div className="flex items-center justify-between gap-2 mt-0.5">
+          <span className={`truncate text-sm ${unread ? "text-ink" : "text-ink-3"}`}>
+            {onCall.length > 0 ? <span className="inline-flex items-center gap-1 font-medium text-emerald-700"><FaPhone size={11} /> On a call</span> : <>{fromMe && "You: "}{displayedLastMessage}</>}
+          </span>
+          <UnreadCount userId={userId} lastMessage={lastMessage} unreadCount={unreadCount} />
         </div>
       </div>
-    </div>
+    </button>
   )
 }
 

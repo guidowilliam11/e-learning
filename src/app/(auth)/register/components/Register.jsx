@@ -88,7 +88,8 @@ const Register = () => {
 
   return (
     <AuthCard
-      title="Create an Account"
+      title="Create your account"
+      subtitle="Free for students. Takes a minute."
       footerText="Already have an account?"
       footerLink="/login"
       footerLinkText="Login"
@@ -165,14 +166,15 @@ const Register = () => {
           <Button
             type="submit"
             variant="contained"
+            disableElevation
             fullWidth
             sx={{
-              backgroundColor: "#6C63FF",
+              backgroundColor: "#4F55DA",
               color: "white",
               py: 1,
               borderRadius: "0.5rem",
               "&:hover": {
-                backgroundColor: "#5750d9",
+                backgroundColor: "#3F45C4",
               },
               transition: "all 0.3s ease-in-out",
             }}

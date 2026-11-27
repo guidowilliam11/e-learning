@@ -1,6 +1,5 @@
 'use client'
 
-import ContentNavigationBar from '@/components/ContentNavigationBar'
 import ConversationPage from '@/app/contact/components/ConversationPage'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Conversation from '@/app/contact/components/Conversation'
@@ -17,11 +16,11 @@ import { pusherConfigs } from '@/configs/pusherConfigs'
 
 const contactTabs = [
   {
-    name: 'Private',
+    name: 'Direct',
     value: 'peer',
   },
   {
-    name: 'Community',
+    name: 'Groups',
     value: 'community',
   },
 ]
@@ -102,62 +101,43 @@ const ContactPage = () => {
     }
   }, [])
 
+  const list = activeContactTab === 0 ? peers : communities
+
   return (
-    <div className="contact flex h-full flex-col">
-      <ContentNavigationBar
-        tabs={contactTabs}
-        activeTab={activeContactTab}
-        setActiveTab={setActiveContactTab}
-      />
-      <div className="grid grid-cols-contact gap-5 mt-5 h-full max-h-[87.5%]">
-        <div className="bg-neutral-50 rounded-md drop-shadow-md overflow-y-auto h-fit max-h-full">
-          {activeContactTab === 0 ? (
-            <>
-              <Link
-                className="flex justify-center items-center gap-1.5 border-b-[1px] border-neutral-300 bg-neutral-50 p-3 cursor-pointer font-semibold text-neutral-600 hover:bg-gray-100 sticky top-0"
-                href="/contact/peer/add"
-              >
-                <FaUser />
-                <span>Add Peer</span>
-              </Link>
-              {peers.map((peer) => (
-                <Conversation
-                  key={peer._id}
-                  conversation={{
-                    ...peer,
-                    userId,
-                  }}
-                />
-              ))}
-            </>
-          ) : (
-            <>
-              <Link
-                className="flex justify-center items-center gap-1.5 border-b-[1px] border-neutral-300 bg-neutral-50 p-3 cursor-pointer font-semibold text-neutral-600 hover:bg-gray-100 sticky top-0"
-                href="/contact/community/add"
-              >
-                <FaUserGroup />
-                <span className="">New Community</span>
-              </Link>
-              {communities.map((community) => (
-                <Conversation
-                  key={community._id}
-                  conversation={{
-                    ...community,
-                    userId,
-                  }}
-                />
-              ))}
-            </>
-          )}
+    <div className="contact grid grid-cols-[340px_minmax(0,1fr)] h-[calc(100vh-128px)] overflow-hidden bg-white border rounded-card border-line">
+      <div className="flex flex-col min-h-0 border-r border-line">
+        <div className="p-4 border-b border-line">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Messages</h2>
+            <Link
+              href={activeContactTab === 0 ? '/contact/peer/add' : '/contact/community/add'}
+              className="flex items-center gap-1.5 h-8 px-3 text-sm font-medium rounded-md border border-line hover:bg-page"
+            >
+              {activeContactTab === 0 ? <FaUser size={12} /> : <FaUserGroup size={13} />}
+              {activeContactTab === 0 ? 'Add peer' : 'New group'}
+            </Link>
+          </div>
+          <div role="tablist" aria-label="Conversation type" className="grid grid-cols-2 p-1 mt-3 rounded-lg bg-page">
+            {contactTabs.map((tab, i) => (
+              <button key={tab.value} role="tab" aria-selected={activeContactTab === i} onClick={() => setActiveContactTab(i)}
+                className={`py-1.5 text-sm font-medium rounded-md ${activeContactTab === i ? 'bg-white shadow-sm text-ink' : 'text-ink-2 hover:text-ink'}`}>
+                {tab.name}
+              </button>
+            ))}
+          </div>
         </div>
-        <ConversationPage
-          activeContactTab={activeContactTab}
-          peers={peers}
-          communities={communities}
-          userId={userId}
-        />
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          {list.map((conversation) => (
+            <Conversation key={conversation._id} conversation={{ ...conversation, userId }} />
+          ))}
+        </div>
       </div>
+      <ConversationPage
+        activeContactTab={activeContactTab}
+        peers={peers}
+        communities={communities}
+        userId={userId}
+      />
     </div>
   )
 }

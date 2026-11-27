@@ -1,82 +1,39 @@
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import Link from 'next/link'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { LuHeart, LuMessageSquare, LuEye } from 'react-icons/lu'
 
-export default function ForumPost({
-  id,
-  image,
-  author,
-  date,
-  content,
-  tags,
-  views,
-  likes,
-  comments,
-}) {
-  const router = useRouter()
+dayjs.extend(relativeTime)
 
-  const handleRedirect = () => {
-    router.push(`/forum/${id}`)
-  }
+// One row per post, like a GitHub Discussions list: who and when, the question, its tags, then counts.
+export default function ForumPost({ id, image, author, date, title, description, tags, views, likes, comments }) {
+  const initials = (author || '?').split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
 
   return (
-    <div
-      className='flex flex-grow gap-5 p-4 bg-white rounded-lg shadow-md cursor-pointer'
-      onDoubleClick={handleRedirect}
-    >
-      {image && image !== '' ? (
-        <Image
-          alt=''
-          src={image}
-          width={180}
-          height={180}
-          className='aspect-square bg-[#E5E7FB] rounded-md'
-        />
-      ) : (
-        <div className='w-full max-w-[180px] h-auto aspect-square bg-[#E5E7FB] rounded-md' />
-      )}
-      <div className='flex flex-col justify-between flex-grow'>
-        <div>
-          {/* Post Content */}
-          <p className='mb-3 font-medium text-black'>{content}</p>
-
-          {/* Tags */}
-          <div className='flex mb-4 space-x-2'>
-            {tags.map((tag, index) => (
-              <span
-                key={index}
-                className='text-xs bg-[#E5E7FB] text-gray-600 rounded-full px-3 py-1'
-              >
-                {tag}
-              </span>
+    <li>
+      <Link href={`/forum/${id}`} className='flex gap-4 p-5 group hover:bg-page/60'>
+        <span className='grid text-xs font-semibold rounded-full size-9 shrink-0 place-items-center bg-accent-wash text-accent' aria-hidden>
+          {initials}
+        </span>
+        <div className='flex-1 min-w-0'>
+          <p className='text-xs text-ink-3'>
+            <span className='font-medium text-ink-2'>{author}</span> · <time dateTime={date} title={dayjs(date).format('D MMM YYYY, HH:mm')}>{dayjs(date).fromNow()}</time>
+          </p>
+          <h3 className='mt-1 font-semibold leading-snug group-hover:text-accent'>{title}</h3>
+          {description && <p className='mt-1 text-sm text-ink-2 line-clamp-2'>{description}</p>}
+          <div className='flex flex-wrap items-center gap-2 mt-3'>
+            {tags.map((tag) => (
+              <span key={tag} className='px-2 py-0.5 text-xs font-medium rounded bg-page text-ink-2 border border-line'>{tag}</span>
             ))}
+            <span className='flex items-center gap-4 ml-auto text-xs text-ink-3 tnum'>
+              <span className='flex items-center gap-1' title='Likes'><LuHeart size={14} aria-hidden />{(likes || 0).toLocaleString()}<span className='sr-only'> likes</span></span>
+              <span className='flex items-center gap-1' title='Comments'><LuMessageSquare size={14} aria-hidden />{(comments || 0).toLocaleString()}<span className='sr-only'> comments</span></span>
+              <span className='flex items-center gap-1' title='Views'><LuEye size={14} aria-hidden />{(views || 0).toLocaleString()}<span className='sr-only'> views</span></span>
+            </span>
           </div>
         </div>
-
-        <div className='flex justify-between'>
-          {/* Post Header */}
-          <div className='flex items-center gap-3'>
-            <Image
-              alt='profile'
-              src='/images/default-profile-picture.webp'
-              width={36}
-              height={36}
-              className='rounded-full'
-            />
-            <div>
-              <h3 className='text-sm font-semibold text-gray-800'>{author}</h3>
-              <p className='text-xs text-gray-500'>{date}</p>
-            </div>
-          </div>
-
-          {/* Post Footer */}
-          <div className='flex items-center justify-between gap-6 text-sm text-gray-600'>
-            <span>{views.toLocaleString()} Views</span>
-            <span>{likes.toLocaleString()} Likes</span>
-            <span>{comments.toLocaleString()} Comments</span>
-          </div>
-        </div>
-      </div>
-    </div>
+        {image && <img src={image} alt='' className='self-start object-cover w-28 border rounded-md aspect-[4/3] shrink-0 border-line' />}
+      </Link>
+    </li>
   )
 }

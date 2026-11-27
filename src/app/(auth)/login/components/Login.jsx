@@ -71,7 +71,8 @@ const Login = () => {
 
   return (
     <AuthCard
-      title="Login to ZEAL"
+      title="Log in to Zeal"
+      subtitle="Welcome back. Pick up where you left off."
       footerText="Don't have an account?"
       footerLink="/register"
       footerLinkText="Register"
@@ -118,19 +119,20 @@ const Login = () => {
           <Button
             type="submit"
             variant="contained"
+            disableElevation
             sx={{
-              backgroundColor: "#6C63FF",
+              backgroundColor: "#4F55DA",
               color: "white",
               py: 1,
               borderRadius: "0.5rem",
               "&:hover": {
-                backgroundColor: "#5750d9",
+                backgroundColor: "#3F45C4",
               },
               transition: "all 0.3s ease-in-out",
             }}
             fullWidth
           >
-            Login
+            Log in
           </Button>
         </Grid2>
       </form>

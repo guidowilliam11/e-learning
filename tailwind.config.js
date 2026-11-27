@@ -20,8 +20,15 @@ module.exports = {
         primaryDark: "#943500",
         secondary: "#545EE1",
         secondaryDark: "#383e95",
-        secondaryLight: "#E5E7FB"
+        secondaryLight: "#E5E7FB",
+        // UI tokens: one action colour (indigo), orange kept for focus data (timer, activity graph).
+        page: "#F7F7F8",
+        line: "#E4E4E7",
+        ink: { DEFAULT: "#18181B", 2: "#52525B", 3: "#71717A" },
+        accent: { DEFAULT: "#4F55DA", hover: "#3F45C4", wash: "#EEF0FD" },
+        focus: { DEFAULT: "#F99B26", ink: "#B45309", wash: "#FEF3E2" },
       },
+      borderRadius: { card: "10px" },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
       },

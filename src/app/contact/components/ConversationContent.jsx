@@ -5,7 +5,7 @@ import { validateMessages } from "../actions"
 import Spinner from "@/components/Spinner"
 import { FaFile } from "react-icons/fa6"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
+import Avatar from "@/components/Avatar"
 
 const ConversationContent = ({ userId }) => {
   const router = useRouter()
@@ -65,7 +65,7 @@ const ConversationContent = ({ userId }) => {
   return (
     <section
       ref={conversationPane}
-      className="bg-secondaryLight flex flex-col flex-[6] overflow-y-auto px-5 py-5"
+      className="flex flex-col flex-1 min-h-0 px-6 py-5 overflow-y-auto bg-page/50"
     >
       {isFetchingConversationMessages && (
         <div className="flex h-full flex-grow justify-center items-center">
@@ -75,7 +75,7 @@ const ConversationContent = ({ userId }) => {
       {!isFetchingConversationMessages &&
         activeConversationMessages.length === 0 && (
           <div className="flex h-full flex-grow justify-center items-center text-xl">
-            Be the first one to chat!
+            No messages yet. Say hello.
           </div>
         )}
       {!isFetchingConversationMessages &&
@@ -94,27 +94,17 @@ const ConversationContent = ({ userId }) => {
           return (
             <div key={_id} className="flex gap-2">
               {!isSentByStudent && (
-                <div className="justify-start">
-                  <Image
-                    src={
-                      sender?.picture || "/images/default-profile-picture.webp"
-                    }
-                    alt={sender?.name || "Picture"}
-                    width={24}
-                    height={24}
-                    className="rounded-full max-h-[24px] max-w-[24px]"
-                  />
-                </div>
+                <Avatar name={sender?.fullName} src={sender?.picture} size={28} className="mt-1" />
               )}
               <div
                 className={
-                  "flex w-full flex-col justify-center mb-5 " +
+                  "flex w-full flex-col justify-center mb-4 " +
                   (isSentByStudent ? "items-end " : "items-start ")
                 }
               >
                 <button
                   onClick={() => handleClickSender(sender)}
-                  className="truncate max-w-1/2"
+                  className="mb-1 text-xs font-medium truncate max-w-1/2 text-ink-2 hover:underline"
                 >
                   {conversationType === "communities" &&
                     !isSentByStudent &&
@@ -122,20 +112,20 @@ const ConversationContent = ({ userId }) => {
                 </button>
                 <div
                   className={
-                    "p-4 max-w-[70%] mt-1 rounded-lg " +
+                    "px-3.5 py-2.5 max-w-[65%] text-[15px] leading-relaxed rounded-2xl " +
                     (isSentByStudent
-                      ? "bg-secondary text-neutral-50"
-                      : "bg-neutral-50 text-neutral-950")
+                      ? "bg-accent text-white rounded-br-md"
+                      : "bg-white border border-line text-ink rounded-bl-md")
                   }
                 >
                   {file && (
                     <a
                       className={
-                        "cursor pointer p-2 border-[1px] rounded-md flex gap-2 items-center hover:bg-neutral-50/25 transition " +
+                        "cursor-pointer px-3 py-2 rounded-lg flex gap-2 items-center text-sm font-medium transition " +
                         (text && "mb-2 ") +
                         (isSentByStudent
-                          ? "hover:bg-neutral-50/25"
-                          : "hover:bg-neutral-400/25 border-neutral-950")
+                          ? "bg-white/15 hover:bg-white/25"
+                          : "bg-page hover:bg-line")
                       }
                       target="_blank"
                       href={file}
@@ -146,7 +136,7 @@ const ConversationContent = ({ userId }) => {
                   )}
                   <div className="break-words text-pretty">{text}</div>
                 </div>
-                <div>{formatMessageTime(createdAt, true)}</div>
+                <div className="mt-1 text-[11px] text-ink-3 tnum">{formatMessageTime(createdAt, true)}</div>
               </div>
             </div>
           )

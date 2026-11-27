@@ -5,7 +5,6 @@ import { getSession, useSession } from "next-auth/react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { FaArrowLeft } from "react-icons/fa6"
 import "./style.css"
 import { updatePreferences, updateProfile } from "./actions"
 import { toast } from "react-toastify"
@@ -56,10 +55,10 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
   }, [user])
 
   return (
-    <div className="flex flex-col bg-neutral-50 rounded-md drop-shadow-md p-4 justify-between items-center text-lg font-bold text-primary mb-4">
-      <span className="cursor-default w-1/2">Profile</span>
+    <div className="p-6 bg-white border rounded-card border-line">
+      <h2 className="mb-4 text-base font-semibold">Profile</h2>
       <form
-        className="flex flex-col items-center text-md font-normal w-1/2"
+        className="flex flex-col w-full"
         id="profileForm"
         onSubmit={handleProfileSubmit}
       >
@@ -72,14 +71,14 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
           required
           hidden
         />
-        <div className="flex flex-col my-2 items-center">
+        <div className="flex flex-col items-start w-full mb-2">
           <div className="relative image-upload-wrapper w-fit">
             <Image
               src={picturePreview || "/images/default-profile-picture.webp"}
-              width={150}
-              height={150}
+              width={96}
+              height={96}
               alt={newUserData?.name || "Picture"}
-              className="rounded-full drop-shadow-lg cursor-pointer"
+              className="object-cover rounded-full cursor-pointer size-24"
               title="Click to upload a new picture"
             />
             <label
@@ -89,9 +88,7 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
               Upload Picture
             </label>
           </div>
-          <span className="text-xs text-neutral-400 mt-1">
-            <sup>*</sup>Click picture to upload a new one
-          </span>
+          <span className="mt-2 text-xs text-ink-3">Click the photo to upload a new one (PNG or JPG, up to 10 MB)</span>
           <input
             name="picture"
             type="file"
@@ -102,9 +99,9 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
             onChange={handlePictureChange}
           />
         </div>
-        <div className="flex flex-col my-2 items-start w-full">
+        <div className="flex flex-col w-full my-2.5 text-sm font-medium text-ink">
           <label htmlFor="fullName">
-            Name<sup className="text-red-600">*</sup>
+            Name<span className="text-red-600" aria-hidden> *</span>
           </label>
           <input
             type="text"
@@ -112,15 +109,15 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
             name="fullName"
             required
             value={newUserData.fullName || ""}
-            className="w-full bg-neutral-50 text-black border-2 border-neutral-50 border-b-primary p-2 rounded-md focus:outline-0 focus:border-primary transition"
+            className="w-full h-10 px-3 mt-1.5 text-sm bg-white border rounded-md border-line placeholder:text-ink-3 focus:outline-none focus:border-accent"
             onChange={(e) =>
               setNewUserData({ ...newUserData, fullName: e.target.value })
             }
           />
         </div>
-        <div className="flex flex-col my-2 items-start w-full">
+        <div className="flex flex-col w-full my-2.5 text-sm font-medium text-ink">
           <label htmlFor="email">
-            Email <sup className="text-red-600">*</sup>
+            Email<span className="text-red-600" aria-hidden> *</span>
           </label>
           <input
             type="email"
@@ -128,7 +125,7 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
             name="email"
             required
             value={newUserData.email || ""}
-            className="w-full bg-neutral-50 text-black border-2 border-neutral-50 border-b-primary p-2 rounded-md focus:outline-0 focus:border-primary transition"
+            className="w-full h-10 px-3 mt-1.5 text-sm bg-white border rounded-md border-line placeholder:text-ink-3 focus:outline-none focus:border-accent"
             onChange={(e) =>
               setNewUserData({ ...newUserData, email: e.target.value })
             }
@@ -139,14 +136,14 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
             </label>
           )}
         </div>
-        <div className="flex flex-col my-2 items-start w-full">
+        <div className="flex flex-col w-full my-2.5 text-sm font-medium text-ink">
           <label htmlFor="newPassword">New Password</label>
           <input
             type="password"
             placeholder="Enter a new password if you want to change your old one"
             id="newPassword"
             name="newPassword"
-            className="w-full bg-neutral-50 text-black border-2 border-neutral-50 border-b-primary p-2 rounded-md focus:outline-0 focus:border-primary transition"
+            className="w-full h-10 px-3 mt-1.5 text-sm bg-white border rounded-md border-line placeholder:text-ink-3 focus:outline-none focus:border-accent"
             minLength="6"
             value={newUserData?.newPassword || ""}
             onChange={(e) =>
@@ -154,9 +151,9 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
             }
           />
         </div>
-        <div className="flex flex-col my-2 items-start w-full">
+        <div className="flex flex-col w-full my-2.5 text-sm font-medium text-ink">
           <label htmlFor="oldPassword">
-            Old Password <sup className="text-red-600">*</sup>
+            Old Password<span className="text-red-600" aria-hidden> *</span>
           </label>
           <input
             type="password"
@@ -164,7 +161,7 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
             id="oldPassword"
             name="oldPassword"
             required
-            className="w-full bg-neutral-50 text-black border-2 border-neutral-50 border-b-primary p-2 rounded-md focus:outline-0 focus:border-primary transition"
+            className="w-full h-10 px-3 mt-1.5 text-sm bg-white border rounded-md border-line placeholder:text-ink-3 focus:outline-none focus:border-accent"
           />
           {errorMode === "INVALID_PASSWORD" && (
             <label htmlFor="email" className="text-red-600 text-sm">
@@ -172,14 +169,14 @@ const ProfileSection = ({ user, handleUpdateProfile, errorMode }) => {
             </label>
           )}
         </div>
-        <div className="flex mt-4 justify-end w-full">
+        <div className="flex justify-end w-full mt-4">
           <button
             type="submit"
             className={
-              "px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 transition duration-300 " +
+              "h-9 px-4 text-sm font-medium rounded-md transition " +
               (isChanged
-                ? "bg-primary hover:bg-primaryDark "
-                : "bg-neutral-400")
+                ? "bg-accent text-white hover:bg-accent-hover "
+                : "bg-page text-ink-3 border border-line cursor-not-allowed")
             }
             disabled={!isChanged}
           >
@@ -208,13 +205,13 @@ const PreferencesSection = ({ preferences, handleUpdatePreferences }) => {
   }, [preferences])
 
   return (
-    <div className="flex flex-col bg-neutral-50 rounded-md drop-shadow-md items-center p-4 justify-between text-lg font-bold text-primary mb-4">
-      <span className="cursor-default w-1/2">Preferences</span>
+    <div className="p-6 bg-white border rounded-card border-line">
+      <h2 className="mb-2 text-base font-semibold">Preferences</h2>
       <form
-        className="flex flex-col w-full items-center text-md font-normal text-neutral-600"
+        className="flex flex-col w-full text-sm text-ink"
         onSubmit={handlePreferencesSubmit}
       >
-        <div className="flex my-2 justify-between w-1/2">
+        <div className="flex items-center justify-between w-full py-2">
           <label htmlFor="allowPeerInvite">
             Allow other peers to invite you
           </label>
@@ -224,7 +221,7 @@ const PreferencesSection = ({ preferences, handleUpdatePreferences }) => {
             name="allowPeerInvite"
             checked={newPreferences?.allowPeerInvite || false}
             value="true"
-            className="bg-neutral-50 text-black border-2 border-neutral-50 border-b-primary p-2 rounded-md focus:outline-0 focus:border-primary transition"
+            className="size-4 accent-[#4F55DA]"
             onChange={() =>
               setNewPreferences({
                 ...newPreferences,
@@ -233,14 +230,14 @@ const PreferencesSection = ({ preferences, handleUpdatePreferences }) => {
             }
           />
         </div>
-        <div className="flex mt-4 justify-end w-1/2">
+        <div className="flex justify-end w-full mt-4">
           <button
             type="submit"
             className={
-              "px-3 py-2 rounded-lg drop-shadow-sm text-neutral-50 transition duration-300 " +
+              "h-9 px-4 text-sm font-medium rounded-md transition " +
               (isChanged
-                ? "bg-primary hover:bg-primaryDark "
-                : "bg-neutral-400")
+                ? "bg-accent text-white hover:bg-accent-hover "
+                : "bg-page text-ink-3 border border-line cursor-not-allowed")
             }
             disabled={!isChanged}
           >
@@ -260,10 +257,6 @@ const SettingsPage = () => {
   const [user, setUser] = useState({})
   const [errorMode, setErrorMode] = useState("")
 
-  const handleClickBack = () => {
-    router.back()
-  }
-
   const handleUpdateProfile = (newUserData) => {
     setIsFullscreenLoading(true)
     updateProfile(newUserData)
@@ -280,7 +273,6 @@ const SettingsPage = () => {
   }
 
   const handleFailUpdateProfile = (res) => {
-    console.log(res)
     const { error } = res.body
     if (error === "EMAIL_NOT_AVAILABLE") {
       toast.error("Email is not available")
@@ -322,14 +314,10 @@ const SettingsPage = () => {
   }, [])
 
   return (
-    <section className="p-6 flex flex-grow h-full flex-col overflow-y-auto">
-      <div className="flex bg-neutral-50 rounded-md drop-shadow-md items-center p-4 justify-between text-xl font-bold text-primary mb-4">
-        <div className="flex items-center gap-4">
-          <button onClick={handleClickBack}>
-            <FaArrowLeft />
-          </button>
-          <span className="cursor-default">Settings</span>
-        </div>
+    <section className="max-w-[640px] space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+        <p className="mt-1 text-sm text-ink-2">Your profile and who can reach you.</p>
       </div>
       <ProfileSection
         user={user}

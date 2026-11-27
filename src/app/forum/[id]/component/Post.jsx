@@ -19,6 +19,7 @@ import CommentField from './CommentField'
 import { redirect } from 'next/navigation'
 import { postFormattedDate } from '@/utils/time'
 import EditDeleteForum from './EditDeleteForum'
+import Avatar from '@/components/Avatar'
 
 const Post = ({ id, user }) => {
   const [currentPost, setCurrentPost] = useState(null)
@@ -155,85 +156,40 @@ const Post = ({ id, user }) => {
     fetchCurrentPost()
   }, [])
 
-  console.log(currentPost)
-
   return (
-    <div className='flex flex-col flex-grow gap-5 p-4 bg-white rounded-lg shadow-md'>
+    <article className='max-w-[860px] p-8 bg-white border rounded-card border-line'>
       {notFound ? (
-        <div>Forum not found. Redirecting you back to the forum page.</div>
+        <p className='text-sm text-ink-2'>This post no longer exists. Taking you back to the forum.</p>
       ) : !currentPost ? (
-        <div>Loading...</div>
+        <div className='h-48 animate-pulse' />
       ) : (
-        <>
-          <div className='flex justify-between'>
-            <div className='flex'>
-              <Image
-                alt='profile'
-                src='/images/default-profile-picture.webp'
-                width={40}
-                height={40}
-              />
-              <div className='flex flex-col ml-2'>
-                <p className='text-sm font-bold'>
-                  {currentPost.studentId.fullName}
-                </p>
-                <p className='text-sm'>
-                  Posted on {postFormattedDate(currentPost.createdAt)}
-                </p>
+        <div className='flex flex-col gap-6'>
+          <div className='flex items-start justify-between'>
+            <div className='flex items-center gap-3'>
+              <Avatar name={currentPost.studentId.fullName} size={40} />
+              <div>
+                <p className='text-sm font-semibold'>{currentPost.studentId.fullName}</p>
+                <p className='text-xs text-ink-3'>Posted {postFormattedDate(currentPost.createdAt)}</p>
               </div>
             </div>
-
-            <EditDeleteForum
-              currentPost={currentPost}
-              fetchData={fetchCurrentPost}
-              user={user}
-            />
+            <EditDeleteForum currentPost={currentPost} fetchData={fetchCurrentPost} user={user} />
           </div>
 
-          <h1 className='text-3xl font-medium'>{currentPost.title}</h1>
-
-          <div className='flex justify-between'>
-            <p>{currentPost.description}</p>
-            <div>
-              {currentPost.tags &&
-                currentPost.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className='text-xs bg-[#E5E7FB] text-gray-600 rounded-full px-3 py-1 ml-2'
-                  >
-                    {tag}
-                  </span>
+          <div>
+            <h1 className='text-2xl font-semibold leading-tight tracking-tight'>{currentPost.title}</h1>
+            {currentPost.tags?.length > 0 && (
+              <div className='flex flex-wrap gap-2 mt-3'>
+                {currentPost.tags.map((tag, index) => (
+                  <span key={index} className='px-2 py-0.5 text-xs font-medium rounded border bg-page text-ink-2 border-line'>{tag}</span>
                 ))}
-            </div>
+              </div>
+            )}
+            <p className='mt-4 text-[15px] leading-7 whitespace-pre-wrap text-ink'>{currentPost.description}</p>
           </div>
 
-          {currentPost.images &&
-            currentPost.images.map((image, key) => (
-              <div
-                key={key}
-                className='relative flex items-center justify-center w-full h-auto overflow-hidden'
-              >
-                <div
-                  className='absolute inset-0 blur-md w-[100%] h-[100%]'
-                  style={{
-                    backgroundImage: `url(${encodeURI(image)})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
-
-                <div className='relative z-10'>
-                  <Image
-                    alt=''
-                    src={image}
-                    priority
-                    width={700}
-                    height={300}
-                    className='w-auto h-auto rounded-md'
-                  />
-                </div>
-              </div>
-            ))}
+          {currentPost.images?.map((image, key) => (
+            <Image key={key} alt='' src={image} priority width={800} height={450} className='w-full h-auto border rounded-md border-line' />
+          ))}
 
           <CommentLike
             view={currentPost.views}
@@ -260,9 +216,9 @@ const Post = ({ id, user }) => {
             fetchPost={fetchCurrentPostNoView}
             fetchPostMoreComment={fetchCurrentPostMoreComments}
           />
-        </>
+        </div>
       )}
-    </div>
+    </article>
   )
 }
 

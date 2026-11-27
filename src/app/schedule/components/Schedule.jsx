@@ -1,10 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import dayjs from 'dayjs'
-import { Button } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
 
 import { toast } from 'react-toastify'
 
@@ -13,7 +10,7 @@ import {
   insertSchedule,
   updateScheduleCheckStatus,
 } from '../action'
-import { formatHour, formattedDate, generateTimeSlots } from '@/utils/time'
+import { formatHour, generateTimeSlots } from '@/utils/time'
 
 import Calendar from './Calendar'
 import AssignmentList from './AssignmentList'
@@ -21,7 +18,7 @@ import CurrentAssignment from './CurrentAssignment'
 import RemainingTasks from './RemainingTasks'
 import TaskPastDue from './TaskPastDue'
 import PastSchedules from './PastSchedules'
-import FutureSchedules from './FutureSchedules'
+import FutureSchedules, { HourRow } from './FutureSchedules'
 import { useSearchParams } from 'next/navigation'
 
 const Schedule = ({ user }) => {
@@ -214,9 +211,8 @@ const Schedule = ({ user }) => {
       currentDate.hour()
   )
 
-  const isPastDate = currentDate.toDate().getDate() < dayjs().toDate().getDate()
-  const isFutureDate =
-    currentDate.toDate().getDate() > dayjs().toDate().getDate()
+  const isPastDate = currentDate.isBefore(dayjs(), 'day')
+  const isFutureDate = currentDate.isAfter(dayjs(), 'day')
 
   const filteredTimeSlots = isPastDate
     ? timeSlots.filter((slot) =>
@@ -234,140 +230,110 @@ const Schedule = ({ user }) => {
     assignmentId && handleViewAssignment(assignmentId)
   }, [assignmentId])
 
+  // The calendar reads the browser's clock, so it renders after hydration.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  const isToday = currentDate.isSame(dayjs(), 'day')
+  const dayTasks = isToday ? todaySchedules : schedules
+
   return (
-    <div className='flex justify-between font-inter'>
-      <div className='w-[30%] mr-6'>
-        <Calendar currentDate={currentDate} setCurrentDate={setCurrentDate} />
-
-        <RemainingTasks
-          schedules={todaySchedules}
-          futureTimeSlots={futureTimeSlots}
-        />
-
-        <TaskPastDue
-          schedules={todaySchedules}
-          futureTimeSlots={futureTimeSlots}
-        />
+    <div className='mx-auto max-w-[1200px] grid grid-cols-[300px_minmax(0,1fr)] gap-6 items-start'>
+      <div className='space-y-4'>
+        <div className='bg-white border rounded-card border-line'>
+          {mounted ? <Calendar currentDate={currentDate} setCurrentDate={setCurrentDate} /> : <div className='h-[334px]' />}
+        </div>
+        <div className='grid grid-cols-2 gap-4'>
+          <RemainingTasks schedules={todaySchedules} futureTimeSlots={futureTimeSlots} />
+          <TaskPastDue schedules={todaySchedules} futureTimeSlots={futureTimeSlots} />
+        </div>
       </div>
 
-      <div className='flex flex-col w-full'>
-        <div
-          className={`flex ${
-            selectedAssignment ? 'justify-between' : 'w-full'
-          } mt-2`}
-        >
-          <div
-            className={`${
-              selectedAssignment ? 'w-[49%]' : 'w-full'
-            } bg-white p-3 rounded-md`}
-          >
-            <div className='text-xl font-medium text-black'>
-              {currentDate ? formattedDate(currentDate) : 'Loading...'}
+      <div className={`grid gap-6 items-start ${selectedAssignment ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <section className='bg-white border rounded-card border-line'>
+          <div className='flex items-baseline justify-between px-6 pt-5 pb-4'>
+            <div>
+              <h2 className='text-lg font-semibold'>{currentDate.format('dddd, D MMMM')}</h2>
+              <p className='mt-0.5 text-sm text-ink-3'>
+                {isToday ? 'Today · ' : ''}{dayTasks.length} {dayTasks.length === 1 ? 'task' : 'tasks'}
+              </p>
             </div>
-
-            <div className='max-h-[75vh] overflow-y-auto pr-2'>
-              {isLoading ? (
-                <div className='text-[#050505a8] text-lg mt-3'>Loading...</div>
-              ) : (
-                <>
-                  {currentDate.toDate().getDate() ===
-                  dayjs().toDate().getDate() ? (
-                    <>
-                      <PastSchedules
-                        currentDate={currentDate}
-                        schedules={todaySchedules}
-                        timeSlots={timeSlots}
-                        handleCheck={handleCheck}
-                        handleViewAssignment={handleViewAssignment}
-                      />
-
-                      <FutureSchedules
-                        currentDate={currentDate}
-                        schedules={todaySchedules}
-                        futureTimeSlots={futureTimeSlots}
-                        assignmentTitles={assignmentTitles}
-                        isAddingBySlot={isAddingBySlot}
-                        handleCheck={handleCheck}
-                        handleCancelAdd={handleCancelAdd}
-                        handleViewAssignment={handleViewAssignment}
-                        handleAddNewClick={handleAddNewClick}
-                        handleTitleChange={handleTitleChange}
-                        handleSaveNewAssignment={handleSaveNewAssignment}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      {filteredTimeSlots.length === 0 && isPastDate ? (
-                        <div className='text-[#050505a8] text-lg mt-3'>
-                          You have no schedules for this day.
-                        </div>
-                      ) : (
-                        filteredTimeSlots.map((slot, index) => (
-                          <div key={`time-slot-${index}`}>
-                            <p className='mt-3 text-[#050505a8] text-lg'>
-                              {slot}
-                            </p>
-
-                            {schedules
-                              .filter((schedule) => schedule.timeSlot === slot)
-                              .map((assignment) => (
-                                <AssignmentList
-                                  key={`assignment-${assignment._id}`}
-                                  curr={assignment._id}
-                                  assignmentId={assignment.assignmentId}
-                                  title={assignment.title}
-                                  checked={assignment.checked}
-                                  handleCheck={handleCheck}
-                                  handleViewAssignment={handleViewAssignment}
-                                />
-                              ))}
-
-                            {isFutureDate &&
-                              (isAddingBySlot[slot] ? (
-                                <AssignmentList
-                                  title={assignmentTitles[slot] || ''}
-                                  isEditing={true}
-                                  onLabelChange={(e) =>
-                                    handleTitleChange(slot, e.target.value)
-                                  }
-                                  onSave={() => handleSaveNewAssignment(slot)}
-                                  cancelAdd={() => handleCancelAdd(slot)}
-                                />
-                              ) : (
-                                <Button
-                                  variant='text'
-                                  startIcon={
-                                    <AddIcon size={14} color='#050505a8' />
-                                  }
-                                  sx={{
-                                    color: '#050505a8',
-                                    fontSize: '16px',
-                                    ml: 0.75,
-                                  }}
-                                  onClick={() => handleAddNewClick(slot)}
-                                >
-                                  Add new
-                                </Button>
-                              ))}
-                          </div>
-                        ))
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-            </div>
+            {!isToday && (
+              <button onClick={() => setCurrentDate(dayjs())} className='h-8 px-3 text-sm font-medium border rounded-md border-line hover:bg-page'>Today</button>
+            )}
           </div>
 
-          {selectedAssignment && (
-            <CurrentAssignment
-              currentDate={currentDate.toISOString()}
-              fetchSchedule={fetchSchedule}
-              handleCloseAssignment={handleCloseAssignment}
-              selectedAssignment={selectedAssignment}
-            />
-          )}
-        </div>
+          <div className='max-h-[70vh] overflow-y-auto px-6 pb-5'>
+            {isLoading ? (
+              <p className='py-6 text-sm text-ink-3'>Loading…</p>
+            ) : isToday ? (
+              <>
+                <PastSchedules
+                  currentDate={currentDate}
+                  schedules={todaySchedules}
+                  timeSlots={timeSlots}
+                  handleCheck={handleCheck}
+                  handleViewAssignment={handleViewAssignment}
+                />
+                <FutureSchedules
+                  currentDate={currentDate}
+                  schedules={todaySchedules}
+                  futureTimeSlots={futureTimeSlots}
+                  assignmentTitles={assignmentTitles}
+                  isAddingBySlot={isAddingBySlot}
+                  handleCheck={handleCheck}
+                  handleCancelAdd={handleCancelAdd}
+                  handleViewAssignment={handleViewAssignment}
+                  handleAddNewClick={handleAddNewClick}
+                  handleTitleChange={handleTitleChange}
+                  handleSaveNewAssignment={handleSaveNewAssignment}
+                />
+              </>
+            ) : filteredTimeSlots.length === 0 && isPastDate ? (
+              <p className='py-6 text-sm text-ink-2'>Nothing was scheduled on this day.</p>
+            ) : (
+              filteredTimeSlots.map((slot, index) => (
+                <HourRow
+                  key={`time-slot-${index}`}
+                  slot={slot}
+                  onAdd={isFutureDate && !isAddingBySlot[slot] ? () => handleAddNewClick(slot) : null}
+                >
+                  {schedules
+                    .filter((schedule) => schedule.timeSlot === slot)
+                    .map((assignment) => (
+                      <AssignmentList
+                        key={`assignment-${assignment._id}`}
+                        curr={assignment._id}
+                        assignmentId={assignment.assignmentId}
+                        title={assignment.title}
+                        checked={assignment.checked}
+                        handleCheck={handleCheck}
+                        handleViewAssignment={handleViewAssignment}
+                      />
+                    ))}
+                  {isFutureDate && isAddingBySlot[slot] && (
+                    <AssignmentList
+                      title={assignmentTitles[slot] || ''}
+                      isEditing={true}
+                      onLabelChange={(e) => handleTitleChange(slot, e.target.value)}
+                      onSave={() => handleSaveNewAssignment(slot)}
+                      cancelAdd={() => handleCancelAdd(slot)}
+                    />
+                  )}
+                </HourRow>
+              ))
+            )}
+          </div>
+        </section>
+
+        {selectedAssignment && (
+          <CurrentAssignment
+            currentDate={currentDate.toISOString()}
+            fetchSchedule={fetchSchedule}
+            handleCloseAssignment={handleCloseAssignment}
+            selectedAssignment={selectedAssignment}
+          />
+        )}
       </div>
     </div>
   )

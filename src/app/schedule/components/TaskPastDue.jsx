@@ -1,15 +1,12 @@
 const TaskPastDue = ({ schedules, futureTimeSlots }) => {
-  const totalTaskPast = schedules.filter(
-    (schedule) =>
-      !futureTimeSlots.includes(schedule.timeSlot) && !schedule.checked
+  const overdue = schedules.filter(
+    (schedule) => !futureTimeSlots.includes(schedule.timeSlot) && !schedule.checked
   ).length
 
   return (
-    <div className='flex flex-col justify-between bg-white text-black rounded-lg p-6 h-[25.5%] mt-4'>
-      <h2 className='mb-2 text-base font-normal'>Task Past Due</h2>
-      <p className='content-center flex-grow text-6xl font-medium text-start'>
-        {totalTaskPast}
-      </p>
+    <div className='p-5 bg-white border rounded-card border-line'>
+      <p className='text-xs text-ink-3'>Past due</p>
+      <p className={`mt-1 text-2xl font-semibold tnum ${overdue ? 'text-red-700' : ''}`}>{overdue}</p>
     </div>
   )
 }

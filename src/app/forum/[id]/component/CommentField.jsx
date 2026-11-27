@@ -9,45 +9,34 @@ const CommentField = ({
   handleAddComment,
 }) => {
   return (
-    <div id='comment' className='mt-2'>
+    <div id='comment' className='pt-6 border-t border-line'>
       <TextField
         value={comment}
         onChange={handleChangeComment}
-        placeholder={isFocused ? '' : 'Add a comment'}
+        placeholder='Add a comment'
         onFocus={() => setIsFocused(true)}
         onKeyDown={(e) =>
           e.key === 'Escape' ? handleCancelComment() : setIsFocused(true)
         }
-        sx={{
-          '& .MuiInputBase-input': {
-            padding: 1.5,
-          },
-        }}
+        size='small'
+        multiline
+        minRows={isFocused ? 3 : 1}
         fullWidth
       />
       {isFocused && (
         <div className='flex justify-end mt-2'>
           <Button
             variant='contained'
-            sx={{
-              color: 'white',
-              backgroundColor: 'grey',
-              fontSize: '16px',
-              ml: 0.75,
-              borderRadius: 5,
-            }}
+            disableElevation
+            sx={{ color: '#52525B', backgroundColor: '#F4F4F5', fontSize: 14, ml: 0.75, borderRadius: 2, '&:hover': { backgroundColor: '#E4E4E7' } }}
             onClick={handleCancelComment}
           >
             Cancel
           </Button>
           <Button
             variant='contained'
-            sx={{
-              color: 'white',
-              fontSize: '16px',
-              ml: 0.75,
-              borderRadius: 5,
-            }}
+            disableElevation
+            sx={{ color: 'white', fontSize: 14, ml: 0.75, borderRadius: 2 }}
             onClick={handleAddComment}
           >
             Comment

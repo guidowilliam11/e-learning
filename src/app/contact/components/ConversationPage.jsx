@@ -9,7 +9,7 @@ const ConversationPage = ({ activeContactTab, peers, communities, userId }) => {
 
   return (
     <>
-      <div className="flex flex-col h-full bg-neutral-50 rounded-md drop-shadow-md overflow-y-auto">
+      <div className="flex flex-col min-h-0 h-full">
         {activeConversationId ? (
           <>
             <ConversationHeader userId={userId} />
@@ -17,43 +17,41 @@ const ConversationPage = ({ activeContactTab, peers, communities, userId }) => {
             <ConversationFooter userId={userId} />
           </>
         ) : (
-          <div className="flex flex-col justify-center items-center h-full font-semibold text-neutral-600 text-lg">
+          <div className="flex flex-col items-center justify-center h-full gap-2 text-sm text-ink-3">
             {activeContactTab === 0 &&
               (peers?.length === 0 ? (
                 <>
-                  <div className="text-[8rem] mb-2">
+                  <div className="text-3xl mb-1 text-zinc-300">
                     <FaUser />
                   </div>
                   <div className="text-center">
-                    No peers yet.. <br />
-                    Add a new one!
+                    No direct messages yet. Add a peer to start one.
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="text-[8rem]">
+                  <div className="text-3xl mb-1 text-zinc-300">
                     <FaComments />
                   </div>
-                  <span>Click on a conversation to open it</span>
+                  <span>Pick a conversation to read it</span>
                 </>
               ))}
             {activeContactTab === 1 &&
               (communities?.length === 0 ? (
                 <>
-                  <div className="text-[8rem] mb-2">
+                  <div className="text-3xl mb-1 text-zinc-300">
                     <FaUsers />
                   </div>
                   <div className="text-center">
-                    No communities yet.. <br />
-                    Create a new one!
+                    No groups yet. Create one for your class.
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="text-[8rem]">
+                  <div className="text-3xl mb-1 text-zinc-300">
                     <FaComments />
                   </div>
-                  <span>Click on a conversation to open it</span>
+                  <span>Pick a conversation to read it</span>
                 </>
               ))}
           </div>
